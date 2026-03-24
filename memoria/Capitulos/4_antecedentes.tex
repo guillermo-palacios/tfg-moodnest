@@ -1,0 +1,75 @@
+\section{Antecedentes}
+\label{sec:antecedentes}
+\setlength{\parskip}{0em} % Ajusta el valor según prefieras
+
+
+En esta sección se analizarán diferentes aplicaciones existentes en el mercado dedicadas al seguimiento del estado de ánimo y el bienestar personal. El objetivo es estudiar sus enfoques, identificar sus fortalezas y debilidades, y establecer los elementos diferenciadores que justifican el desarrollo del presente Trabajo de Fin de Grado.
+
+\subsection{Aplicaciones de micro-diario (Competencia Directa)}
+
+Esta categoría incluye las aplicaciones que, como este TFG, se basan en registros rápidos, visuales y centrados en datos, más que en la escritura de párrafos largos.
+
+\subsubsection{Daylio \cite{app:daylio}}
+Es la referencia del mercado. Permite registrar el ánimo con 5 iconos y asociarlo a actividades predefinidas mediante otros iconos.
+\begin{itemize}
+    \item \textbf{Ventajas:} Extrema rapidez de registro (micro-diario), gamificación (rachas, logros) que fomenta el hábito, y gran facilidad de uso.
+    \item \textbf{Desventajas:} El análisis de datos es muy superficial. Las ``actividades'' son rígidas y no capturan el contexto (ej. ``Trabajo'' es lo mismo si fue un día bueno o malo).
+    \item \textbf{Elementos Diferenciadores de \texttt{MoodNest}:} 
+    Nuestra aplicación resuelve esta desventaja de forma directa. En lugar de limitarse a iconos, el usuario podrá usar \textit{tags} neutrales (ej. \texttt{\#Trabajo}) y asignarles una puntuación individual y opcional (ej. 3/10), independiente de la puntuación global del día. Esto permite un análisis de correlaciones mucho más preciso y veraz, identificando qué factores impactan real y negativamente (como un mal día de trabajo) incluso en un día percibido como bueno.
+\end{itemize}
+
+\subsubsection{Moodistory \cite{app:moodistory}}
+Un diario de ánimo y micro-diario (principalmente para iOS y Android) que se destaca por su alto grado de personalización y su potente módulo de análisis de datos.
+\begin{itemize}
+    \item \textbf{Ventajas:} Permite al usuario crear su propia escala de estados de ánimo. Ofrece un motor de análisis estadístico muy completo, capaz de generar correlaciones entre el ánimo y los ``eventos'' (sus etiquetas) registrados por el usuario.
+    \item \textbf{Desventajas:} Su principal funcionalidad de análisis no es gratuita, sino de pago único. Al ser una aplicación nativa, no es accesible desde un navegador web. Su sistema de ``eventos'', aunque personalizable, es más estructurado y lento de configurar que un sistema de \textit{tags} dinámicos.
+    \item \textbf{Elementos diferenciadores de \texttt{MoodNest}:} El proyecto se desarrollará como una aplicación web (multiplataforma) y será 100\% gratuita, eliminando las barreras de pago y de sistema operativo. Además, nuestro sistema de \textit{tags} dinámicos (con sugerencias genéricas y creación personalizada) buscará ser más ágil y de menor fricción (más rápido, más fácil y que requiere menos esfuerzo mental por parte del usuario) que su sistema de ``eventos'' estructurados, buscando ir un paso más allá del análisis individual de Moodistory.
+\end{itemize}
+
+\subsection{Aplicaciones de diario guiado (Enfoque Cualitativo)}
+
+Esta categoría agrupa aplicaciones cuyo objetivo es el mismo (autoconocimiento), pero su método principal es la escritura introspectiva guiada por la aplicación.
+
+\subsubsection{Reflectly \cite{app:reflectly}}
+Un diario personal que utiliza una interfaz conversacional (tipo \textit{chatbot}) para hacer preguntas al usuario y guiar su reflexión diaria sobre sus sentimientos.
+\begin{itemize}
+    \item \textbf{Ventajas:} Fomenta una introspección más profunda que el simple registro de iconos. La experiencia de usuario está muy pulida y es muy amigable.
+    \item \textbf{Desventajas:} Requiere más tiempo y esfuerzo (escribir). Los datos generados son principalmente texto libre, lo que dificulta el análisis de patrones y correlaciones objetivas.
+    \item \textbf{Elementos diferenciadores de \texttt{MoodNest}:} Nuestra propuesta se basa en el análisis de datos estructurados, no en el procesamiento de texto libre. Esto permite generar gráficos y estadísticas objetivas sobre patrones de comportamiento, en lugar de depender de la interpretación cualitativa del usuario.
+\end{itemize}
+
+\subsubsection{Stoic \cite{app:stoic}}
+Combina el registro de ánimo con ejercicios prácticos basados en la filosofía estoica, como meditaciones, visualizaciones y reflexiones filosóficas.
+\begin{itemize}
+    \item \textbf{Ventajas:} Aporta un marco de trabajo mental proactivo. No solo registra el pasado, sino que ofrece herramientas activas para gestionar las emociones.
+    \item \textbf{Desventajas:} Es una aplicación de nicho, muy orientada a una filosofía concreta. Su objetivo principal son los ejercicios, siendo el registro de ánimo una función secundaria.
+    \item \textbf{Elementos diferenciadores de \texttt{MoodNest}:} El proyecto estará 100\% centrado en el registro y análisis de datos personales del usuario, sin imponer un marco filosófico. La herramienta es agnóstica y se adapta al usuario, no el usuario a la herramienta.
+\end{itemize}
+
+\subsection{Aplicaciones de seguimiento de salud integral}
+
+Esta categoría agrupa a las aplicaciones que extienden el seguimiento del ánimo para incluir una gran cantidad de factores de salud, resultando en herramientas de mayor complejidad.
+
+\subsubsection{Bearable \cite{app:bearable}}
+Una aplicación de salud integral (para iOS y Android) que permite un seguimiento exhaustivo no solo del estado de ánimo, sino también de síntomas físicos, medicación, calidad del sueño, dieta y otros factores de salud.
+\begin{itemize}
+    \item \textbf{Ventajas:} Su principal fortaleza es el nivel de detalle y su potente motor para relacionar el bienestar emocional con factores de salud física (como dolor, fatiga o digestión), algo muy útil para usuarios que gestionan condiciones de salud complejas.
+    \item \textbf{Desventajas:} Para un usuario general que solo busca autoconocimiento emocional, este grado de detalle es excesivo. La presencia de apartados dedicados como ``Síntomas'' o ``Medicación'' añade una complejidad innecesaria para el registro diario, alejándola de la simplicidad deseada.
+    \item \textbf{Elementos diferenciadores de \texttt{MoodNest}:} Se desarrollará una herramienta de uso cotidiano y no clínico. El enfoque es el bienestar y el autoconocimiento para la población general, priorizando una interfaz limpia y rápida. Se evitan conscientemente los factores de salud física complejos en favor de la simplicidad.
+\end{itemize}
+
+\subsection{Gráfico de posicionamiento y nicho de mercado}
+\label{ssec:posicionamiento}
+
+Para resumir visualmente el análisis de esta sección y posicionar la propuesta de este TFG, la Figura \ref{fig:posicionamiento_apps} ilustra el nicho de mercado de \texttt{MoodNest} frente a las alternativas analizadas, basado en la profundidad de su análisis y su facilidad de uso para el registro diario. 
+
+Se puede observar cómo el mercado actual fuerza al usuario a elegir entre herramientas sencillas de utilizar pero con un análisis básico (como Daylio) o herramientas con análisis completos pero complejas de utilizar diariamente por sus detalles clínicos (como Bearable). Por tanto, existe un claro hueco en el cuadrante inferior derecho para una herramienta que, como \texttt{MoodNest}, combine una interfaz sencilla con un motor de análisis completo y gratuito.
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{Imagenes/grafico_posicionamiento.pdf}
+    \caption{Gráfico de posicionamiento de \texttt{MoodNest} frente a la competencia.}
+    \label{fig:posicionamiento_apps}
+\end{figure}
+

@@ -1,0 +1,2 @@
+3.1
+- Añadida página en blanco entre portada y dedicatoria

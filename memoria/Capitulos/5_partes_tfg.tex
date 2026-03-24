@@ -1,0 +1,69 @@
+\section{Partes que figurarán en el TFG}
+\label{sec:partes}
+
+El desarrollo de este TFG corresponde al tipo de \textit{Análisis y resolución de casos prácticos reales en el ámbito de la ingeniería}. Para este tipo de TFG, la memoria contendrá los siguientes apartados.
+
+\vspace{-0.1cm}
+
+\subsection{Manual técnico}
+
+\vspace{-0.1cm}
+
+\subsubsection{Introducción y contexto}
+Lo primero será llevar a cabo un estudio detallado para definir el contexto de la aplicación web y analizar qué herramientas podemos usar y qué fundamentos necesitamos adquirir para lograr el desarrollo correcto de la aplicación.
+
+\vspace{-0.1cm}
+
+\subsubsection{Objetivos}
+En esta parte se recogerán con claridad y detalle los objetivos fundamentales del desarrollo del TFG, centrados en la creación de una herramienta de autoconocimiento emocional.
+
+\vspace{-0.1cm}
+
+\subsubsection{Antecedentes}
+En esta parte se incluirá la información de otras aplicaciones web y móviles que comparten similitudes con \texttt{MoodNest} y un análisis de sus principales ventajas, desventajas y las mejoras que este TFG propone.
+
+\vspace{-0.1cm}
+
+\subsubsection{Análisis del problema}
+En esta parte se aplicarán los conocimientos adquiridos durante la titulación para estudiar y recopilar todos los requisitos que deberá cumplir la aplicación web, así como de las funcionalidades que proporcionará. Estos se dividirán en requisitos funcionales, no funcionales y de información.
+
+\vspace{-0.1cm}
+
+\subsubsection{Diseño}
+\label{ssec:diseno}
+En esta parte se hará el desarrollo del diseño conceptual del sistema, que deberá cumplir con todos los requisitos de usuario y especificaciones pertinentes. Se incluirán el diseño de la arquitectura, el modelo de la base de datos y los diagramas que reflejen de manera sencilla e intuitiva cómo se estructuran las interfaces y se conectan entre sí.
+
+\vspace{-0.1cm}
+
+\subsubsection{Implementación}
+\label{ssec:implementacion}
+En esta parte será necesario transformar el diseño del sistema obtenido con anterioridad, en código ejecutable que represente a la aplicación. La aplicación se dividirá en dos partes complementarias:
+
+\begin{itemize}
+    \item\textbf{Frontend.} Es la parte que se encarga de la interactividad de la aplicación con los usuarios y que se ejecuta en su navegador. Se desarrollará como una \textit{Single Page Application} (SPA) utilizando la biblioteca \texttt{React.js} \cite{bib:react}. Se empleará \texttt{HTML} \cite{bib:html}, \texttt{CSS} \cite{bib:css} y \texttt{JavaScript} \cite{bib:js}. Para los gráficos del módulo de análisis se utilizará la biblioteca \texttt{Chart.js} \cite{bib:chartjs}.
+
+    \item\textbf{Backend.} Es la parte encargada de manejar la lógica de negocio, la seguridad y el acceso a los datos. Se construirá una \textit{API REST} utilizando \texttt{Java} \cite{bib:java} con el \textit{framework} \texttt{Spring Boot} \cite{bib:springboot}. Esta API manejará toda la lógica y servirá los datos en formato \texttt{JSON} \cite{bib:json}. La conexión con la base de datos NoSQL \texttt{MongoDB} \cite{bib:mongodb} se gestionará mediante el \texttt{Mongo Java Driver} \cite{bib:mongojavadriver}.
+\end{itemize}
+
+Por otra parte, se utilizará \texttt{Visual Studio Code} \cite{bib:vscode} como entorno de desarrollo principal. El proyecto completo será containerizado utilizando \texttt{Docker} \cite{bib:docker}, y la base de datos \texttt{MongoDB} se gestionará localmente a través de la herramienta gráfica \texttt{MongoDB Compass} \cite{bib:mongodbcompass}.
+
+\vspace{-0.1cm}
+
+\subsubsection{Conclusiones}
+Esta parte contendrá un resumen de los principales objetivos que se han cumplido con el desarrollo de la aplicación web. Por otro lado se incluirá un apartado de futuras mejoras, que recogerá ideas que pueden ser desarrolladas e incorporadas en un futuro a esta aplicación web.
+
+\vspace{-0.1cm}
+
+\subsubsection{Bibliografía}
+Es una lista que, siguiendo un formato adecuado y profesional, contendrá todas las fuentes citadas o consultadas durante el desarrollo de la aplicación web.
+
+\vspace{-0.15cm}
+
+\subsection{Manual de código}
+Además de la memoria, se recopilará todo el código fuente desarrollado de manera estructurada y documentada en un repositorio de \texttt{GitHub} \cite{bib:github}. Se incluirán también los archivos \texttt{Dockerfile} y \texttt{docker-compose.yml} necesarios para el despliegue y la evaluación de la aplicación. Para ello se aplicarán los principios de buenas prácticas vistos a lo largo de la titulación 
+garantizando la calidad del resultado.
+
+\vspace{-0.15cm}
+
+\subsection{Manual de usuario}
+En este manual, también llamado guía de usuario, se recogerán en lenguaje simple, los pasos a seguir, de manera clara y detallada, por el usuario para entender y ser capaz de manejarse por el sistema haciendo uso completo de sus funcionalidades.
