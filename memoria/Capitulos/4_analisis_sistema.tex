@@ -1,0 +1,168 @@
+\chapter{Análisis y Especificación del Sistema}
+
+En este capítulo se detallan las especificaciones completas del sistema MoodNest. Se definirán los actores involucrados, se detallarán los Requisitos Funcionales (RF) que determinan qué debe hacer el sistema, y los Requisitos No Funcionales (RNF) que establecen cómo debe comportarse técnica y operativamente.
+
+% --- COMANDO PARA TABLAS DE REQUISITOS ---
+\newcommand{\reqTable}[3]{
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5} % Da un poco de "aire" a las filas
+    \begin{tabularx}{\textwidth}{|>{\columncolor{gray!20}\bfseries}c|X|}
+        \hline
+        \rowcolor{UCO} % Color de la cabecera (definido en confg_colores)
+        \multicolumn{2}{|c|}{\textcolor{white}{\textbf{#1}}} \\
+        \hline
+        #2
+    \end{tabularx}
+    \caption{#3}
+\end{table}
+}
+% ------------------------------------------------
+
+\section{Requisitos Funcionales (RF)}
+
+Los Requisitos Funcionales describen el comportamiento esperado del sistema y las interacciones específicas que los usuarios pueden realizar dentro de la plataforma. Para una mejor comprensión, se han dividido en módulos lógicos.
+
+\subsection{Módulo 1: Gestión de Usuarios}
+
+\reqTable{Gestión de Usuarios}{
+    RF1.1 & El sistema permitirá a un usuario no registrado crear una nueva cuenta proporcionando un nombre, un correo electrónico válido y único en el sistema, y una contraseña. \\ \hline
+    RF1.2 & El sistema permitirá el acceso a usuarios registrados solicitando obligatoriamente su correo electrónico y contraseña. \\ \hline
+    RF1.3 & El sistema permitirá al usuario autenticado modificar su nombre de visualización y actualizar su contraseña. \\ \hline
+    RF1.4 & El sistema permitirá al usuario autenticado cerrar sesión de forma segura. \\ \hline
+    RF1.5 & El sistema permitirá al usuario autenticado eliminar su cuenta y todos sus datos de forma permanente. \\ \hline
+}{Requisitos Funcionales - Módulo 1}
+
+\subsection{Módulo 2: Registro Diario y Etiquetas}
+
+\reqTable{Registro Diario y Etiquetas}{
+    RF2.1 & El sistema permitirá al usuario autenticado crear un nuevo registro de estado de ánimo asociado a una fecha. \\ \hline
+    RF2.2 & El sistema establecerá la fecha actual por defecto al iniciar la creación de un nuevo registro, permitiendo su modificación a fechas pasadas. \\ \hline
+    RF2.3 & El sistema exigirá de forma obligatoria una puntuación global del estado de ánimo, representada por un valor numérico entero del 1 al 10. \\ \hline
+    RF2.4 & El sistema permitirá al usuario incluir un comentario opcional en su registro diario. \\ \hline
+    RF2.5 & El sistema permitirá al usuario autenticado crear nuevas etiquetas personalizadas asignándoles un nombre identificativo. \\ \hline
+    RF2.6 & El sistema permitirá al usuario gestionar sus etiquetas personalizadas, pudiendo editarlas o eliminarlas de su catálogo. \\ \hline
+    RF2.7 & El sistema permitirá al usuario asociar una o múltiples etiquetas a un registro diario. \\ \hline
+    RF2.8 & El sistema permitirá al usuario asignar, de manera opcional, una puntuación numérica entera (del 1 al 10) a cada etiqueta individual seleccionada en un registro. \\ \hline
+    RF2.9 & El sistema permitirá al usuario modificar cualquier dato de un registro propio previamente guardado. \\ \hline
+    RF2.10 & El sistema permitirá al usuario eliminar de forma permanente cualquiera de sus registros pasados. \\ \hline
+}{Requisitos Funcionales - Módulo 2}
+
+\subsection{Módulo 3: Panel Principal e Historial}
+
+\reqTable{Panel Principal e Historial}{
+    RF3.1 & El sistema mostrará al usuario autenticado un panel principal con el resumen de su último registro de estado de ánimo. \\ \hline
+    RF3.2 & El sistema proporcionará en el panel principal un acceso directo y visualmente destacado para la creación de un nuevo registro diario. \\ \hline
+    RF3.3 & El sistema mostrará en el panel principal un listado cronológico resumido con las últimas entradas registradas por el usuario. \\ \hline
+    RF3.4 & El sistema calculará y mostrará visualmente el número de días consecutivos que el usuario ha realizado al menos un registro. \\ \hline
+    RF3.5 & El sistema proporcionará al usuario autenticado una vista de historial basada en un calendario mensual, donde se identificarán visualmente los días que contienen un registro de estado de ánimo. \\ \hline
+    RF3.6 & El sistema permitirá al usuario interactuar con el calendario, de forma que al seleccionar un día con registro, se muestre el detalle completo de la entrada. \\ \hline
+}{Requisitos Funcionales - Módulo 3}
+
+\subsection{Módulo 4: Análisis de Datos (Estadísticas)}
+
+\reqTable{Análisis de Datos}{
+    RF4.1 & El sistema generará un gráfico temporal de líneas que represente la evolución de la puntuación global del estado de ánimo. \\ \hline
+    RF4.2 & El sistema permitirá al usuario filtrar los datos de dicha evolución temporal seleccionando el rango de tiempo deseado (semanal, mensual o anual). \\ \hline
+    RF4.3 & El sistema calculará y mostrará qué etiquetas presentan el mayor impacto positivo y negativo sobre el estado de ánimo global del usuario. \\ \hline
+    RF4.4 & El sistema permitirá al usuario seleccionar una etiqueta específica de su historial para analizar su impacto individual. \\ \hline
+    RF4.5 & El sistema generará un gráfico de barras agrupadas que compare visualmente el promedio del estado de ánimo global con el promedio de la puntuación específica de la etiqueta seleccionada. \\ \hline
+    RF4.6 & El sistema generará automáticamente un mensaje de texto interpretativo basado en la diferencia matemática entre la puntuación global media y la puntuación de la etiqueta analizada. \\ \hline
+    RF4.7 & El sistema generará un gráfico de barras que represente el promedio histórico de la puntuación global de los registros de estado de ánimo de cada uno de los días de la semana. \\ \hline
+    RF4.8 & El sistema generará un gráfico circular que represente la distribución porcentual de los registros de estado de ánimo en diferentes rangos (ej. días buenos, neutros y malos). \\ \hline
+}{Requisitos Funcionales - Módulo 4}
+
+\subsection{Módulo 5: Personalización y Sistema}
+
+\reqTable{Personalización y Sistema}{
+    RF5.1 & El sistema permitirá al usuario autenticado personalizar los textos descriptivos de su escala de estado de ánimo para cada uno de los niveles numéricos (del 1 al 10). \\ \hline
+    RF5.2 & El sistema permitirá al usuario seleccionar el estilo visual de su escala de ánimo eligiendo entre varios conjuntos de iconos predefinidos. \\ \hline
+    RF5.3 & El sistema mostrará en el panel principal un mensaje de bienvenida dinámico, adaptado contextualmente a factores como la hora del día o la actividad reciente. \\ \hline
+    RF5.4 & El sistema permitirá al usuario alternar la interfaz gráfica entre un tema visual claro y un tema visual oscuro. \\ \hline
+    RF5.5 & El sistema permitirá al usuario seleccionar un color principal para personalizar la apariencia de los elementos gráficos clave de la interfaz. \\ \hline
+}{Requisitos Funcionales - Módulo 5}
+
+\newpage
+
+\section{Requisitos No Funcionales (RNF)}
+
+Los Requisitos No Funcionales definen los atributos de calidad del sistema, tales como su rendimiento, seguridad, usabilidad y arquitectura técnica. Estos condicionan las decisiones tecnológicas del desarrollo de MoodNest.
+
+\subsection{Bloque 1: Compatibilidad y Portabilidad}
+
+\reqTable{Compatibilidad y Portabilidad}{
+    RNF1.1 & El sistema deberá estar desarrollado bajo una arquitectura web Cliente-Servidor. \\ \hline
+    RNF1.2 & El sistema deberá ser completamente accesible y funcional a través de los navegadores web modernos más utilizados (Google Chrome, Firefox, Safari, Edge) en sus versiones actualizadas. \\ \hline
+    RNF1.3 & El sistema no requerirá la instalación de ningún software adicional ni plugins por parte del usuario, ejecutándose nativamente en el navegador. \\ \hline
+}{Requisitos No Funcionales - Bloque 1}
+
+\subsection{Bloque 2: Rendimiento y Disponibilidad}
+
+\reqTable{Rendimiento y Disponibilidad}{
+    RNF2.1 & El tiempo de respuesta del servidor para operaciones estándar de lectura y escritura en la base de datos no superará los 2 segundos bajo una conexión a internet estable. \\ \hline
+    RNF2.2 & La interfaz gráfica principal de la aplicación deberá renderizarse en el navegador del usuario en un tiempo máximo de 3 segundos desde la petición inicial. \\ \hline
+    RNF2.3 & El servidor deberá ser capaz de procesar al menos 50 peticiones concurrentes por segundo sin que el tiempo de respuesta promedio supere los 2 segundos. \\ \hline
+    RNF2.4 & Si el servidor de BD no responde en un plazo de 5 segundos, el sistema cancelará la operación y mostrará un mensaje de error amigable, evitando el bloqueo indefinido de la aplicación. \\ \hline
+}{Requisitos No Funcionales - Bloque 2}
+
+\subsection{Bloque 3: Usabilidad e Interfaz}
+
+\reqTable{Usabilidad e Interfaz}{
+    RNF3.1 & La interfaz de usuario deberá ser Responsive, garantizando la correcta visualización y operabilidad en dispositivos móviles y pantallas de escritorio. \\ \hline
+    RNF3.2 & El sistema minimizará la fricción, permitiendo al usuario acceder a la pantalla de creación de un nuevo registro en un máximo de dos interacciones desde que inicia sesión. \\ \hline
+    RNF3.3 & El sistema proporcionará retroalimentación visual inmediata ante cualquier acción importante (ej. notificaciones de éxito o alertas claras de error). \\ \hline
+}{Requisitos No Funcionales - Bloque 3}
+
+\subsection{Bloque 4: Seguridad y Privacidad}
+
+\reqTable{Seguridad y Privacidad}{
+    RNF4.1 & El sistema almacenará las contraseñas en la base de datos aplicando un algoritmo de hashing unidireccional, quedando estrictamente prohibido su almacenamiento en texto plano. \\ \hline
+    RNF4.2 & El sistema protegerá las vistas y operaciones privadas exigiendo un token de autenticación válido. Los usuarios no autenticados serán redirigidos a la pantalla de inicio de sesión. \\ \hline
+    RNF4.3 & El servidor verificará en cada petición que el usuario solo acceda a sus propios registros y etiquetas, bloqueando cualquier intento de acceso a datos de terceros. \\ \hline
+    RNF4.4 & Toda la comunicación de datos entre el navegador del cliente y el servidor deberá realizarse de forma cifrada utilizando el protocolo HTTPS. \\ \hline
+}{Requisitos No Funcionales - Bloque 4}
+
+\newpage
+
+\section{Requisitos de Información (RI)}
+
+Los Requisitos de Información definen el modelo conceptual de datos del sistema. Describen qué información debe almacenar, gestionar y recuperar la plataforma para garantizar su correcto funcionamiento, independientemente de la tecnología de base de datos que se seleccione posteriormente en la fase de diseño.
+
+\subsection{RI-01: Información del Usuario}
+
+\reqTable{Información del Usuario}{
+    ID\_Usuario & Identificador único y autogenerado por el sistema. \\ \hline
+    Nombre & Cadena de caracteres con el nombre o apodo visible en el panel. \\ \hline
+    Email & Dirección de correo electrónico (debe ser un valor único en todo el sistema). \\ \hline
+    Contraseña & Credencial de acceso almacenada de forma segura mediante un algoritmo de cifrado irreversible. \\ \hline
+    Preferencias\_Sistema & Conjunto de configuraciones de interfaz, que incluye: el tema visual (claro/oscuro), el color principal y la familia de iconos seleccionada. \\ \hline
+    Escala\_Personalizada & Conjunto de 10 descriptores textuales asociados a cada nivel numérico del estado de ánimo. \\ \hline
+    Fecha\_Registro & Marca temporal (fecha y hora) exacta de la creación de la cuenta. \\ \hline
+    Racha\_Actual & Valor numérico entero que contabiliza los días consecutivos realizando registros. \\ \hline
+    Fecha\_Ultimo\_Registro & Fecha correspondiente a la última entrada creada en el sistema. \\ \hline
+}{Requisitos de Información - Usuario}
+
+\subsection{RI-02: Información de la Etiqueta}
+
+\reqTable{Información de la Etiqueta}{
+    ID\_Etiqueta & Identificador único y autogenerado por el sistema. \\ \hline
+    ID\_Usuario & Identificador que vincula la etiqueta con su usuario creador. \\ \hline
+    Nombre & Cadena de caracteres con el nombre descriptivo de la actividad o factor (ej. "Deporte", "Familia"). \\ \hline
+    Color & Código de color asociado a la etiqueta. \\ \hline
+    Activa & Indicador lógico que determina si la etiqueta es visible y utilizable por el usuario, o si ha sido archivada/eliminada. \\ \hline
+    Fecha\_Ultimo\_Uso & Marca temporal que se actualiza cada vez que la etiqueta se vincula a un nuevo registro, permitiendo ordenar la interfaz por uso reciente. \\ \hline
+    Fecha\_Creacion & Marca temporal de la creación de la etiqueta. \\ \hline
+}{Requisitos de Información - Etiqueta}
+
+\subsection{RI-03: Información del Registro Diario}
+
+\reqTable{Información del Registro Diario}{
+    ID\_Registro & Identificador único y autogenerado por el sistema. \\ \hline
+    ID\_Usuario & Identificador que vincula el registro con el usuario propietario. \\ \hline
+    Fecha\_Asignada & Fecha del calendario correspondiente al día que se está evaluando. \\ \hline
+    Puntuacion\_Global & Valor numérico entero (del 1 al 10) que representa el estado de ánimo general del día. \\ \hline
+    Comentario & Texto opcional con anotaciones o descripciones adicionales del día. \\ \hline
+    Etiquetas\_Asociadas & Relación de etiquetas vinculadas a este registro. Por cada etiqueta seleccionada, se guardará su identificador y, de forma opcional, una puntuación numérica específica (del 1 al 10). \\ \hline
+    Fecha\_Creacion & Marca temporal exacta en la que el registro fue guardado en el sistema. \\ \hline
+    Fecha\_Modificacion & Marca temporal de la última edición realizada sobre el registro. \\ \hline
+}{Requisitos de Información - Registro Diario}

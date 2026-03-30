@@ -1,55 +1,67 @@
+
 % #----------------------------------------------#
-% |   Autor Plantilla: Eduardo Cañete Carmona    |
-% |   Fecha creación: 01/07/2019                 |
-% |   Ultima actualización: 28/07/2023           |
-% |   Versión: 3.1                               |
+% |  Plantilla Base: Eduardo Cañete Carmona      |
+% |  Adaptación TFG: Guillermo Palacios (2026)   |
 % #----------------------------------------------#
 
-\documentclass[a4paper, 12pt]{article}
+\documentclass[a4paper, 12pt, table]{article}
+
+% --- PAQUETES DE IDIOMA Y FUENTES ---
 \usepackage[spanish,es-tabla]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage{datetime}
 
-\usepackage[left = 25mm, right = 25mm, top = 25mm, height = 206mm]{geometry}
+% --- PAQUETES DE DISEÑO Y ESTRUCTURA ---
+\usepackage[left=25mm, right=25mm, top=25mm, height=206mm]{geometry}
 \usepackage{fancyhdr}
-\usepackage{graphicx}
-\usepackage{lipsum}
-\usepackage[square,numbers]{natbib}
-\usepackage[skip=12pt,font=small]{caption}  %Tamaño de la leyenda
-\usepackage{subcaption}
-\usepackage{amsmath}
-\usepackage{afterpage}
-\usepackage[table]{xcolor}
 \usepackage{titlesec}
-\usepackage{listings}
+\usepackage{afterpage}
+\usepackage{placeins} % Para fijar imágenes con \FloatBarrier
+\usepackage{pdflscape} % Páginas horizontales
+\usepackage{pdfpages} % Incluir PDFs externos
+
+% --- PAQUETES DE GRÁFICOS Y TABLAS ---
+\usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage{float}
-\usepackage{eurosym}
-\usepackage{enumitem}
-\usepackage{amssymb}
 \usepackage{array}
-\usepackage{wrapfig}
 \usepackage{multirow}
 \usepackage{tabularx}
-\usepackage{url}
+\usepackage{wrapfig}
+\usepackage{tikz} % Diagramas de flujo
+\usetikzlibrary{shapes.geometric, arrows}
+
+% --- PAQUETES MATEMÁTICOS Y SÍMBOLOS ---
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{eurosym}
+\usepackage{pifont} % Para marcas de tick y cruz
+
+% --- PAQUETES DE UTILIDAD Y BIBLIOGRAFÍA ---
+\usepackage{lipsum} % Borrar cuando no necesites texto falso
+\usepackage[square,numbers]{natbib}
+\usepackage[skip=12pt,font=small]{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{listings} % Para bloques de código
+\usepackage{url}
 \usepackage{appendix}
-\usepackage{pdfpages}
-\usepackage{pdflscape} %poner pdf horizontal
-\usepackage[hidelinks]{hyperref}%para el hiperlink de las secciones
-%\usepackage[newfloat]{minted}
-\usepackage[nottoc]{tocbibind}
-\usepackage{glossaries}
-\usepackage{pifont}
-\usepackage{placeins}
-% Comandos para Ticks (verde) y Cruces (rojo)
-\newcommand{\cmark}{\textcolor[HTML]{008000}{\ding{51}}}%
-\newcommand{\xmark}{\textcolor[HTML]{FF0000}{\ding{55}}}%
+\usepackage[nottoc]{tocbibind} % Para incluir la bibliografía en el índice
+\usepackage[hidelinks]{hyperref} % Enlaces interactivos en el PDF
+
+% --- CONFIGURACIÓN DE RUTAS ---
+\graphicspath{ {Imagenes/} }
+
+% --- IMPORTACIÓN DE CONFIGURACIONES EXTERNAS ---
+\input{Configuracion/confg_colores}
+\input{Configuracion/confg_codigo}
+\input{Configuracion/confg_diagrama_flujo}
+
+% --- COMANDOS PERSONALIZADOS ---
+\newcommand{\cmark}{\textcolor[HTML]{008000}{\ding{51}}} % Tick verde
+\newcommand{\xmark}{\textcolor[HTML]{FF0000}{\ding{55}}} % Cruz roja
 \newcommand{\revision}[1]{\textcolor{blue}{#1}}
 
-
-\usepackage{tikz} % Diagramas de flujo
-\usetikzlibrary{shapes.geometric, arrows} %Libería de flechas
-
-\usepackage{datetime}
 % Definir los nombres de los meses con mayúscula inicial
 \renewcommand{\monthname}[1][\month]{%
   \ifcase#1
@@ -57,228 +69,138 @@
   \or Julio\or Agosto\or Septiembre\or Octubre\or Noviembre\or Diciembre%
   \fi
 }
-
-% Nuevo formato: "Noviembre 2025"
 \newdateformat{mesyeardate}{\monthname[\THEMONTH] \THEYEAR}
 
-% Entorno para código
+% Configuración para bloques de código
 \newenvironment{code}{\captionsetup{type=lstlisting}}{}    
-
-% Cambiamos el caption de los listing a español
 \renewcommand{\lstlistingname}{Código}    
-
-% Cambiamos el idioma del índice de códigos
 \renewcommand*{\lstlistlistingname}{Índice de Códigos}
 
+% Configuración para diagramas de flujo
 \newfloat{diagrama}{htbp}{loc}
 \floatname{diagrama}{Diagrama}
 \newcommand{\listofdiagrams}{\listof{diagrama}{Índice de Diagramas de Flujo}}
-
 \floatstyle{plain}
 \restylefloat{table}
 
-\graphicspath{ {Imagenes/} }
-
-
-\input{Configuracion/confg_colores}
-\input{Configuracion/confg_codigo}
-\input{Configuracion/confg_diagrama_flujo}
-%----------------------------------------------------------------------------------------
-%	ENCABEZADOS Y PIE DE PAGINA
-%----------------------------------------------------------------------------------------
-
+% --- ENCABEZADOS Y PIE DE PÁGINA ---
 \pagestyle{fancy}
-	\fancypagestyle{cuerpo}{
-      \fancyfoot{}
-      \fancyfoot[L]{Anteproyecto - Trabajo Fin de Grado} %Autor
-      \fancyfoot[C]{}
-      \fancyfoot[R]{- \thepage \ -}
-      \fancyhead{}
-      \fancyhead[L]{\leftmark} %Nombre del documento
-      \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco.jpg}} %Logo Universidad
-      \renewcommand{\headrulewidth}{0.4pt}
-      \renewcommand{\footrulewidth}{0.4pt}
-      \setlength{\headheight}{65pt}
-    }
-    \fancypagestyle{indice}{
-      \fancyfoot{}
-      \fancyfoot[L]{\AutorTFG} %Autor
-      \fancyfoot[R]{- \thepage \ -} %Asignatura
-      \fancyhead{}
-      \fancyhead[L]{Anteproyecto - Trabajo Fin de Grado} %Nombre del documento
-      \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco.jpg}} %Logo
-      \renewcommand{\headrulewidth}{0.4pt}
-      \renewcommand{\footrulewidth}{0.4pt}
-      \setlength{\headheight}{65pt}
-      }
-      
-    \fancypagestyle{plain}{% % <-- this is new
-     \fancyfoot{}
-      \fancyfoot[L]{Trabajo Fin de Grado} %Autor
-      \fancyfoot[C]{} %ecc
-      \fancyfoot[R]{- \thepage \ -}
-      \fancyhead{}
-      \fancyhead[L]{\leftmark} %Nombre del documento
-      \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco.jpg}} %Logo Universidad
-      \renewcommand{\headrulewidth}{0.4pt}
-      \renewcommand{\footrulewidth}{0.4pt}
-      \setlength{\headheight}{65pt}
-    }
+\fancypagestyle{cuerpo}{
+    \fancyfoot{}
+    \fancyfoot[L]{Trabajo Fin de Grado} 
+    \fancyfoot[C]{}
+    \fancyfoot[R]{- \thepage \ -}
+    \fancyhead{}
+    \fancyhead[L]{\leftmark} 
+    \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco.jpg}} 
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    \setlength{\headheight}{65pt}
+}
+
+\fancypagestyle{indice}{
+    \fancyfoot{}
+    \fancyfoot[L]{\AutorTFG} 
+    \fancyfoot[R]{- \thepage \ -} 
+    \fancyhead{}
+    \fancyhead[L]{Trabajo Fin de Grado} 
+    \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco.jpg}} 
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    \setlength{\headheight}{65pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyfoot{}
+    \fancyfoot[L]{Trabajo Fin de Grado} 
+    \fancyfoot[C]{} 
+    \fancyfoot[R]{- \thepage \ -}
+    \fancyhead{}
+    \fancyhead[L]{\leftmark} 
+    \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco.jpg}} 
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    \setlength{\headheight}{65pt}
+}
   
 \setcounter{secnumdepth}{4}
+\raggedbottom  % Quita huecos grandes en blanco verticalmente
 
-\pagenumbering{empty}
-
-
-%%%%%%%%%
-% ANEXO %
-%%%%%%%%%
-
-% Para que ponga ANEXO en vez de APENDICE
- \addto\captionsspanish{\renewcommand{\appendixname}{Anexo}} %para que ponga anexo y no apéndice.
-
-\makeglossaries
-\raggedbottom  % Quita huecos grandes en blanco
+% ========================================================================= %
+%                           INICIO DEL DOCUMENTO                            %
+% ========================================================================= %
 \begin{document}
 
-%%%%%%%%%%%
-% PORTADA %
-%%%%%%%%%%%
+% --- PORTADA ---
+\pagenumbering{empty}
 \input{Portada/cover}
 \newpage
-\thispagestyle{empty}   % Página en blanco entre la portada y el comienzo del documento
+\thispagestyle{empty}
 \mbox{} 
 $\ $
-\thispagestyle{empty} % para que no se numere esta pagina
-% \newpage
-% $\ $
-% \thispagestyle{empty} % para que no se numere esta pagina
+\thispagestyle{empty} 
 
-%%%%%%%%%%%%%%%
-% DEDICATORIA %
-%%%%%%%%%%%%%%%
-% \pagenumbering{Roman} % para comenzar la numeracion de paginas en numeros romanos
-% \pagestyle{indice}
-% \thispagestyle{indice}
-% \begin{flushright}
-% \textit{Dedicado a \\
-% mi familia}
-% \end{flushright}
-
-%%%%%%%%%%%%%%%%%%%
-% AGRADECIMIENTOS %
-%%%%%%%%%%%%%%%%%%%
-%\input{_agradecimientos}%
-
-%%%%%%%%%%%%%%%%%%%%%%
-% RESUMEN Y ABSTRACT %
-%%%%%%%%%%%%%%%%%%%%%%
-%\input{_resumen_y_abstract}%
-
-%%%%%%%%%%%%%%%%%%
-% INDICE GENERAL %
-%%%%%%%%%%%%%%%%%%
-
-% --- Numeración romana para preliminares ---
+% --- PRELIMINARES ---
 \pagenumbering{roman}
 \setcounter{page}{0}
+\pagestyle{indice} 
 
-% --- ACTIVAR EL ESTILO DE PÁGINA "indice" ---
-\pagestyle{indice} % <--- AÑADE ESTA LÍNEA
+% (Descomenta y ajusta las rutas cuando los redactes)
+% \input{Preliminares/_agradecimientos}
+% \input{Preliminares/_resumen_y_abstract}
 
-% --- Índice ---
+% --- ÍNDICES ---
 \cleardoublepage
 \phantomsection
 \tableofcontents
 
-% --- Lista de figuras ---
 \cleardoublepage
 \phantomsection
 \listoffigures
 
-% --- Lista de tablas ---
 \cleardoublepage
 \phantomsection
 \listoftables
 
-% Descomentar las siguientes líneas si tienes pensado añadir diagramas de flujo.
 % \cleardoublepage
 % \phantomsection
 % \addcontentsline{toc}{chapter}{Índice de diagramas de flujo}
 % \listofdiagrams
 
-%\phantomsection
-%\addcontentsline{toc}{chapter}{Lista de Acrónimos}
-
-%\include{lista_acronimos}
-%\printglossary[type=\acronymtype, title={Acrónimos}]
-
-%---------------------%
-%	CUERPO DE TEXTO   %
-%---------------------%
-
-%\afterpage{\null\newpage}%
-
+% --- CUERPO DEL TEXTO (CAPÍTULOS) ---
 \cleardoublepage
 \pagestyle{cuerpo}
 \thispagestyle{cuerpo}
-
 \pagenumbering{arabic}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                         ESTRUCTURA CONTENIDO                      %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%------------------%
-%	=CAPÍTULOS=      %
-%------------------%
-
-\input{Capitulos/1_datos_proyecto}
+\input{Capitulos/1_introduccion}
 \clearpage
-\input{Capitulos/2_introduccion}
+\input{Capitulos/2_objetivos}
 \clearpage
-\input{Capitulos/3_objetivos}
+\input{Capitulos/3_antecedentes}
 \clearpage
-\input{Capitulos/4_antecedentes}
+\input{Capitulos/4_analisis_sistema}
 \clearpage
-\input{Capitulos/5_partes_tfg}
+\input{Capitulos/5_arquitectura_diseno}
 \clearpage
-\input{Capitulos/6_fases_cronograma}
+\input{Capitulos/6_implementacion}
 \clearpage
-\input{Capitulos/7_recursos}
-
-% --> poner otros capítulos
-
-% Comentar en la versión final
-%\input{EJEMPLOS_LATEX}
-
-%\input{9_conclusiones}
-
-%--------------------%
-% DOCUMENTOS TÉNICOS %
-%--------------------%
-
-%\input{presupuesto}
-%\input{planos}
+\input{Capitulos/7_pruebas}
+\clearpage
+\input{Capitulos/8_gestion_proyecto}
+\clearpage
+\input{Capitulos/9_conclusiones}
+\clearpage
 
 
-%------------------%
-%	BIBLIOGRAFIA   %
-%------------------%
+% --- BIBLIOGRAFÍA ---
 \newpage
-%Estilo de la bibliografia
 \bibliographystyle{unsrtnat} 
-%\bibliographystyle{elsarticle-num}
 \bibliography{referencias.bib} 
 
-%------------------%
-%      ANEXOS      %
-%------------------%
-
+% --- ANEXOS ---
 % \appendix
-
-% \input{anexo_hojas_de_caracteristicas}
-% \input{anexo_codigo}
-% \input{anexo_manual_usuario}
+% \input{Anexos/anexo_manual_usuario}
+% \input{Anexos/presupuesto}
 
 \end{document}
