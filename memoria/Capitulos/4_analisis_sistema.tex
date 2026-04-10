@@ -1,4 +1,4 @@
-\chapter{Análisis y Especificación del Sistema}
+\section{Análisis y Especificación del Sistema}
 
 En este capítulo se detallan las especificaciones completas del sistema MoodNest. Se definirán los actores involucrados, se detallarán los Requisitos Funcionales (RF) que determinan qué debe hacer el sistema, y los Requisitos No Funcionales (RNF) que establecen cómo debe comportarse técnica y operativamente.
 
@@ -19,11 +19,11 @@ En este capítulo se detallan las especificaciones completas del sistema MoodNes
 }
 % ------------------------------------------------
 
-\section{Requisitos Funcionales (RF)}
+\subsection{Requisitos Funcionales (RF)}
 
 Los Requisitos Funcionales describen el comportamiento esperado del sistema y las interacciones específicas que los usuarios pueden realizar dentro de la plataforma. Para una mejor comprensión, se han dividido en módulos lógicos.
 
-\subsection{Módulo 1: Gestión de Usuarios}
+\subsubsection{Módulo 1: Gestión de Usuarios}
 
 \reqTable{Gestión de Usuarios}{
     RF1.1 & El sistema permitirá a un usuario no registrado crear una nueva cuenta proporcionando un nombre, un correo electrónico válido y único en el sistema, y una contraseña. \\ \hline
@@ -33,7 +33,7 @@ Los Requisitos Funcionales describen el comportamiento esperado del sistema y la
     RF1.5 & El sistema permitirá al usuario autenticado eliminar su cuenta y todos sus datos de forma permanente. \\ \hline
 }{Requisitos Funcionales - Módulo 1}
 
-\subsection{Módulo 2: Registro Diario y Etiquetas}
+\subsubsection{Módulo 2: Registro Diario y Etiquetas}
 
 \reqTable{Registro Diario y Etiquetas}{
     RF2.1 & El sistema permitirá al usuario autenticado crear un nuevo registro de estado de ánimo asociado a una fecha. \\ \hline
@@ -48,7 +48,7 @@ Los Requisitos Funcionales describen el comportamiento esperado del sistema y la
     RF2.10 & El sistema permitirá al usuario eliminar de forma permanente cualquiera de sus registros pasados. \\ \hline
 }{Requisitos Funcionales - Módulo 2}
 
-\subsection{Módulo 3: Panel Principal e Historial}
+\subsubsection{Módulo 3: Panel Principal e Historial}
 
 \reqTable{Panel Principal e Historial}{
     RF3.1 & El sistema mostrará al usuario autenticado un panel principal con el resumen de su último registro de estado de ánimo. \\ \hline
@@ -59,7 +59,7 @@ Los Requisitos Funcionales describen el comportamiento esperado del sistema y la
     RF3.6 & El sistema permitirá al usuario interactuar con el calendario, de forma que al seleccionar un día con registro, se muestre el detalle completo de la entrada. \\ \hline
 }{Requisitos Funcionales - Módulo 3}
 
-\subsection{Módulo 4: Análisis de Datos (Estadísticas)}
+\subsubsection{Módulo 4: Análisis de Datos (Estadísticas)}
 
 \reqTable{Análisis de Datos}{
     RF4.1 & El sistema generará un gráfico temporal de líneas que represente la evolución de la puntuación global del estado de ánimo. \\ \hline
@@ -72,7 +72,7 @@ Los Requisitos Funcionales describen el comportamiento esperado del sistema y la
     RF4.8 & El sistema generará un gráfico circular que represente la distribución porcentual de los registros de estado de ánimo en diferentes rangos (ej. días buenos, neutros y malos). \\ \hline
 }{Requisitos Funcionales - Módulo 4}
 
-\subsection{Módulo 5: Personalización y Sistema}
+\subsubsection{Módulo 5: Personalización y Sistema}
 
 \reqTable{Personalización y Sistema}{
     RF5.1 & El sistema permitirá al usuario autenticado personalizar los textos descriptivos de su escala de estado de ánimo para cada uno de los niveles numéricos (del 1 al 10). \\ \hline
@@ -84,11 +84,11 @@ Los Requisitos Funcionales describen el comportamiento esperado del sistema y la
 
 \newpage
 
-\section{Requisitos No Funcionales (RNF)}
+\subsection{Requisitos No Funcionales (RNF)}
 
 Los Requisitos No Funcionales definen los atributos de calidad del sistema, tales como su rendimiento, seguridad, usabilidad y arquitectura técnica. Estos condicionan las decisiones tecnológicas del desarrollo de MoodNest.
 
-\subsection{Bloque 1: Compatibilidad y Portabilidad}
+\subsubsection{Bloque 1: Compatibilidad y Portabilidad}
 
 \reqTable{Compatibilidad y Portabilidad}{
     RNF1.1 & El sistema deberá estar desarrollado bajo una arquitectura web Cliente-Servidor. \\ \hline
@@ -96,7 +96,7 @@ Los Requisitos No Funcionales definen los atributos de calidad del sistema, tale
     RNF1.3 & El sistema no requerirá la instalación de ningún software adicional ni plugins por parte del usuario, ejecutándose nativamente en el navegador. \\ \hline
 }{Requisitos No Funcionales - Bloque 1}
 
-\subsection{Bloque 2: Rendimiento y Disponibilidad}
+\subsubsection{Bloque 2: Rendimiento y Disponibilidad}
 
 \reqTable{Rendimiento y Disponibilidad}{
     RNF2.1 & El tiempo de respuesta del servidor para operaciones estándar de lectura y escritura en la base de datos no superará los 2 segundos bajo una conexión a internet estable. \\ \hline
@@ -105,15 +105,15 @@ Los Requisitos No Funcionales definen los atributos de calidad del sistema, tale
     RNF2.4 & Si el servidor de BD no responde en un plazo de 5 segundos, el sistema cancelará la operación y mostrará un mensaje de error amigable, evitando el bloqueo indefinido de la aplicación. \\ \hline
 }{Requisitos No Funcionales - Bloque 2}
 
-\subsection{Bloque 3: Usabilidad e Interfaz}
+\subsubsection{Bloque 3: Usabilidad e Interfaz}
 
 \reqTable{Usabilidad e Interfaz}{
     RNF3.1 & La interfaz de usuario deberá ser Responsive, garantizando la correcta visualización y operabilidad en dispositivos móviles y pantallas de escritorio. \\ \hline
-    RNF3.2 & El sistema minimizará la fricción, permitiendo al usuario acceder a la pantalla de creación de un nuevo registro en un máximo de dos interacciones desde que inicia sesión. \\ \hline
+    RNF3.2 & El sistema agilizará la navegación, permitiendo al usuario acceder a la pantalla de creación de un nuevo registro en un máximo de dos interacciones desde que inicia sesión. \\ \hline
     RNF3.3 & El sistema proporcionará retroalimentación visual inmediata ante cualquier acción importante (ej. notificaciones de éxito o alertas claras de error). \\ \hline
 }{Requisitos No Funcionales - Bloque 3}
 
-\subsection{Bloque 4: Seguridad y Privacidad}
+\subsubsection{Bloque 4: Seguridad y Privacidad}
 
 \reqTable{Seguridad y Privacidad}{
     RNF4.1 & El sistema almacenará las contraseñas en la base de datos aplicando un algoritmo de hashing unidireccional, quedando estrictamente prohibido su almacenamiento en texto plano. \\ \hline
@@ -124,11 +124,11 @@ Los Requisitos No Funcionales definen los atributos de calidad del sistema, tale
 
 \newpage
 
-\section{Requisitos de Información (RI)}
+\subsection{Requisitos de Información (RI)}
 
 Los Requisitos de Información definen el modelo conceptual de datos del sistema. Describen qué información debe almacenar, gestionar y recuperar la plataforma para garantizar su correcto funcionamiento, independientemente de la tecnología de base de datos que se seleccione posteriormente en la fase de diseño.
 
-\subsection{RI-01: Información del Usuario}
+\subsubsection{RI-01: Información del Usuario}
 
 \reqTable{Información del Usuario}{
     ID\_Usuario & Identificador único y autogenerado por el sistema. \\ \hline
@@ -142,7 +142,7 @@ Los Requisitos de Información definen el modelo conceptual de datos del sistema
     Fecha\_Ultimo\_Registro & Fecha correspondiente a la última entrada creada en el sistema. \\ \hline
 }{Requisitos de Información - Usuario}
 
-\subsection{RI-02: Información de la Etiqueta}
+\subsubsection{RI-02: Información de la Etiqueta}
 
 \reqTable{Información de la Etiqueta}{
     ID\_Etiqueta & Identificador único y autogenerado por el sistema. \\ \hline
@@ -154,7 +154,7 @@ Los Requisitos de Información definen el modelo conceptual de datos del sistema
     Fecha\_Creacion & Marca temporal de la creación de la etiqueta. \\ \hline
 }{Requisitos de Información - Etiqueta}
 
-\subsection{RI-03: Información del Registro Diario}
+\subsubsection{RI-03: Información del Registro Diario}
 
 \reqTable{Información del Registro Diario}{
     ID\_Registro & Identificador único y autogenerado por el sistema. \\ \hline
@@ -166,3 +166,215 @@ Los Requisitos de Información definen el modelo conceptual de datos del sistema
     Fecha\_Creacion & Marca temporal exacta en la que el registro fue guardado en el sistema. \\ \hline
     Fecha\_Modificacion & Marca temporal de la última edición realizada sobre el registro. \\ \hline
 }{Requisitos de Información - Registro Diario}
+
+\newpage
+\subsection{Verificación y Validación de Requisitos}
+
+Una vez desarrollado por completo el catálogo de requisitos, llevamos a cabo un proceso de Verificación y Validación. El objetivo principal de esta etapa es asegurar la calidad, viabilidad y corrección del catálogo de requisitos antes de pasar a la siguiente fase. Aplicar esta técnica de forma temprana permite detectar problemas o incongruencias desde el principio, minimizando el impacto temporal y el coste que supondría arrastrar estos fallos a las fases de diseño o programación.
+
+Esta validación se ha aplicado al catálogo completo de requisitos, incluyendo los Requisitos Funcionales (RF), los Requisitos No Funcionales (RNF) y los Requisitos de Información (RI). 
+
+Para realizar la evaluación, se ha utilizado una lista de control (\textit{Checklist}) de calidad. Cada requisito se ha revisado individualmente para comprobar que cumple con estos cinco criterios básicos:
+
+\begin{itemize}
+    \item \textbf{C1 - Inequívoco:} El requisito está redactado con un lenguaje formal de forma clara y precisa. No usa términos subjetivos garantizando que admite una única interpretación técnica posible.
+    \item \textbf{C2 - Verificable:} La especificación permite el diseño de una prueba objetiva que determine de forma concluyente si el sistema desarrollado cumple con la condición exigida.
+    \item \textbf{C3 - Necesario:} El requisito aporta valor real a la aplicación y está alineado con los objetivos del proyecto, evitando añadir funciones de relleno o innecesarias.
+    \item \textbf{C4 - Consistente:} El requisito no está repetido y no entra en conflicto ni se contradice con ningún otro punto del documento.
+    \item \textbf{C5 - Completo:} La regla de negocio o restricción técnica está totalmente acotada e incluye toda la información necesaria para su desarrollo, definiendo correctamente sus límites sin delegar decisiones clave a fases posteriores.
+\end{itemize}
+
+% Comando para las celdas de la matriz
+\newcommand{\pass}{\cmark} % Tick verde
+\newcommand{\fail}{\xmark} % Cruz roja
+\newcommand{\warn}{\textcolor{orange}{\textbf{!}}} % Advertencia naranja
+
+\subsubsection{Matriz de Verificación: Requisitos Funcionales}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{xltabular}{\textwidth}{|c|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|c|}
+    \caption{Matriz de Verificación de Requisitos Funcionales} \label{tab:matriz_rf} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
+    \endfirsthead
+    
+    % --- Esta cabecera aparecerá automáticamente si la tabla salta de página ---
+    \multicolumn{7}{c}{{\bfseries Continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
+    \endhead
+
+    \hline
+    \endfoot
+
+    \hline
+    \endlastfoot
+
+    % --- CONTENIDO DE LA TABLA ---
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 1: Gestión de Usuarios}} \\ \hline
+    RF1.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF1.2 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF1.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF1.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF1.5 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 2: Registro Diario y Etiquetas}} \\ \hline
+    RF2.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.2 & \fail & \pass & \pass & \pass & \fail & \textcolor{orange}{A refinar} \\ \hline
+    RF2.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.5 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.6 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.7 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.8 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.9 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.10 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 3: Panel Principal e Historial}} \\ \hline
+    RF3.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF3.2 & \fail & \fail & \pass & \pass & \pass & \textcolor{orange}{A refinar} \\ \hline
+    RF3.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF3.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF3.5 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF3.6 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 4: Análisis de Datos (Estadísticas)}} \\ \hline
+    RF4.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF4.2 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF4.3 & \fail & \fail & \pass & \pass & \pass & \textcolor{orange}{A refinar} \\ \hline
+    RF4.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF4.5 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF4.6 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF4.7 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF4.8 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 5: Personalización y Sistema}} \\ \hline
+    RF5.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF5.2 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF5.3 & \fail & \pass & \pass & \pass & \pass & \textcolor{orange}{A refinar} \\ \hline
+    RF5.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF5.5 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+\end{xltabular}
+
+\textbf{Nota:} Los requisitos marcados como ''A refinar'' presentaron ambigüedades en su redacción (C1/C2) o falta de especificación en las reglas de negocio base (C5), por lo que requieren una reescritura antes de darse por válidos.
+
+\subsubsection{Matriz de Verificación: Requisitos No Funcionales}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{xltabular}{\textwidth}{|c|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|c|}
+    \caption{Matriz de Verificación de Requisitos No Funcionales} \label{tab:matriz_rnf} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
+    \endfirsthead
+    
+    % --- Cabecera para saltos de página ---
+    \multicolumn{7}{c}{{\bfseries Continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
+    \endhead
+
+    \hline
+    \endfoot
+
+    \hline
+    \endlastfoot
+
+    % --- CONTENIDO DE LA TABLA ---
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Bloque 1: Compatibilidad y Portabilidad}} \\ \hline
+    RNF1.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF1.2 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF1.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Bloque 2: Rendimiento y Disponibilidad}} \\ \hline
+    RNF2.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF2.2 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF2.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF2.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Bloque 3: Usabilidad e Interfaz}} \\ \hline
+    RNF3.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF3.2 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF3.3 & \fail & \fail & \pass & \pass & \pass & \textcolor{orange}{A refinar} \\ \hline
+
+    \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Bloque 4: Seguridad y Privacidad}} \\ \hline
+    RNF4.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF4.2 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF4.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RNF4.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+\end{xltabular}
+
+\subsubsection{Matriz de Verificación: Requisitos de Información}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{xltabular}{\textwidth}{|c|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|c|}
+    \caption{Matriz de Verificación de Requisitos de Información} \label{tab:matriz_ri} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
+    \endfirsthead
+    
+    % --- Cabecera para saltos de página ---
+    \multicolumn{7}{c}{{\bfseries Continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
+    \endhead
+
+    \hline
+    \endfoot
+
+    \hline
+    \endlastfoot
+
+    % --- CONTENIDO DE LA TABLA ---
+    RI-01 (Usuario) & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RI-02 (Etiqueta) & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RI-03 (Registro) & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+
+\end{xltabular}
+
+\subsubsection{Refinamiento y Corrección de Requisitos}
+
+Como resultado de la fase de inspección, se detectaron deficiencias en seis requisitos que no superaron los criterios de calidad establecidos (marcados en la matriz con estado de advertencia \textit{A refinar}). Para garantizar la robustez del documento antes de avanzar a la fase de diseño, estos requisitos han sido sometidos a un proceso de reescritura, pasando finalmente a estado de \textit{Aprobados}. 
+
+A continuación se detalla el catálogo de correcciones aplicadas:
+
+\begin{itemize}
+    \item \textbf{RF2.2 (Fallo en C5 - Incompleto):}
+    \begin{itemize}
+        \item \textit{Original:} El sistema establecerá la fecha actual por defecto al iniciar la creación de un nuevo registro, permitiendo su modificación a fechas pasadas.
+        \item \textit{Corregido:} El sistema establecerá la fecha actual por defecto al iniciar la creación de un nuevo registro, permitiendo su modificación únicamente a fechas pasadas y bloqueando explícitamente la selección de fechas futuras.
+    \end{itemize}
+    
+    \item \textbf{RF3.2 (Fallo en C1 y C2 - Subjetivo e inmedible):}
+    \begin{itemize}
+        \item \textit{Original:} El sistema proporcionará en el panel principal un acceso directo y visualmente destacado para la creación de un nuevo registro diario.
+        \item \textit{Corregido:} El sistema proporcionará en el panel principal un botón de acceso directo a la creación de un nuevo registro, accesible sin necesidad de navegación adicional.
+    \end{itemize}
+
+    \item \textbf{RF4.3 (Fallo en C1 - Ambiguo):}
+    \begin{itemize}
+        \item \textit{Original:} El sistema calculará y mostrará qué etiquetas presentan el mayor impacto positivo y negativo sobre el estado de ánimo global del usuario.
+        \item \textit{Corregido:} El sistema calculará y mostrará qué etiquetas están asociadas matemáticamente con las puntuaciones globales medias más altas (impacto positivo) y más bajas (impacto negativo) del estado de ánimo del usuario.
+    \end{itemize}
+
+    \item \textbf{RF5.3 (Fallo en C1 - Ambiguo):}
+    \begin{itemize}
+        \item \textit{Original:} El sistema mostrará en el panel principal un mensaje de bienvenida dinámico, adaptado contextualmente a factores como la hora del día o la actividad reciente.
+        \item \textit{Corregido:} El sistema mostrará en el panel principal un mensaje de bienvenida dinámico determinado por dos parámetros: la franja horaria local (mañana, tarde o noche) y el estado de su registro diario (pendiente de rellenar o ya completado en el día actual).
+    \end{itemize}
+
+    \item \textbf{RNF3.3 (Fallo en C1 y C2 - Subjetivo e inmedible):}
+    \begin{itemize}
+        \item \textit{Original:} El sistema proporcionará retroalimentación visual inmediata ante cualquier acción importante (ej. notificaciones de éxito o alertas claras de error).
+        \item \textit{Corregido:} El sistema proporcionará retroalimentación visual en un tiempo máximo de 0,5 segundos ante cualquier acción importante (ej. notificaciones de éxito o alertas claras de error).
+    \end{itemize}
+\end{itemize}
+
+\textit{Nota: Para mantener la coherencia del documento, las tablas generales de especificación de requisitos presentadas en los apartados anteriores ya reflejan estas versiones finales y corregidas.}
