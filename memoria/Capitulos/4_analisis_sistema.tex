@@ -378,3 +378,26 @@ A continuación se detalla el catálogo de correcciones aplicadas:
 \end{itemize}
 
 \textit{Nota: Para mantener la coherencia del documento, las tablas generales de especificación de requisitos presentadas en los apartados anteriores ya reflejan estas versiones finales y corregidas.}
+
+\newpage
+
+\subsection{Estudio de Viabilidad Técnica y Selección Tecnológica}
+
+Para asegurar que MoodNest cumpla con los requisitos de rendimiento, seguridad y escalabilidad definidos, se ha realizado un estudio de las alternativas tecnológicas disponibles. La elección de la arquitectura no responde a una preferencia personal, sino a la necesidad de cubrir las demandas específicas de la gestión de datos de bienestar y el análisis estadístico del sistema.
+
+\subsubsection{Modelo de Datos}
+El núcleo de MoodNest es el "Registro Diario". Al analizar los requisitos del Módulo 2, se observa que la información de cada registro no es rígida: un usuario puede asociar dos etiquetas a un día y diez etiquetas al siguiente, añadir comentarios de longitud variable o incluir puntuaciones específicas solo para ciertos factores.
+
+En un modelo relacional (SQL) como PostgreSQL o MySQL, esta flexibilidad obligaría a realizar diseños de tablas complejos con múltiples uniones (joins) o el uso extensivo de valores nulos, lo que penalizaría el rendimiento de las consultas (incumpliendo el RNF2.1). Por ello, se ha optado por un modelo NoSQL orientado a documentos con MongoDB. Esta tecnología permite almacenar cada registro como un documento JSON independiente, facilitando que la estructura de los datos evolucione de forma natural y que el acceso a la información sea directo y mucho más veloz.
+
+\subsubsection{Lógica de Negocio y Seguridad}
+Para la construcción del servidor, se evaluaron alternativas como Node.js y Spring Boot. Aunque Node.js ofrece una gran rapidez de ejecución, la naturaleza de MoodNest (que maneja datos personales sensibles) requiere un entorno con un enfoque robusto en seguridad y estabilidad.
+
+Se ha seleccionado Spring Boot (Java) debido a su madurez y a la potencia de su ecosistema. Especialmente crítico es el uso de Spring Security, que permite implementar de forma nativa la protección de datos y el acceso mediante tokens JWT exigidos en el RNF4.2. Además, la integración con MongoDB a través de Spring Data permite que el desarrollo sea mucho más ágil, garantizando que el backend sea capaz de procesar las peticiones concurrentes definidas en el RNF2.3 sin degradar la experiencia del usuario.
+
+\subsubsection{Interfaz de Usuario y Visualización de Datos}
+La interfaz de la aplicación tiene dos retos principales: la agilidad (RNF3.2) y la complejidad de los gráficos estadísticos (Módulo 4). Tras analizar opciones como Angular o Vue, se ha determinado que React es la opción más viable para este proyecto, utilizando la biblioteca Chart.js para la generación y gestión de todas las visualizaciones del sistema.
+
+React permite construir la interfaz mediante componentes reutilizables (calendarios, selectores de humor, widgets de estadísticas), lo que facilita enormemente el mantenimiento del código. Su capacidad para gestionar el estado de la aplicación de forma reactiva asegura que los cambios en los datos se reflejen instantáneamente en los gráficos generados con Chart.js sin necesidad de recargar la página, cumpliendo así con los tiempos de renderizado exigidos. Asimismo, la integración de esta biblioteca específica garantiza que la implementación de los gráficos de líneas, barras y circulares sea técnica y operativamente posible.
+
+Como conclusión de este análisis, se determina que el stack tecnológico seleccionado es capaz de soportar todas las funcionalidades descritas y garantiza el cumplimiento de los requisitos no funcionales de seguridad y rendimiento. Por tanto, el desarrollo de MoodNest se considera técnicamente viable bajo esta arquitectura, permitiendo avanzar con seguridad hacia la fase de especificación funcional del sistema.
