@@ -1,136 +1,158 @@
+
 \section{Análisis y Especificación del Sistema}
 
 En este capítulo se detallan las especificaciones completas del sistema MoodNest. Se definirán los actores involucrados, se detallarán los Requisitos Funcionales (RF) que determinan qué debe hacer el sistema, y los Requisitos No Funcionales (RNF) que establecen cómo debe comportarse técnica y operativamente.
 
-% --- COMANDO PARA TABLAS DE REQUISITOS ---
-\newcommand{\reqTable}[3]{
-\begin{table}[H]
-    \centering
-    \renewcommand{\arraystretch}{1.5} % Da un poco de "aire" a las filas
-    \begin{tabularx}{\textwidth}{|>{\columncolor{gray!20}\bfseries}c|X|}
-        \hline
-        \rowcolor{UCO} % Color de la cabecera (definido en confg_colores)
-        \multicolumn{2}{|c|}{\textcolor{white}{\textbf{#1}}} \\
-        \hline
-        #2
-    \end{tabularx}
-    \caption{#3}
-\end{table}
-}
-% ------------------------------------------------
+% --- CONFIGURACIÓN DE TABLAS MAESTRAS (Asegúrate de tener xltabular y colortbl en el preámbulo) ---
 
-\subsection{Requisitos Funcionales (RF)}
+\subsection{Análisis de Requisitos}
 
-Los Requisitos Funcionales describen el comportamiento esperado del sistema y las interacciones específicas que los usuarios pueden realizar dentro de la plataforma. Para una mejor comprensión, se han dividido en módulos lógicos.
+\subsubsection{Requisitos Funcionales (RF)}
 
-\subsubsection{Módulo 1: Gestión de Usuarios}
+Los Requisitos Funcionales describen el comportamiento esperado del sistema y las interacciones específicas que los usuarios pueden realizar dentro de la plataforma. Para una mejor comprensión, se han agrupado en módulos lógicos dentro de la siguiente tabla maestra.
 
-\reqTable{Gestión de Usuarios}{
+\renewcommand{\arraystretch}{1.5}
+\begin{xltabular}{\textwidth}{|>{\columncolor{white}\bfseries}c|X|}
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Descripción del Requisito}}} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Descripción del Requisito}}} \\ \hline
+    \endhead
+
+    % --- MÓDULO 1 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Módulo 1: Gestión de Usuarios}} \\ \hline
     RF1.1 & El sistema permitirá a un usuario no registrado crear una nueva cuenta proporcionando un nombre, un correo electrónico válido y único en el sistema, y una contraseña. \\ \hline
     RF1.2 & El sistema permitirá el acceso a usuarios registrados solicitando obligatoriamente su correo electrónico y contraseña. \\ \hline
     RF1.3 & El sistema permitirá al usuario autenticado modificar su nombre de visualización y actualizar su contraseña. \\ \hline
     RF1.4 & El sistema permitirá al usuario autenticado cerrar sesión de forma segura. \\ \hline
     RF1.5 & El sistema permitirá al usuario autenticado eliminar su cuenta y todos sus datos de forma permanente. \\ \hline
-}{Requisitos Funcionales - Módulo 1}
 
-\subsubsection{Módulo 2: Registro Diario y Etiquetas}
-
-\reqTable{Registro Diario y Etiquetas}{
+    % --- MÓDULO 2 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Módulo 2: Registro Diario y Etiquetas}} \\ \hline
     RF2.1 & El sistema permitirá al usuario autenticado crear un nuevo registro de estado de ánimo asociado a una fecha. \\ \hline
-    RF2.2 & El sistema establecerá la fecha actual por defecto al iniciar la creación de un nuevo registro, permitiendo su modificación a fechas pasadas. \\ \hline
+    RF2.2 & El sistema establecerá la fecha actual por defecto al iniciar la creación de un nuevo registro, permitiendo su modificación únicamente a fechas pasadas y bloqueando explícitamente la selección de fechas futuras. \\ \hline
     RF2.3 & El sistema exigirá de forma obligatoria una puntuación global del estado de ánimo, representada por un valor numérico entero del 1 al 10. \\ \hline
     RF2.4 & El sistema permitirá al usuario incluir un comentario opcional en su registro diario. \\ \hline
     RF2.5 & El sistema permitirá al usuario autenticado crear nuevas etiquetas personalizadas asignándoles un nombre identificativo. \\ \hline
     RF2.6 & El sistema permitirá al usuario gestionar sus etiquetas personalizadas, pudiendo editarlas o eliminarlas de su catálogo. \\ \hline
     RF2.7 & El sistema permitirá al usuario asociar una o múltiples etiquetas a un registro diario. \\ \hline
     RF2.8 & El sistema permitirá al usuario asignar, de manera opcional, una puntuación numérica entera (del 1 al 10) a cada etiqueta individual seleccionada en un registro. \\ \hline
-    RF2.9 & El sistema permitirá al usuario modificar cualquier dato de un registro propio previamente guardado. \\ \hline
+    RF2.9 & El sistema permitirá al usuario editar los atributos modificables (puntuación global, fecha asignada, comentario y etiquetas vinculadas) de un registro propio, aplicando las mismas reglas de validación y obligatoriedad definidas para la creación del registro. \\ \hline
     RF2.10 & El sistema permitirá al usuario eliminar de forma permanente cualquiera de sus registros pasados. \\ \hline
-}{Requisitos Funcionales - Módulo 2}
 
-\subsubsection{Módulo 3: Panel Principal e Historial}
-
-\reqTable{Panel Principal e Historial}{
+    % --- MÓDULO 3 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Módulo 3: Panel Principal e Historial}} \\ \hline
     RF3.1 & El sistema mostrará al usuario autenticado un panel principal con el resumen de su último registro de estado de ánimo. \\ \hline
-    RF3.2 & El sistema proporcionará en el panel principal un acceso directo y visualmente destacado para la creación de un nuevo registro diario. \\ \hline
+    RF3.2 & El sistema proporcionará en el panel principal un botón de acceso directo a la creación de un nuevo registro, accesible sin necesidad de navegación adicional. \\ \hline
     RF3.3 & El sistema mostrará en el panel principal un listado cronológico resumido con las últimas entradas registradas por el usuario. \\ \hline
     RF3.4 & El sistema calculará y mostrará visualmente el número de días consecutivos que el usuario ha realizado al menos un registro. \\ \hline
     RF3.5 & El sistema proporcionará al usuario autenticado una vista de historial basada en un calendario mensual, donde se identificarán visualmente los días que contienen un registro de estado de ánimo. \\ \hline
     RF3.6 & El sistema permitirá al usuario interactuar con el calendario, de forma que al seleccionar un día con registro, se muestre el detalle completo de la entrada. \\ \hline
-}{Requisitos Funcionales - Módulo 3}
 
-\subsubsection{Módulo 4: Análisis de Datos (Estadísticas)}
-
-\reqTable{Análisis de Datos}{
+    % --- MÓDULO 4 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Módulo 4: Análisis de Datos (Estadísticas)}} \\ \hline
     RF4.1 & El sistema generará un gráfico temporal de líneas que represente la evolución de la puntuación global del estado de ánimo. \\ \hline
     RF4.2 & El sistema permitirá al usuario filtrar los datos de dicha evolución temporal seleccionando el rango de tiempo deseado (semanal, mensual o anual). \\ \hline
-    RF4.3 & El sistema calculará y mostrará qué etiquetas presentan el mayor impacto positivo y negativo sobre el estado de ánimo global del usuario. \\ \hline
-    RF4.4 & El sistema permitirá al usuario seleccionar una etiqueta específica de su historial para analizar su impacto individual. \\ \hline
+    RF4.3 & El sistema calculará y mostrará qué etiquetas están asociadas matemáticamente con las puntuaciones globales medias más altas (impacto positivo) y más bajas (impacto negativo) del estado de ánimo del usuario. \\ \hline
+    RF4.4 & El sistema permitiría al usuario seleccionar una etiqueta específica de su historial para analizar su impacto individual. \\ \hline
     RF4.5 & El sistema generará un gráfico de barras agrupadas que compare visualmente el promedio del estado de ánimo global con el promedio de la puntuación específica de la etiqueta seleccionada. \\ \hline
     RF4.6 & El sistema generará automáticamente un mensaje de texto interpretativo basado en la diferencia matemática entre la puntuación global media y la puntuación de la etiqueta analizada. \\ \hline
     RF4.7 & El sistema generará un gráfico de barras que represente el promedio histórico de la puntuación global de los registros de estado de ánimo de cada uno de los días de la semana. \\ \hline
     RF4.8 & El sistema generará un gráfico circular que represente la distribución porcentual de los registros de estado de ánimo en diferentes rangos (ej. días buenos, neutros y malos). \\ \hline
-}{Requisitos Funcionales - Módulo 4}
 
-\subsubsection{Módulo 5: Personalización y Sistema}
-
-\reqTable{Personalización y Sistema}{
+    % --- MÓDULO 5 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Módulo 5: Personalización y Sistema}} \\ \hline
     RF5.1 & El sistema permitirá al usuario autenticado personalizar los textos descriptivos de su escala de estado de ánimo para cada uno de los niveles numéricos (del 1 al 10). \\ \hline
     RF5.2 & El sistema permitirá al usuario seleccionar el estilo visual de su escala de ánimo eligiendo entre varios conjuntos de iconos predefinidos. \\ \hline
-    RF5.3 & El sistema mostrará en el panel principal un mensaje de bienvenida dinámico, adaptado contextualmente a factores como la hora del día o la actividad reciente. \\ \hline
+    RF5.3 & El sistema mostrará en el panel principal un mensaje de bienvenida dinámico determinado por dos parámetros: la franja horaria local y el estado de su registro diario (pendiente o completado). \\ \hline
     RF5.4 & El sistema permitirá al usuario alternar la interfaz gráfica entre un tema visual claro y un tema visual oscuro. \\ \hline
     RF5.5 & El sistema permitirá al usuario seleccionar un color principal para personalizar la apariencia de los elementos gráficos clave de la interfaz. \\ \hline
-}{Requisitos Funcionales - Módulo 5}
+    \caption{Catálogo unificado de Requisitos Funcionales} \label{tab:rf_total} \\
+
+\end{xltabular}
 
 \newpage
 
-\subsection{Requisitos No Funcionales (RNF)}
+\subsubsection{Requisitos No Funcionales (RNF)}
 
-Los Requisitos No Funcionales definen los atributos de calidad del sistema, tales como su rendimiento, seguridad, usabilidad y arquitectura técnica. Estos condicionan las decisiones tecnológicas del desarrollo de MoodNest.
+Los Requisitos No Funcionales definen los atributos de calidad del sistema, condicionando las decisiones tecnológicas del desarrollo de MoodNest.
 
-\subsubsection{Bloque 1: Compatibilidad y Portabilidad}
+\renewcommand{\arraystretch}{1.5}
+\begin{xltabular}{\textwidth}{|>{\columncolor{white}\bfseries}c|X|}
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Descripción del Requisito}}} \\ \hline
+    \endfirsthead
 
-\reqTable{Compatibilidad y Portabilidad}{
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Descripción del Requisito}}} \\ \hline
+    \endhead
+
+    % --- BLOQUE 1 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Bloque 1: Compatibilidad y Portabilidad}} \\ \hline
     RNF1.1 & El sistema deberá estar desarrollado bajo una arquitectura web Cliente-Servidor. \\ \hline
-    RNF1.2 & El sistema deberá ser completamente accesible y funcional a través de los navegadores web modernos más utilizados (Google Chrome, Firefox, Safari, Edge) en sus versiones actualizadas. \\ \hline
-    RNF1.3 & El sistema no requerirá la instalación de ningún software adicional ni plugins por parte del usuario, ejecutándose nativamente en el navegador. \\ \hline
-}{Requisitos No Funcionales - Bloque 1}
+    RNF1.2 & El sistema deberá ser completamente accesible y funcional a través de los navegadores web modernos más utilizados. \\ \hline
+    RNF1.3 & El sistema no requerirá la instalación de ningún software adicional ni plugins por parte del usuario. \\ \hline
 
-\subsubsection{Bloque 2: Rendimiento y Disponibilidad}
+    % --- BLOQUE 2 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Bloque 2: Rendimiento y Disponibilidad}} \\ \hline
+    RNF2.1 & El tiempo de respuesta del servidor para operaciones estándar no superará los 2 segundos. \\ \hline
+    RNF2.2 & La interfaz gráfica principal deberá renderizarse en un tiempo máximo de 3 segundos. \\ \hline
+    RNF2.3 & El servidor deberá ser capaz de procesar al menos 50 peticiones concurrentes por segundo. \\ \hline
+    RNF2.4 & Ante falta de respuesta de la base de datos (5s), el sistema mostrará un mensaje de error amigable evitando el bloqueo. \\ \hline
 
-\reqTable{Rendimiento y Disponibilidad}{
-    RNF2.1 & El tiempo de respuesta del servidor para operaciones estándar de lectura y escritura en la base de datos no superará los 2 segundos bajo una conexión a internet estable. \\ \hline
-    RNF2.2 & La interfaz gráfica principal de la aplicación deberá renderizarse en el navegador del usuario en un tiempo máximo de 3 segundos desde la petición inicial. \\ \hline
-    RNF2.3 & El servidor deberá ser capaz de procesar al menos 50 peticiones concurrentes por segundo sin que el tiempo de respuesta promedio supere los 2 segundos. \\ \hline
-    RNF2.4 & Si el servidor de BD no responde en un plazo de 5 segundos, el sistema cancelará la operación y mostrará un mensaje de error amigable, evitando el bloqueo indefinido de la aplicación. \\ \hline
-}{Requisitos No Funcionales - Bloque 2}
+    % --- BLOQUE 3 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Bloque 3: Usabilidad e Interfaz}} \\ \hline
+    RNF3.1 & La interfaz de usuario deberá ser Responsive (Móvil y Escritorio). \\ \hline
+    RNF3.2 & El sistema permitirá acceder a la pantalla de creación de registro en un máximo de dos interacciones desde el inicio de sesión. \\ \hline
+    RNF3.3 & El sistema proporcionará retroalimentación visual en un tiempo máximo de 0,5 segundos ante cualquier acción importante. \\ \hline
 
-\subsubsection{Bloque 3: Usabilidad e Interfaz}
+    % --- BLOQUE 4 ---
+    \multicolumn{2}{|c|}{\cellcolor{gray!20}\textbf{Bloque 4: Seguridad y Privacidad}} \\ \hline
+    RNF4.1 & El sistema almacenará las contraseñas aplicando un algoritmo de hashing unidireccional. \\ \hline
+    RNF4.2 & El sistema protegerá las vistas privadas exigiendo un token de autenticación válido. \\ \hline
+    RNF4.3 & El servidor verificará que el usuario solo acceda a sus propios registros y etiquetas. \\ \hline
+    RNF4.4 & Toda la comunicación de datos se realizará de forma cifrada mediante el protocolo HTTPS. \\ \hline
 
-\reqTable{Usabilidad e Interfaz}{
-    RNF3.1 & La interfaz de usuario deberá ser Responsive, garantizando la correcta visualización y operabilidad en dispositivos móviles y pantallas de escritorio. \\ \hline
-    RNF3.2 & El sistema agilizará la navegación, permitiendo al usuario acceder a la pantalla de creación de un nuevo registro en un máximo de dos interacciones desde que inicia sesión. \\ \hline
-    RNF3.3 & El sistema proporcionará retroalimentación visual inmediata ante cualquier acción importante (ej. notificaciones de éxito o alertas claras de error). \\ \hline
-}{Requisitos No Funcionales - Bloque 3}
+    \caption{Catálogo unificado de Requisitos No Funcionales} \label{tab:rnf_total} \\
 
-\subsubsection{Bloque 4: Seguridad y Privacidad}
-
-\reqTable{Seguridad y Privacidad}{
-    RNF4.1 & El sistema almacenará las contraseñas en la base de datos aplicando un algoritmo de hashing unidireccional, quedando estrictamente prohibido su almacenamiento en texto plano. \\ \hline
-    RNF4.2 & El sistema protegerá las vistas y operaciones privadas exigiendo un token de autenticación válido. Los usuarios no autenticados serán redirigidos a la pantalla de inicio de sesión. \\ \hline
-    RNF4.3 & El servidor verificará en cada petición que el usuario solo acceda a sus propios registros y etiquetas, bloqueando cualquier intento de acceso a datos de terceros. \\ \hline
-    RNF4.4 & Toda la comunicación de datos entre el navegador del cliente y el servidor deberá realizarse de forma cifrada utilizando el protocolo HTTPS. \\ \hline
-}{Requisitos No Funcionales - Bloque 4}
+\end{xltabular}
 
 \newpage
 
-\subsection{Requisitos de Información (RI)}
+% --- COMANDO PARA TABLAS DE REQUISITOS ---
+
+\newcommand{\reqTable}[3]{
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.5} % Da un poco de "aire" a las filas
+\begin{tabularx}{\textwidth}{|>{\columncolor{gray!20}\bfseries}c|X|}
+\hline
+\rowcolor{UCO} % Color de la cabecera (definido en confg_colores)
+\multicolumn{2}{|c|}{\textcolor{white}{\textbf{#1}}} \\
+\hline
+#2
+\end{tabularx}
+\caption{#3}
+\end{table}
+}
+
+% ------------------------------------------------
+
+
+
+\subsubsection{Requisitos de Información (RI)}
 
 Los Requisitos de Información definen el modelo conceptual de datos del sistema. Describen qué información debe almacenar, gestionar y recuperar la plataforma para garantizar su correcto funcionamiento, independientemente de la tecnología de base de datos que se seleccione posteriormente en la fase de diseño.
 
-\subsubsection{RI-01: Información del Usuario}
-
-\reqTable{Información del Usuario}{
+\reqTable{RI-01: Información del Usuario}{
     ID\_Usuario & Identificador único y autogenerado por el sistema. \\ \hline
     Nombre & Cadena de caracteres con el nombre o apodo visible en el panel. \\ \hline
     Email & Dirección de correo electrónico (debe ser un valor único en todo el sistema). \\ \hline
@@ -142,9 +164,7 @@ Los Requisitos de Información definen el modelo conceptual de datos del sistema
     Fecha\_Ultimo\_Registro & Fecha correspondiente a la última entrada creada en el sistema. \\ \hline
 }{Requisitos de Información - Usuario}
 
-\subsubsection{RI-02: Información de la Etiqueta}
-
-\reqTable{Información de la Etiqueta}{
+\reqTable{RI-02: Información de la Etiqueta}{
     ID\_Etiqueta & Identificador único y autogenerado por el sistema. \\ \hline
     ID\_Usuario & Identificador que vincula la etiqueta con su usuario creador. \\ \hline
     Nombre & Cadena de caracteres con el nombre descriptivo de la actividad o factor (ej. "Deporte", "Familia"). \\ \hline
@@ -154,9 +174,7 @@ Los Requisitos de Información definen el modelo conceptual de datos del sistema
     Fecha\_Creacion & Marca temporal de la creación de la etiqueta. \\ \hline
 }{Requisitos de Información - Etiqueta}
 
-\subsubsection{RI-03: Información del Registro Diario}
-
-\reqTable{Información del Registro Diario}{
+\reqTable{RI-03: Información del Registro Diario}{
     ID\_Registro & Identificador único y autogenerado por el sistema. \\ \hline
     ID\_Usuario & Identificador que vincula el registro con el usuario propietario. \\ \hline
     Fecha\_Asignada & Fecha del calendario correspondiente al día que se está evaluando. \\ \hline
@@ -193,24 +211,17 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
 \renewcommand{\arraystretch}{1.3}
 \begin{xltabular}{\textwidth}{|c|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|c|}
-    \caption{Matriz de Verificación de Requisitos Funcionales} \label{tab:matriz_rf} \\
     \hline
     \rowcolor{UCO}
     \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
     \endfirsthead
     
     % --- Esta cabecera aparecerá automáticamente si la tabla salta de página ---
-    \multicolumn{7}{c}{{\bfseries Continuación de la página anterior}} \\
+    \multicolumn{7}{c}{{\bfseries \dots continuación de la página anterior}} \\
     \hline
     \rowcolor{UCO}
     \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
     \endhead
-
-    \hline
-    \endfoot
-
-    \hline
-    \endlastfoot
 
     % --- CONTENIDO DE LA TABLA ---
     \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 1: Gestión de Usuarios}} \\ \hline
@@ -222,14 +233,14 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
     \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 2: Registro Diario y Etiquetas}} \\ \hline
     RF2.1 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
-    RF2.2 & \fail & \pass & \pass & \pass & \fail & \textcolor{orange}{A refinar} \\ \hline
+    RF2.2 & \pass & \pass & \pass & \pass & \fail & \textcolor{orange}{A refinar} \\ \hline
     RF2.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RF2.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RF2.5 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RF2.6 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RF2.7 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RF2.8 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
-    RF2.9 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    RF2.9 & \fail & \pass & \pass & \pass & \fail & \textcolor{orange}{A refinar} \\ \hline
     RF2.10 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
 
     \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Módulo 3: Panel Principal e Historial}} \\ \hline
@@ -256,6 +267,7 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
     RF5.3 & \fail & \pass & \pass & \pass & \pass & \textcolor{orange}{A refinar} \\ \hline
     RF5.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RF5.5 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    \caption{Matriz de Verificación de Requisitos Funcionales} \label{tab:matriz_rf} \\
 
 \end{xltabular}
 
@@ -265,24 +277,18 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
 \renewcommand{\arraystretch}{1.3}
 \begin{xltabular}{\textwidth}{|c|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|c|}
-    \caption{Matriz de Verificación de Requisitos No Funcionales} \label{tab:matriz_rnf} \\
     \hline
     \rowcolor{UCO}
     \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
     \endfirsthead
     
     % --- Cabecera para saltos de página ---
-    \multicolumn{7}{c}{{\bfseries Continuación de la página anterior}} \\
+    \multicolumn{7}{c}{{\bfseries \dots continuación de la página anterior}} \\
     \hline
     \rowcolor{UCO}
     \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
     \endhead
 
-    \hline
-    \endfoot
-
-    \hline
-    \endlastfoot
 
     % --- CONTENIDO DE LA TABLA ---
     \multicolumn{7}{|c|}{\cellcolor{gray!20}\textbf{Bloque 1: Compatibilidad y Portabilidad}} \\ \hline
@@ -307,35 +313,32 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
     RNF4.3 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RNF4.4 & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
 
+    \caption{Matriz de Verificación de Requisitos No Funcionales} \label{tab:matriz_rnf} \\
+
 \end{xltabular}
 
 \subsubsection{Matriz de Verificación: Requisitos de Información}
 
 \renewcommand{\arraystretch}{1.3}
 \begin{xltabular}{\textwidth}{|c|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|c|}
-    \caption{Matriz de Verificación de Requisitos de Información} \label{tab:matriz_ri} \\
     \hline
     \rowcolor{UCO}
     \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
     \endfirsthead
     
     % --- Cabecera para saltos de página ---
-    \multicolumn{7}{c}{{\bfseries Continuación de la página anterior}} \\
+    \multicolumn{7}{c}{{\bfseries \dots continuación de la página anterior}} \\
     \hline
     \rowcolor{UCO}
     \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{C1}} & \textcolor{white}{\textbf{C2}} & \textcolor{white}{\textbf{C3}} & \textcolor{white}{\textbf{C4}} & \textcolor{white}{\textbf{C5}} & \textcolor{white}{\textbf{Estado}} \\ \hline
     \endhead
 
-    \hline
-    \endfoot
-
-    \hline
-    \endlastfoot
 
     % --- CONTENIDO DE LA TABLA ---
     RI-01 (Usuario) & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RI-02 (Etiqueta) & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
     RI-03 (Registro) & \pass & \pass & \pass & \pass & \pass & \textcolor{codegreen}{Aprobado} \\ \hline
+    \caption{Matriz de Verificación de Requisitos de Información} \label{tab:matriz_ri} \\
 
 \end{xltabular}
 
@@ -350,6 +353,12 @@ A continuación se detalla el catálogo de correcciones aplicadas:
     \begin{itemize}
         \item \textit{Original:} El sistema establecerá la fecha actual por defecto al iniciar la creación de un nuevo registro, permitiendo su modificación a fechas pasadas.
         \item \textit{Corregido:} El sistema establecerá la fecha actual por defecto al iniciar la creación de un nuevo registro, permitiendo su modificación únicamente a fechas pasadas y bloqueando explícitamente la selección de fechas futuras.
+    \end{itemize}
+
+    \item \textbf{RF2.9 (Fallo en C1 y C5 - Subjetivo e incompleto):}
+    \begin{itemize}
+        \item \textit{Original:} El sistema permitirá al usuario modificar cualquier dato de un registro propio previamente guardado.
+        \item \textit{Corregido:} El sistema permitirá al usuario editar los atributos modificables (puntuación global, fecha asignada, comentario y etiquetas vinculadas) de un registro propio, aplicando las mismas reglas de validación y obligatoriedad definidas para la creación del registro.
     \end{itemize}
     
     \item \textbf{RF3.2 (Fallo en C1 y C2 - Subjetivo e inmedible):}
@@ -401,3 +410,165 @@ La interfaz de la aplicación tiene dos retos principales: la agilidad (RNF3.2) 
 React permite construir la interfaz mediante componentes reutilizables (calendarios, selectores de humor, widgets de estadísticas), lo que facilita enormemente el mantenimiento del código. Su capacidad para gestionar el estado de la aplicación de forma reactiva asegura que los cambios en los datos se reflejen instantáneamente en los gráficos generados con Chart.js sin necesidad de recargar la página, cumpliendo así con los tiempos de renderizado exigidos. Asimismo, la integración de esta biblioteca específica garantiza que la implementación de los gráficos de líneas, barras y circulares sea técnica y operativamente posible.
 
 Como conclusión de este análisis, se determina que el stack tecnológico seleccionado es capaz de soportar todas las funcionalidades descritas y garantiza el cumplimiento de los requisitos no funcionales de seguridad y rendimiento. Por tanto, el desarrollo de MoodNest se considera técnicamente viable bajo esta arquitectura, permitiendo avanzar con seguridad hacia la fase de especificación funcional del sistema.
+
+
+
+\newpage
+\subsection{Análisis Funcional}
+
+En esta sección se traduce el catálogo de requisitos en interacciones narrativas. Se define qué actores estarán presentes en el sistema y qué acciones pueden realizar, asegurando que toda la funcionalidad técnica tenga una representación orientada al usuario.
+
+\subsubsection{Identificación y Descripción de Actores}
+
+Un actor representa un rol que un usuario desempeña al interactuar con el sistema. En MoodNest se han identificado dos actores:
+
+
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{\textwidth}{|c|X|}
+        \hline
+        \rowcolor{UCO} 
+        \textcolor{white}{\textbf{Actor}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Descripción}}} \\ \hline
+        Usuario Registrado & Actor principal del sistema que ha superado el proceso de autenticación y tiene acceso total a la gestión de sus registros, etiquetas y análisis estadístico. \\ \hline
+        Usuario Visitante & Usuario no autenticado que accede a la plataforma por primera vez o no ha iniciado sesión. Limitado a las funciones de registro e inicio de sesión. \\ \hline
+    \end{tabularx}
+    \caption{Descripción de los actores}
+    \label{tab:actores}
+\end{table}
+
+\subsubsection{Definición de Casos de Uso}
+
+A continuación, se presenta el catálogo general de Casos de Uso del sistema, organizados por su finalidad funcional.
+
+% Usamos >{\raggedright\arraybackslash} para que no intente justificar y no de errores de hboxes
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|c|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|c|}    \hline
+    \rowcolor{UCO} 
+    \textcolor{white}{\textbf{Id}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Nombre}}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Descripción}}} & \textcolor{white}{\textbf{Actor}} \\ \hline
+    \endfirsthead
+    
+    \multicolumn{4}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO} 
+    \textcolor{white}{\textbf{Id}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Nombre}}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Descripción}}} & \textcolor{white}{\textbf{Actor}} \\ \hline
+    \endhead
+
+    % --- Grupo 1 ---
+    \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Gestión de Cuenta}} \\ \hline
+    CU1 & Registrar Usuario & Un usuario se registra en MoodNest proporcionando nombre, correo y contraseña. & Visitante \\ \hline
+    CU2 & Iniciar Sesión & Un usuario accede al sistema con su correo y contraseña. & Visitante \\ \hline
+    CU3 & Gestionar Perfil & El usuario modifica su nombre de visualización o su contraseña. & Registrado \\ \hline
+    CU4 & Cerrar Sesión & El usuario finaliza su sesión de forma segura. & Registrado \\ \hline
+    CU5 & Eliminar Cuenta & El usuario borra permanentemente su cuenta y todos sus datos. & Registrado \\ \hline
+    
+    % --- Grupo 2 ---
+    \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Gestión de Registros y Etiquetas}} \\ \hline
+    CU6 & Crear Registro Diario & El usuario crea una nueva entrada diaria con sus etiquetas y puntuaciones. & Registrado \\ \hline
+    CU7 & Gestionar Registro & El usuario edita o elimina uno de sus registros diarios. & Registrado \\ \hline
+    CU8 & Gestionar Etiqueta & El usuario crea, edita o elimina una etiqueta de su catálogo personal. & Registrado \\ \hline
+    
+    % --- Grupo 3 ---
+    \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Visualización y Consulta}} \\ \hline
+    CU9 & Visualizar Dashboard & El usuario consulta el panel principal con el resumen de su actividad. & Registrado \\ \hline
+    CU10 & Visualizar Historial & El usuario consulta sus registros pasados a través de un calendario. & Registrado \\ \hline
+    
+    % --- Grupo 4 ---
+    \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Análisis Estadístico}} \\ \hline
+    CU11 & Consultar Evolución Temporal & El usuario solicita y filtra la gráfica de su estado de ánimo por periodos (semanal, mensual o anual). & Registrado \\ \hline
+    CU12 & Analizar Impacto de Etiquetas & El usuario selecciona etiquetas específicas para comparar su influencia en el estado de ánimo global. & Registrado \\ \hline
+    CU13 & Visualizar Estadísticas Generales & El usuario accede al análisis de datos para visualizar el impacto de las etiquetas, los promedios semanales y la distribución porcentual de su ánimo. & Registrado \\ \hline    
+    % --- Grupo 5 ---
+    \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Personalización del Sistema}} \\ \hline
+    CU14 & Personalizar Escala & El usuario configura los textos e iconos de su escala del 1 al 10. & Registrado \\ \hline
+    CU15 & Personalizar Interfaz & El usuario selecciona el tema (claro/oscuro) y el color de la aplicación. & Registrado \\ \hline
+
+    \caption{Definición de los casos de uso organizados por módulos}
+    \label{tab:definicion_cu}
+
+\end{xltabular}
+
+
+\subsubsection{Matriz de Trazabilidad}
+
+Con el objetivo de garantizar la integridad y consistencia del diseño funcional, se presenta a continuación la Matriz de Trazabilidad, la cual nos permite realizar una validación cruzada entre los Requisitos Funcionales y Casos de Uso.
+
+La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los requisitos detectados está satisfecho por, al menos, un caso de uso, evitando que queden necesidades del usuario sin una solución técnica y a su vez garantizar que cada caso de uso existe para dar cumplimiento a un requisito específico, evitando la implementación de funcionalidades innecesarias que no aporten valor real al proyecto.
+
+% Definimos un tipo de columna X centrada para que la matriz quede simétrica
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+\begin{center}
+\footnotesize 
+\renewcommand{\arraystretch}{1.2}
+% Usamos Y para las 15 columnas de los CUs para que se estiren hasta ocupar \textwidth
+\begin{xltabular}{\textwidth}{|c|Y|Y|Y|Y|Y|Y|Y|Y|Y|Y|Y|Y|Y|Y|Y|}
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID RF}} & 
+    \rotatebox{90}{\textcolor{white}{CU1}} & \rotatebox{90}{\textcolor{white}{CU2}} & \rotatebox{90}{\textcolor{white}{CU3}} & \rotatebox{90}{\textcolor{white}{CU4}} & \rotatebox{90}{\textcolor{white}{CU5}} & 
+    \rotatebox{90}{\textcolor{white}{CU6}} & \rotatebox{90}{\textcolor{white}{CU7}} & \rotatebox{90}{\textcolor{white}{CU8}} & 
+    \rotatebox{90}{\textcolor{white}{CU9}} & \rotatebox{90}{\textcolor{white}{CU10}} & 
+    \rotatebox{90}{\textcolor{white}{CU11}} & \rotatebox{90}{\textcolor{white}{CU12}} & \rotatebox{90}{\textcolor{white}{CU13}} & 
+    \rotatebox{90}{\textcolor{white}{CU14}} & \rotatebox{90}{\textcolor{white}{CU15}} \\ \hline
+    \endfirsthead
+
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{\textbf{ID RF}} & 
+    \rotatebox{90}{\textcolor{white}{CU1}} & \rotatebox{90}{\textcolor{white}{CU2}} & \rotatebox{90}{\textcolor{white}{CU3}} & \rotatebox{90}{\textcolor{white}{CU4}} & \rotatebox{90}{\textcolor{white}{CU5}} & 
+    \rotatebox{90}{\textcolor{white}{CU6}} & \rotatebox{90}{\textcolor{white}{CU7}} & \rotatebox{90}{\textcolor{white}{CU8}} & 
+    \rotatebox{90}{\textcolor{white}{CU9}} & \rotatebox{90}{\textcolor{white}{CU10}} & 
+    \rotatebox{90}{\textcolor{white}{CU11}} & \rotatebox{90}{\textcolor{white}{CU12}} & \rotatebox{90}{\textcolor{white}{CU13}} & 
+    \rotatebox{90}{\textcolor{white}{CU14}} & \rotatebox{90}{\textcolor{white}{CU15}} \\ \hline
+    \endhead
+
+
+    \multicolumn{16}{|c|}{\cellcolor{gray!20}\textbf{Módulo 1: Gestión de Usuarios}} \\ \hline
+    RF1.1 & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+    RF1.2 &   & X &   &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+    RF1.3 &   &   & X &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+    RF1.4 &   &   &   & X &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+    RF1.5 &   &   &   &   & X &   &   &   &   &   &   &   &   &   &   \\ \hline
+
+    \multicolumn{16}{|c|}{\cellcolor{gray!20}\textbf{Módulo 2: Registro Diario y Etiquetas}} \\ \hline
+    RF2.1 &   &   &   &   &   & X &   &   &   &   &   &   &   &   &   \\ \hline
+    RF2.2 &   &   &   &   &   & X &   &   &   &   &   &   &   &   &   \\ \hline
+    RF2.3 &   &   &   &   &   & X &   &   &   &   &   &   &   &   &   \\ \hline
+    RF2.4 &   &   &   &   &   & X &   &   &   &   &   &   &   &   &   \\ \hline
+    RF2.5 &   &   &   &   &   &   &   & X &   &   &   &   &   &   &   \\ \hline
+    RF2.6 &   &   &   &   &   &   &   & X &   &   &   &   &   &   &   \\ \hline
+    RF2.7 &   &   &   &   &   & X &   &   &   &   &   &   &   &   &   \\ \hline
+    RF2.8 &   &   &   &   &   & X &   &   &   &   &   &   &   &   &   \\ \hline
+    RF2.9 &   &   &   &   &   &   & X &   &   &   &   &   &   &   &   \\ \hline
+    RF2.10&   &   &   &   &   &   & X &   &   &   &   &   &   &   &   \\ \hline
+
+    \multicolumn{16}{|c|}{\cellcolor{gray!20}\textbf{Módulo 3: Panel Principal e Historial}} \\ \hline
+    RF3.1 &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\ \hline
+    RF3.2 &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\ \hline
+    RF3.3 &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\ \hline
+    RF3.4 &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\ \hline
+    RF3.5 &   &   &   &   &   &   &   &   &   & X &   &   &   &   &   \\ \hline
+    RF3.6 &   &   &   &   &   &   &   &   &   & X &   &   &   &   &   \\ \hline
+
+    \multicolumn{16}{|c|}{\cellcolor{gray!20}\textbf{Módulo 4: Análisis de Datos (Estadísticas)}} \\ \hline
+    RF4.1 &   &   &   &   &   &   &   &   &   &   & X &   &   &   &   \\ \hline
+    RF4.2 &   &   &   &   &   &   &   &   &   &   & X &   &   &   &   \\ \hline
+    RF4.3 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
+    RF4.4 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
+    RF4.5 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
+    RF4.6 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
+    RF4.7 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
+    RF4.8 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
+
+    \multicolumn{16}{|c|}{\cellcolor{gray!20}\textbf{Módulo 5: Personalización y Sistema}} \\ \hline
+    RF5.1 &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   \\ \hline
+    RF5.2 &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   \\ \hline
+    RF5.3 &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\ \hline
+    RF5.4 &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X \\ \hline
+    RF5.5 &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X \\ \hline
+
+
+    \caption{Matriz de validación cruzada de Requisitos y Casos de Uso} \label{tab:matriz_trazabilidad} \\
+\end{xltabular}
+\end{center}
