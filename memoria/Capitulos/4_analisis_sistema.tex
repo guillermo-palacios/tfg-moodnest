@@ -271,8 +271,6 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
 \end{xltabular}
 
-\textbf{Nota:} Los requisitos marcados como ''A refinar'' presentaron ambigüedades en su redacción (C1/C2) o falta de especificación en las reglas de negocio base (C5), por lo que requieren una reescritura antes de darse por válidos.
-
 \subsubsection{Matriz de Verificación: Requisitos No Funcionales}
 
 \renewcommand{\arraystretch}{1.3}
@@ -344,9 +342,8 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
 \subsubsection{Refinamiento y Corrección de Requisitos}
 
-Como resultado de la fase de inspección, se detectaron deficiencias en seis requisitos que no superaron los criterios de calidad establecidos (marcados en la matriz con estado de advertencia \textit{A refinar}). Para garantizar la robustez del documento antes de avanzar a la fase de diseño, estos requisitos han sido sometidos a un proceso de reescritura, pasando finalmente a estado de \textit{Aprobados}. 
+Tras la aplicación de la matriz de verificación de requisitos se ha detectado que seis requisitos(marcados en la matriz con estado \textit{''A refinar''}) no han superado los criterios de calidad establecidos. Por tanto, para garantizar la robustez en la definición de requisitos, estos han sido sometidos a un proceso de reescritura, para asegurar que cumplen correctamente con los criterios de calidad: 
 
-A continuación se detalla el catálogo de correcciones aplicadas:
 
 \begin{itemize}
     \item \textbf{RF2.2 (Fallo en C5 - Incompleto):}
@@ -392,12 +389,12 @@ A continuación se detalla el catálogo de correcciones aplicadas:
 
 \subsection{Estudio de Viabilidad Técnica y Selección Tecnológica}
 
-Para asegurar que MoodNest cumpla con los requisitos de rendimiento, seguridad y escalabilidad definidos, se ha realizado un estudio de las alternativas tecnológicas disponibles. La elección de la arquitectura no responde a una preferencia personal, sino a la necesidad de cubrir las demandas específicas de la gestión de datos de bienestar y el análisis estadístico del sistema.
+Para asegurar que MoodNest cumpla con los requisitos de rendimiento, seguridad y escalabilidad definidos, se ha realizado un estudio de las alternativas tecnológicas disponibles. La elección de la arquitectura no responde a una preferencia personal, sino a la necesidad de cubrir las demandas específicas de la gestión de datos y el análisis estadístico del sistema.
 
 \subsubsection{Modelo de Datos}
-El núcleo de MoodNest es el "Registro Diario". Al analizar los requisitos del Módulo 2, se observa que la información de cada registro no es rígida: un usuario puede asociar dos etiquetas a un día y diez etiquetas al siguiente, añadir comentarios de longitud variable o incluir puntuaciones específicas solo para ciertos factores.
+El núcleo de MoodNest es el ''Registro Diario''. Al analizar los requisitos del Módulo 2, se observa que la información de cada registro no es rígida: un usuario puede asociar dos etiquetas a un día y diez etiquetas al siguiente, añadir comentarios de longitud variable o incluir puntuaciones específicas solo para ciertos factores.
 
-En un modelo relacional (SQL) como PostgreSQL o MySQL, esta flexibilidad obligaría a realizar diseños de tablas complejos con múltiples uniones (joins) o el uso extensivo de valores nulos, lo que penalizaría el rendimiento de las consultas (incumpliendo el RNF2.1). Por ello, se ha optado por un modelo NoSQL orientado a documentos con MongoDB. Esta tecnología permite almacenar cada registro como un documento JSON independiente, facilitando que la estructura de los datos evolucione de forma natural y que el acceso a la información sea directo y mucho más veloz.
+En un modelo relacional (SQL) como PostgreSQL o MySQL, esta flexibilidad obligaría a realizar diseños de tablas complejos con múltiples uniones o el uso extensivo de valores nulos, lo que penalizaría el rendimiento de las consultas (incumpliendo el RNF2.1). Por ello, se ha optado por un modelo NoSQL orientado a documentos con MongoDB. Esta tecnología permite almacenar cada registro como un documento JSON independiente, facilitando que la estructura de los datos evolucione de forma natural y que el acceso a la información sea directo y mucho más veloz.
 
 \subsubsection{Lógica de Negocio y Seguridad}
 Para la construcción del servidor, se evaluaron alternativas como Node.js y Spring Boot. Aunque Node.js ofrece una gran rapidez de ejecución, la naturaleza de MoodNest (que maneja datos personales sensibles) requiere un entorno con un enfoque robusto en seguridad y estabilidad.
@@ -476,8 +473,8 @@ A continuación, se presenta el catálogo general de Casos de Uso del sistema, o
     % --- Grupo 4 ---
     \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Análisis Estadístico}} \\ \hline
     CU11 & Consultar Evolución Temporal & El usuario solicita y filtra la gráfica de su estado de ánimo por periodos (semanal, mensual o anual). & Registrado \\ \hline
-    CU12 & Analizar Impacto de Etiquetas & El usuario selecciona etiquetas específicas para comparar su influencia en el estado de ánimo global. & Registrado \\ \hline
-    CU13 & Visualizar Estadísticas Generales & El usuario accede al análisis de datos para visualizar el impacto de las etiquetas, los promedios semanales y la distribución porcentual de su ánimo. & Registrado \\ \hline    
+    CU12 & Visualizar Resumen Estadístico & El usuario accede a la página de análisis y visualiza distintas estadísticas sobre sus registros diarios y etiquetas. & Registrado \\ \hline
+    CU13 & Analizar Impacto de Etiquetas & El usuario selecciona etiquetas específicas para comparar su influencia en el estado de ánimo global. & Registrado \\ \hline    
     % --- Grupo 5 ---
     \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Personalización del Sistema}} \\ \hline
     CU14 & Personalizar Escala & El usuario configura los textos e iconos de su escala del 1 al 10. & Registrado \\ \hline
@@ -554,12 +551,12 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
     \multicolumn{16}{|c|}{\cellcolor{gray!20}\textbf{Módulo 4: Análisis de Datos (Estadísticas)}} \\ \hline
     RF4.1 &   &   &   &   &   &   &   &   &   &   & X &   &   &   &   \\ \hline
     RF4.2 &   &   &   &   &   &   &   &   &   &   & X &   &   &   &   \\ \hline
-    RF4.3 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
-    RF4.4 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
-    RF4.5 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
-    RF4.6 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
-    RF4.7 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
-    RF4.8 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
+    RF4.3 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
+    RF4.4 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
+    RF4.5 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
+    RF4.6 &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   \\ \hline
+    RF4.7 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
+    RF4.8 &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   \\ \hline
 
     \multicolumn{16}{|c|}{\cellcolor{gray!20}\textbf{Módulo 5: Personalización y Sistema}} \\ \hline
     RF5.1 &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   \\ \hline
@@ -572,3 +569,685 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
     \caption{Matriz de validación cruzada de Requisitos y Casos de Uso} \label{tab:matriz_trazabilidad} \\
 \end{xltabular}
 \end{center}
+
+\newpage
+
+\subsubsection{Especificación Detallada de Casos de Uso}
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+% Añadido \columncolor{gray!20} a la primera columna
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Registrar Usuario \\ \hline
+    Identificador & CU1 \\ \hline
+    Descripción & Un usuario se registra en MoodNest proporcionando su nombre, correo electrónico y contraseña. \\ \hline
+    Actor Principal & Usuario Visitante \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & Ninguna \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando un usuario selecciona la opción ''Registrarse''.
+        \item El sistema solicita las credenciales y datos necesarios (nombre, correo electrónico y contraseña).
+        \item El usuario introduce la información requerida.
+        \item El sistema comprueba que la información introducida es válida y que el correo no está registrado previamente en la base de datos.
+        \item El sistema cifra la contraseña y registra un nuevo usuario.
+        \item El sistema redirige a la pantalla de inicio de sesión mostrando un mensaje de éxito.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Datos Inválidos o Duplicados}: Se activa en el paso 4 si la información no cumple con el formato exigido o el correo ya existe en la base de datos. El sistema muestra un mensaje de alerta y solicita que se introduzcan de nuevo.
+        \item \textbf{Cancelar}: Comienza en cualquier punto del flujo principal. El usuario selecciona cancelar o vuelve atrás. El sistema cancela el proceso en curso y regresa a la pantalla de inicio.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El usuario queda registrado en el sistema y listo para iniciar sesión. \\ \hline
+    \caption{CU1: Registrar Usuario}
+    \label{tab:esp_cu1} \\
+\end{xltabular}
+\endgroup
+
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Iniciar Sesión \\ \hline
+    Identificador & CU2 \\ \hline
+    Descripción & Un usuario accede al sistema introduciendo sus credenciales para obtener acceso a sus datos privados. \\ \hline
+    Actor Principal & Usuario Visitante \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe tener una cuenta previamente registrada en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando un usuario accede a la pantalla de inicio de sesión.
+        \item El sistema solicita el correo electrónico y la contraseña.
+        \item El usuario introduce sus credenciales y selecciona ''Iniciar Sesión''.
+        \item El sistema verifica que la cuenta existe y que la contraseña es correcta.
+        \item El sistema genera un token de autenticación válido para la sesión.
+        \item El sistema redirige al usuario al Panel Principal y le concede permisos de ''Usuario Registrado''.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Credenciales Incorrectas}: Se activa en el paso 4 si el correo no existe o la contraseña no coincide. El sistema deniega el acceso, muestra un mensaje de aviso y borra el campo de la contraseña por seguridad.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El usuario pasa a tener el rol de ''Usuario Registrado'' y puede acceder a las funciones principales de la aplicación. \\ \hline
+    \caption{CU2: Iniciar Sesión}
+    \label{tab:esp_cu2} \\
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Gestionar Perfil \\ \hline
+    Identificador & CU3 \\ \hline
+    Descripción & El usuario autenticado modifica sus datos básicos de perfil, como su nombre de visualización o su contraseña de acceso. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a la sección de ''Configuración de Perfil''.
+        \item El sistema recupera y muestra el nombre de visualización actual del usuario.
+        \item El usuario modifica su nombre y/o introduce una nueva contraseña en los campos habilitados.
+        \item El usuario selecciona la opción "Guardar Cambios".
+        \item El sistema valida que los datos introducidos cumplan con los requisitos de formato y seguridad.
+        \item El sistema actualiza la información en la base de datos.
+        \item El sistema confirma la operación mediante un mensaje de éxito.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Validación Fallida}: Si los datos no cumplen con el formato o la contraseña es demasiado débil, el sistema muestra un mensaje de aviso y permite al usuario corregirlos sin abandonar la pantalla.
+        \item \textbf{Cancelar}: El usuario decide no guardar los cambios y pulsa en ''Volver'' o ''Cancelar''. El sistema regresa a la vista anterior sin realizar ninguna modificación en la base de datos.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & Los datos del perfil se actualizan permanentemente. \\ \hline
+
+    \caption{CU3: Gestionar Perfil}
+    \label{tab:esp_cu3} \\
+    
+\end{xltabular}
+\endgroup
+
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Cerrar Sesión \\ \hline
+    Identificador & CU4 \\ \hline
+    Descripción & El usuario finaliza su sesión activa en el sistema de forma segura para proteger la privacidad de sus datos y registros. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe tener una sesión activa en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario selecciona la opción ''Cerrar Sesión'' ubicada en el menú principal o el perfil.
+        \item El sistema muestra un cuadro de diálogo emergente solicitando la confirmación de la acción.
+        \item El usuario confirma su intención de salir de la aplicación.
+        \item El sistema elimina el token de autenticación y limpia el estado de la sesión en el almacenamiento local del navegador.
+        \item El sistema redirige al usuario a la pantalla pública de inicio.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Cancelar Cierre}: En el paso 2, el usuario selecciona ''Cancelar'' o hace clic fuera del cuadro de diálogo. El sistema oculta el aviso y la sesión activa se mantiene intacta.
+        \item \textbf{Sesión Expirada}: Si al intentar cerrar la sesión el token del usuario ya había caducado por inactividad, el sistema ignora la confirmación, limpia los datos residuales del navegador y redirige directamente al inicio de sesión.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & La sesión se da por finalizada. El actor pierde el acceso a las funciones privadas y recobra el rol de ''Usuario Visitante''. \\ \hline
+
+    \caption{CU4: Cerrar Sesión}
+    \label{tab:esp_cu4} \\
+\end{xltabular}
+\endgroup
+
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Eliminar Cuenta \\ \hline
+    Identificador & CU5 \\ \hline
+    Descripción & El usuario elimina de forma permanente e irreversible su cuenta y todos los datos asociados a la misma (registros, etiquetas y preferencias). \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a la configuración de su perfil y selecciona la opción ''Eliminar Cuenta''.
+        \item El sistema muestra una advertencia crítica informando que la acción es completamente irreversible.
+        \item El sistema solicita al usuario que introduzca su contraseña actual como medida de seguridad adicional.
+        \item El usuario introduce su contraseña y confirma la eliminación.
+        \item El sistema valida que la contraseña introducida sea correcta.
+        \item El sistema procede a eliminar permanentemente el registro del usuario y realiza un borrado en cascada de todos sus registros diarios y etiquetas personalizadas en la base de datos.
+        \item El sistema revoca el token de sesión actual.
+        \item El sistema redirige al usuario a la página de inicio pública mostrando un mensaje de confirmación de baja.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Contraseña Incorrecta}: Se activa en el paso 5 si la contraseña no coincide con la del usuario. El sistema detiene el proceso de borrado, muestra una alerta de seguridad y permite reintentar la operación.
+        \item \textbf{Cancelar Proceso}: En el paso 2 o 3, el usuario selecciona ''Cancelar'' o retrocede. El sistema aborta la operación y mantiene intactos todos los datos y la sesión del usuario.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & Toda la información del usuario desaparece de la plataforma. El actor pierde su cuenta y recobra el rol de ''Usuario Visitante''. \\ \hline
+
+    \caption{CU5: Eliminar Cuenta}
+    \label{tab:esp_cu5} \\
+    
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Crear Registro Diario \\ \hline
+    Identificador & CU6 \\ \hline
+    Descripción & El usuario crea una nueva entrada en su historial asignando una fecha, una puntuación global de su estado de ánimo, etiquetas asociadas y un comentario. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario selecciona la opción ''Nuevo Registro'' desde el panel principal.
+        \item El sistema presenta el formulario de creación, estableciendo la fecha actual por defecto.
+        \item El usuario confirma la fecha actual o selecciona una fecha pasada en el selector.
+        \item El usuario selecciona obligatoriamente una puntuación global (del 1 al 10) para definir su estado de ánimo general del día.
+        \item El usuario selecciona, de manera opcional, una o múltiples etiquetas de su catálogo personal.
+        \item Para cada etiqueta seleccionada, el usuario puede asignarle (opcionalmente) una puntuación específica del 1 al 10.
+        \item El usuario escribe, opcionalmente, un texto descriptivo en el campo de comentario.
+        \item El usuario selecciona la opción ''Guardar Registro''.
+        \item El sistema valida que la fecha sea válida (no futura) y que exista una puntuación global.
+        \item El sistema guarda el registro en la base de datos y recalcula la racha de días consecutivos del usuario si procede.
+        \item El sistema redirige al usuario a la vista anterior, mostrando un mensaje de éxito.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Validación Fallida}: En el paso 9, si los datos no cumplen con el formato o falta por rellenar algún campo, el sistema muestra un mensaje de aviso y permite al usuario corregirlos sin abandonar la pantalla.
+        \item \textbf{Cancelar}: En cualquier momento antes de guardar, el usuario selecciona "Cancelar" o retrocede. El sistema descarta toda la información introducida y regresa a la pantalla anterior sin realizar cambios en la base de datos.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El registro se consolida en la base de datos, queda disponible para su consulta en el historial y computa inmediatamente para las gráficas de análisis estadístico. \\ \hline
+
+    \caption{CU6: Crear Registro Diario}
+    \label{tab:esp_cu6} \\
+\end{xltabular}
+\endgroup
+
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Gestionar Registro \\ \hline
+    Identificador & CU7 \\ \hline
+    Descripción & El usuario accede a su historial para editar los atributos de un registro existente o para eliminarlo de forma permanente del sistema. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado y tener al menos un registro previo en su historial. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario selecciona un registro específico desde el historial o el panel principal.
+        \item El sistema muestra los detalles completos de la entrada y habilita las opciones de ''Editar'' y ''Eliminar''.
+        \item El usuario selecciona la opción ''Editar''.
+        \item El sistema presenta el formulario del registro con sus datos actuales pre-cargados (fecha, puntuación, etiquetas vinculadas y comentario).
+        \item El usuario modifica los atributos deseados.
+        \item El usuario selecciona la opción ''Guardar Cambios''.
+        \item El sistema valida las modificaciones aplicando las mismas reglas de negocio y obligatoriedad que en la creación de registros.
+        \item El sistema actualiza el registro en la base de datos y recalcula las estadísticas o la racha si fuese necesario.
+        \item El sistema redirige a la vista del historial, mostrando un mensaje de éxito.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Eliminar Registro}: En el paso 3, el usuario selecciona ''Eliminar''. El sistema muestra un cuadro de diálogo advirtiendo que la acción es irreversible. El usuario confirma. El sistema borra el registro permanentemente, recalcula la racha/estadísticas afectadas y redirige a la pantalla anterior con un mensaje de éxito.
+        \item \textbf{Errores de Validación}: Se activa en el paso 7 si los datos modificados no cumplen con el formato. El sistema detiene el proceso y muestra un mensaje de error.
+        \item \textbf{Cancelar}: En cualquier momento durante la edición o en el cuadro de confirmación de eliminación, el usuario selecciona ''Cancelar'' o retrocede. El sistema cancela el proceso y mantiene el registro original sin alteraciones.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El registro seleccionado queda actualizado o eliminado permanentemente de la base de datos, y los cambios se propagan de inmediato a las estadísticas y vistas del usuario. \\ \hline
+
+    \caption{CU7: Gestionar Registros}
+    \label{tab:esp_cu7} \\
+\end{xltabular}
+\endgroup
+
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Gestionar Etiquetas \\ \hline
+    Identificador & CU8 \\ \hline
+    Descripción & El usuario crea nuevas etiquetas personalizadas o edita/elimina las existentes dentro de su catálogo personal. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a su catálogo de etiquetas y selecciona ''Crear Nueva Etiqueta''.
+        \item El sistema muestra un formulario solicitando un nombre identificativo y la selección de un color para la etiqueta.
+        \item El usuario introduce el nombre deseado y selecciona un color.
+        \item El usuario selecciona ''Guardar''.
+        \item El sistema verifica que el nombre no esté vacío y que no exista ya una etiqueta activa con el mismo nombre para este usuario.
+        \item El sistema registra la nueva etiqueta en la base de datos asignándola al identificador del usuario.
+        \item El sistema actualiza la vista del catálogo mostrando la nueva etiqueta disponible para ser usada en futuros registros diarios.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Editar Etiqueta}: En el paso 1, el usuario pulsa ''Editar'' en una etiqueta existente. El sistema muestra el formulario con los datos actuales. El usuario los modifica y guarda. El sistema valida (paso 5) y actualiza la información en la base de datos.
+        \item \textbf{Eliminar Etiqueta (Borrado Lógico)}: En el paso 1, el usuario pulsa ''Eliminar'' en una etiqueta existente. Tras solicitar confirmación, el sistema no borra el registro de la base de datos para preservar la integridad de los registros pasados y en su lugar, marca la etiqueta como inactiva, ocultándola del catálogo para que no pueda ser seleccionada en nuevos registros.
+        \item \textbf{Nombre Duplicado o Inválido}: Se activa en el paso 5 si el nombre está vacío o ya existe en el catálogo activo del usuario. El sistema detiene el proceso y muestra un mensaje de error indicando que el nombre debe ser único.
+        \item \textbf{Cancelar}: En cualquier momento, el usuario selecciona ''Cancelar''. El sistema cancela el proceso y regresa al catálogo principal.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El catálogo de etiquetas del usuario queda actualizado, preservando en todo momento la integridad de los registros históricos anteriores. \\ \hline
+
+    \caption{CU8: Gestionar Etiquetas}
+    \label{tab:esp_cu8} \\
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Visualizar Dashboard \\ \hline
+    Identificador & CU9 \\ \hline
+    Descripción & El usuario accede al panel principal de la aplicación para consultar un resumen de su actividad reciente, su racha actual y acceder rápidamente a la creación de registros. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario inicia sesión exitosamente o navega hacia la pantalla de inicio de la aplicación.
+        \item El sistema evalúa la franja horaria local del cliente (mañana, tarde o noche) y verifica si existe un registro creado en la fecha actual.
+        \item El sistema genera un mensaje de bienvenida dinámico en base a los parámetros anteriores.
+        \item El sistema calcula la racha actual consultando los días consecutivos con un registro en la base de datos.
+        \item El sistema recupera un listado cronológico resumido con las últimas entradas del historial del usuario.
+        \item El sistema renderiza el Dashboard mostrando: el mensaje de bienvenida, el contador de racha, el historial reciente y un botón destacado de acceso directo para crear un nuevo registro.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Usuario Sin Historial}: Si en el paso 4 y 5 el sistema detecta que el usuario no tiene ningún registro previo, el contador de racha se inicializa a 0. En la sección de entradas recientes, el sistema muestra un mensaje amigable invitando al usuario a crear su primer registro de estado de ánimo.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El usuario visualiza la información actualizada de su progreso y dispone de los controles necesarios para seguir interactuando con la plataforma. \\ \hline
+
+    \caption{CU9: Visualizar Dashboard}
+    \label{tab:esp_cu9} \\
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción---------------------REVISAR} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción---------------------REVISAR} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Visualizar Historial \\ \hline
+    Identificador & CU10 \\ \hline
+    Descripción & El usuario consulta sus registros pasados a través de una interfaz de calendario para visualizar el detalle de cada entrada. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario selecciona la opción ''Historial'' en el menú de navegación.
+        \item El sistema renderiza una vista de calendario, estableciendo por defecto el mes y año actuales.
+        \item El sistema consulta la base de datos y resalta visualmente los días que contienen un registro.
+        \item El usuario selecciona un día resaltado del calendario.
+        \item El sistema recupera y muestra el detalle completo del registro (puntuación global, etiquetas y comentario).
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Navegar entre meses}: En el paso 4, el usuario utiliza los controles de ''Mes anterior'' o ''Mes siguiente''. El sistema actualiza la vista al mes seleccionado y vuelve al paso 3.
+        \item \textbf{Seleccionar día sin registro}: En el paso 4, si el usuario selecciona un día que no tiene registro, el sistema muestra un mensaje indicando que no hay registros.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El usuario visualiza un calendario con el histórico de sus registros. \\ \hline
+    
+    \caption{CU10: Visualizar Historial}
+    \label{tab:esp_cu10} \\
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Consultar Evolución Temporal \\ \hline
+    Identificador & CU11 \\ \hline
+    Descripción & El usuario visualiza un gráfico temporal interactivo que muestra la progresión de su puntuación global de estado de ánimo. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a la sección de ''Análisis'' o ''Estadísticas''.
+        \item El sistema renderiza la interfaz y establece por defecto el filtro temporal en vista ''Semanal'' (últimos 7 días).
+        \item El sistema consulta la base de datos para recuperar las puntuaciones globales de los registros de ese periodo.
+        \item El sistema genera y muestra un gráfico de líneas que conecta cronológicamente los datos recuperados.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Cambiar Filtro Temporal}: En el paso 4, el usuario selecciona un rango diferente (Mensual o Anual). El sistema actualiza el rango de fechas, repite los pasos 3 y 4, y el caso de uso finaliza.
+        \item \textbf{Sin Registros}: Se activa en el paso 3. Si no existen registros el sistema oculta el gráfico y muestra un mensaje de aviso.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El usuario visualiza un gráfico con la evolución de su estado de ánimo. \\ \hline
+    \caption{CU11: Consultar Evolución Temporal}
+    \label{tab:esp_cu11} \\
+\end{xltabular}
+\endgroup
+
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Visualizar Resumen Estadístico \\ \hline
+    Identificador & CU12 \\ \hline
+    Descripción & El usuario accede a la página de análisis y visualiza distintas estadísticas sobre sus registros diarios y etiquetas. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a la página de análisis.
+        \item El sistema procesa los registros y etiquetas del usuario para calcular tres métricas clave:
+        \begin{itemize}[leftmargin=0.5cm, topsep=2pt, itemsep=2pt]
+            \item Las etiquetas con mayor desviación positiva y negativa respecto a la puntuación global media de todos los registros históricos del usuario.
+            \item El promedio histórico de las puntuaciones globales de los registros diarios del usuario agrupado por cada día de la semana.
+            \item La distribución porcentual de los registros en distintos rangos de ánimo (días buenos, neutros y malos).
+        \end{itemize}
+        \item El sistema renderiza simultáneamente los componentes visuales: dos recuadros destacados para las etiquetas de mayor impacto positivo/negativo, un gráfico de barras para los días de la semana y un gráfico circular para la distribución porcentual.
+        \item El usuario visualiza la información consolidada.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Sin Registros con Etiquetas}: Si en el paso 2 el sistema detecta que el usuario no dispone de al menos un registro etiquetas asociadas mostrará un mensaje de aviso invitando al usuario a registrar su día.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El usuario adquiere consciencia sobre sus patrones emocionales y conductuales de forma rápida y automatizada. \\ \hline
+
+    \caption{CU12: Visualizar Resumen Estadístico}
+    \label{tab:esp_cu12} \\
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Analizar Impacto de Etiquetas \\ \hline
+    Identificador & CU13 \\ \hline
+    Descripción & El usuario consulta cómo afectan sus distintas actividades (etiquetas) a su estado de ánimo general. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema y se encuentra dentro de la página de análisis. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a la sección de ''Impacto de Etiquetas''.
+        \item El sistema muestra un selector con el catálogo de etiquetas del usuario.
+        \item El usuario elige una etiqueta en el selector.
+        \item El sistema calcula y genera un gráfico de barras que compara visualmente la puntuación global media de todos los registros del usuario frente al promedio específico de los días que contienen la etiqueta seleccionada.
+        \item El sistema renderiza el gráfico y muestra un mensaje de texto interpretativo basado en la diferencia matemática entre la puntuación global media y la puntuación de la etiqueta analizada.
+        \item El usuario visualiza si la etiqueta afecta positiva o negativamente en sus días.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Ausencia de Etiquetas}: Si en el paso 2 el sistema detecta que el usuario no tiene etiquetas registradas en su historial, deshabilita el selector y muestra un mensaje de aviso indicando que necesita vincular etiquetas a sus registros para utilizar esta función.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & El usuario obtiene una conclusión visual sobre la influencia positiva o negativa de las etiquetas en su bienestar emocional. \\ \hline
+
+    \caption{CU13: Analizar Impacto de Etiquetas}
+    \label{tab:esp_cu13} \\
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Personalizar Escala \\ \hline
+    Identificador & CU14 \\ \hline
+    Descripción & El usuario personaliza los textos descriptivos de cada puntuación (del 1 al 10) y elige el conjunto de iconos visuales para sus registros. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a la página de personalización y pulsa en ''Personalizar Escala de Ánimo''.
+        \item El sistema muestra un formulario con los diez niveles numéricos con sus textos descriptivos actuales y un selector visual con los conjuntos de iconos predefinidos disponibles.
+        \item El usuario modifica los textos descriptivos de los niveles numéricos que desee y selecciona un nuevo conjunto de iconos.
+        \item El usuario selecciona la opción ''Guardar Cambios''.
+        \item El sistema valida que los textos no excedan el límite máximo de caracteres permitido.
+        \item El sistema actualiza la información en la base de datos y muestra un mensaje de éxito.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Errores de Validación}: Si en el paso 5 un texto supera la longitud máxima permitida, el sistema detiene el proceso de guardado y muestra un mensaje de aviso.
+        \item \textbf{Restablecer Valores por Defecto}: En cualquier momento, el usuario puede seleccionar la opción ''Restablecer''. El sistema solicita confirmación y, tr utilizará a partir de este momento la nueva escala personalizadaas ser aceptada, restaura los textos genéricos y el conjunto de iconos original de la aplicación, guardando estos cambios en la base de datos.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & La escala del estado de animo del usuario queda actualizada en la base de datos y está disponible en la interfaz de creación y edición de registros del usuario. \\ \hline
+
+    \caption{CU14: Personalizar Escala}
+    \label{tab:esp_cu14} \\
+\end{xltabular}
+\endgroup
+
+\begingroup
+\small 
+\renewcommand{\arraystretch}{1.4}
+\begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
+    \hline
+    \rowcolor{UCO}
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
+    \endhead
+
+    % CONTENIDO DE LA TABLA
+    Nombre & Personalizar Interfaz \\ \hline
+    Identificador & CU15 \\ \hline
+    Descripción & El usuario ajusta la apariencia visual de la aplicación alternando entre modos de visualización (claro/oscuro) y seleccionando un color de acento principal. \\ \hline
+    Actor Principal & Usuario Registrado \\ \hline
+    Actor Secundario & Ninguno \\ \hline
+    Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
+    Flujo Principal & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item El caso de uso comienza cuando el usuario accede a la página de personalización y pulsa en ''Personalizar Interfaz'' interactúa con el panel de apariencia visual.
+        \item El sistema renderiza los controles disponibles: un selector de tema (Claro, Oscuro) y una paleta con colores de acento seleccionables.
+        \item El usuario selecciona una nueva opción de tema y/o un nuevo color principal.
+        \item El sistema aplica el cambio visual de forma inmediata en la interfaz para que el usuario pueda previsualizar el resultado en tiempo real y actualiza las preferencias del usuario en la base de datos.
+        \item El usuario visualiza los cambios en la interfaz.
+    \end{enumerate} 
+    \\ \hline
+    Flujo Alternativo & 
+    \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
+        \item \textbf{Error Durante el Proceso}: En el paso 4 si ocurre algun problema con la actualización o guardado de la personalización del usuario el sistema mostrará un mensaje de aviso.
+    \end{enumerate}
+    \\ \hline
+    Postcondición & La aplicación se renderiza con los nuevos parámetros estéticos seleccionados y el usuario visualiza la nueva interfaz. \\ \hline
+
+    \caption{CU15: Personalizar Interfaz}
+    \label{tab:esp_cu15} \\
+\end{xltabular}
+\endgroup
