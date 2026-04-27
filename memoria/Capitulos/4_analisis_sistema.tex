@@ -571,7 +571,20 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
 \end{center}
 
 \newpage
+\subsubsection{Diagrama General de Casos de Uso}
 
+A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama general de Casos de Uso de la aplicación. Este modelo visualiza la frontera del sistema y establece las relaciones estructurales entre los actores identificados y las funcionalidades principales, incluyendo las dependencias de inclusión (\textit{include}) y extensión (\textit{extend}) que rigen la lógica de navegación.
+
+\begin{figure}[H]
+    \centering
+    % Ajusta el width si ves que la imagen queda muy grande (ej. width=0.9\textwidth)
+    \includegraphics[width=\textwidth]{DiagramaCUMoodnest.png}
+    \caption{Diagrama General de Casos de Uso de MoodNest}
+    \label{fig:diagrama_cu}
+\end{figure}
+
+
+\newpage
 \subsubsection{Especificación Detallada de Casos de Uso}
 
 \begingroup
@@ -734,16 +747,19 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
     Precondición & El usuario debe tener una sesión activa en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario selecciona la opción ''Cerrar Sesión'' ubicada en el menú principal o el perfil.
-        \item El sistema muestra un cuadro de diálogo emergente solicitando la confirmación de la acción.
-        \item El usuario confirma su intención de salir de la aplicación.
+        \item El caso de uso comienza cuando el usuario selecciona la opción ''Cerrar Sesión'' o cuando el usuario elimina su cuenta (CU5).
+        \item Si la acción es iniciada manualmente por el usuario
+            \begin{enumerate}[label=\theenumi.\arabic*, leftmargin=0.6cm, topsep=2pt, itemsep=2pt]
+                \item El sistema muestra un cuadro de diálogo para confirmar la salida.
+                \item El usuario confirma su intención de salir de la aplicación.
+            \end{enumerate}
         \item El sistema elimina el token de autenticación y limpia el estado de la sesión en el almacenamiento local del navegador.
         \item El sistema redirige al usuario a la pantalla pública de inicio.
-    \end{enumerate} 
+    \end{enumerate}
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Cancelar Cierre}: En el paso 2, el usuario selecciona ''Cancelar'' o hace clic fuera del cuadro de diálogo. El sistema oculta el aviso y la sesión activa se mantiene intacta.
+        \item \textbf{Cancelar Cierre}: En el paso 2.1, el usuario selecciona ''Cancelar'' o hace clic fuera del cuadro de diálogo. El sistema oculta el aviso y la sesión activa se mantiene intacta.
         \item \textbf{Sesión Expirada}: Si al intentar cerrar la sesión el token del usuario ya había caducado por inactividad, el sistema ignora la confirmación, limpia los datos residuales del navegador y redirige directamente al inicio de sesión.
     \end{enumerate}
     \\ \hline
@@ -785,8 +801,8 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
         \item El usuario introduce su contraseña y confirma la eliminación.
         \item El sistema valida que la contraseña introducida sea correcta.
         \item El sistema procede a eliminar permanentemente el registro del usuario y realiza un borrado en cascada de todos sus registros diarios y etiquetas personalizadas en la base de datos.
-        \item El sistema revoca el token de sesión actual.
-        \item El sistema redirige al usuario a la página de inicio pública mostrando un mensaje de confirmación de baja.
+        \item El sistema incluye y ejecuta el ''CU3: Cerrar Sesión''.
+        \item El sistema muestra un mensaje de confirmación de baja.
     \end{enumerate} 
     \\ \hline
     Flujo Alternativo & 
@@ -982,7 +998,7 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Usuario Sin Historial}: Si en el paso 4 y 5 el sistema detecta que el usuario no tiene ningún registro previo, el contador de racha se inicializa a 0. En la sección de entradas recientes, el sistema muestra un mensaje amigable invitando al usuario a crear su primer registro de estado de ánimo.
+        \item \textbf{Usuario Sin Historial}: Si en el paso 4 y 5 el sistema detecta que el usuario no tiene ningún registro previo, el contador de racha se inicializa a 0. En la sección de entradas recientes, el sistema muestra un mensaje invitando al usuario a crear su primer registro de estado de ánimo, permitiendo extender el flujo hacia el ''CU6: Crear Registro Diario''.
     \end{enumerate}
     \\ \hline
     Postcondición & El usuario visualiza la información actualizada de su progreso y dispone de los controles necesarios para seguir interactuando con la plataforma. \\ \hline
@@ -997,13 +1013,13 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
 \renewcommand{\arraystretch}{1.4}
 \begin{xltabular}{\textwidth}{|>{\columncolor{gray!20}\bfseries}p{3.5cm}|X|}
     \rowcolor{UCO}
-    \textcolor{white}{Campo} & \textcolor{white}{Descripción---------------------REVISAR} \\ \hline
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
     \endfirsthead
 
     \multicolumn{2}{c}{{\bfseries \dots continuación de la página anterior}} \\
     \hline
     \rowcolor{UCO}
-    \textcolor{white}{Campo} & \textcolor{white}{Descripción---------------------REVISAR} \\ \hline
+    \textcolor{white}{Campo} & \textcolor{white}{Descripción} \\ \hline
     \endhead
 
     % CONTENIDO DE LA TABLA
@@ -1025,7 +1041,8 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item \textbf{Navegar entre meses}: En el paso 4, el usuario utiliza los controles de ''Mes anterior'' o ''Mes siguiente''. El sistema actualiza la vista al mes seleccionado y vuelve al paso 3.
-        \item \textbf{Seleccionar día sin registro}: En el paso 4, si el usuario selecciona un día que no tiene registro, el sistema muestra un mensaje indicando que no hay registros.
+        \item \textbf{Seleccionar día sin registro}: En el paso 4, si el usuario selecciona un día que no tiene registro, el sistema muestra un mensaje indicándolo y ofrece la opción de extender el flujo hacia el ''CU6: Crear Registro Diario''.
+        \item \textbf{Gestionar Registro}: En el paso 5, si el usuario decide editar o borrar la información del registro visualizado, el sistema extiende el flujo hacia el ''CU7: Gestionar Registros''.
     \end{enumerate}
     \\ \hline
     Postcondición & El usuario visualiza un calendario con el histórico de sus registros. \\ \hline
