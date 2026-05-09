@@ -1,0 +1,107 @@
+\newpage
+\section{Diseño del Sistema}
+
+En este capítulo se describe la solución técnica adoptada para satisfacer los requisitos expuestos en la fase de análisis. Se detalla la arquitectura del sistema desde dos perspectivas complementarias: la arquitectura física (despliegue) y la arquitectura lógica (componentes), justificando las decisiones tecnológicas adoptadas para el ecosistema de MoodNest.
+
+\subsection{Diseño de la Arquitectura Física y Despliegue}
+
+En este apartado se detalla la infraestructura física y el entorno de ejecución sobre el cual se asienta MoodNest. Para garantizar la portabilidad, la escalabilidad y la facilidad de despliegue, se ha adoptado una arquitectura basada en contenedores utilizando la tecnología Docker.
+
+Como se observa en el Diagrama de Despliegue de la Figura \ref{fig:diagrama_despliegue}, el sistema se distribuye en dos nodos principales que interactúan a través de redes estándar de comunicación:
+
+\begin{itemize}
+    \item \textbf{Nodo Cliente (Dispositivo del Usuario):} Representa el hardware físico desde el cual el usuario accede a la plataforma (PC, tablet o smartphone). El software no requiere instalación local, ya que el artefacto \textit{MoodNest SPA} (desarrollado en React.js) se ejecuta directamente dentro de un Navegador Web. Al ser una \textit{Single Page Application}, la lógica de presentación y navegación opera localmente en el cliente tras la carga inicial.
+    
+    \item \textbf{Nodo Servidor (Servidor Anfitrión / Host):} Representa la máquina física o virtual que aloja la lógica central y los datos de la aplicación. Este equipo ejecuta un \textit{Docker Engine} encargado de orquestar tres contenedores independientes y aislados:
+    \begin{enumerate}
+        \item \textbf{Contenedor Frontend:} Actúa como servidor de archivos estáticos que entrega la SPA al navegador web cuando se realiza la primera conexión.
+        \item \textbf{Contenedor Backend:} Contiene un entorno de ejecución Java que corre la aplicación Spring Boot junto a su servidor Tomcat embebido, exponiendo los \textit{endpoints} de la API REST.
+        \item \textbf{Contenedor de Base de Datos:} Provee el servicio de persistencia mediante el motor NoSQL MongoDB, encapsulado y protegido de forma que solo sea accesible mediante la red interna de Docker.
+    \end{enumerate}
+\end{itemize}
+
+La integridad del sistema se apoya en flujos de comunicación diferenciados: los recursos estáticos y las peticiones a la API REST viajan a través del protocolo \textbf{HTTPS} (intercambiando información en formato JSON), mientras que la comunicación interna de alto rendimiento entre la API y la base de datos se realiza mediante \textbf{TCP/IP} utilizando el \textit{Mongo Java Driver}.
+
+\begin{figure}[h!]
+    \centering
+    % Ajusta el tamaño de la imagen según necesites
+    \includegraphics[width=0.95\textwidth]{Imagenes/diagrama_despliegue.pdf}
+    \caption{Diagrama de Despliegue físico de la plataforma MoodNest}
+    \label{fig:diagrama_despliegue}
+\end{figure}
+
+
+\subsection{Arquitectura Lógica del Sistema}
+
+Una vez definida la infraestructura física y el entorno de ejecución, es fundamental detallar la organización interna del software de MoodNest. El diseño de la arquitectura lógica no es una mera distribución de archivos, sino la materialización de los principios de ingeniería de software de \textbf{alta cohesión} y \textbf{bajo acoplamiento}[cite: 615, 664]. 
+
+El objetivo primordial de esta estructura es garantizar que el sistema sea mantenible a largo plazo y fácilmente escalable. Para ello, se ha optado por una arquitectura desacoplada que separa la lógica de presentación de la lógica de negocio y la persistencia de datos. Esta organización permite que los cambios en una capa (por ejemplo, una actualización en la interfaz visual) tengan un impacto nulo o mínimo en las demás capas (como la base de datos). Para representar esta estructura, se han elaborado un Diagrama de Componentes y un Diagrama de Paquetes siguiendo el estándar UML.
+
+\subsubsection{Diseño de Componentes}
+
+El Diagrama de Componentes (Figura \ref{fig:diagrama_componentes}) ofrece una visión de alto nivel de los módulos funcionales que componen MoodNest y, lo más importante, de cómo estos interactúan a través de interfaces explícitas[cite: 659, 665]. 
+
+
+
+En esta vista, el sistema se divide en tres estratos principales, cada uno con una responsabilidad única y bien definida:
+
+\begin{itemize}
+    \item \textbf{Capa de Presentación (Frontend):} Se materializa en el componente \texttt{MoodNest SPA}. Este módulo es el encargado de toda la interacción directa con el usuario, incluyendo el renderizado de los elementos visuales de la interfaz y la gestión del estado local en el navegador[cite: 666, 667]. Es un componente "delgado" en términos de reglas de negocio; su función no es procesar datos, sino solicitarlos y presentarlos. Para ello, actúa como un consumidor que se conecta a los servicios del backend mediante interfaces requeridas o "enchufes"[cite: 668].
+    
+    \item \textbf{Capa de Lógica de Negocio (Backend):} Es el núcleo del sistema, implementado sobre el framework Spring Boot. Para evitar un código monolítico y difícil de gestionar, esta capa se ha modularizado en "Gestores" independientes que encapsulan dominios de información específicos[cite: 669]:
+    \begin{itemize}
+        \item \textbf{UsuariosMgr}: Centraliza la seguridad y gestión de identidad, resolviendo las operaciones críticas de registro, autenticación mediante JWT y mantenimiento del perfil de usuario[cite: 670].
+        \item \textbf{RegistrosDiariosMgr}: Gestiona la lógica principal de la aplicación, controlando el ciclo de vida completo (creación, lectura, actualización y borrado) de las entradas de estado de ánimo diarias[cite: 671].
+        \item \textbf{EtiquetasMgr}: Administra el catálogo de factores contextuales (actividades, personas, eventos) que el usuario puede asociar a sus registros, permitiendo una personalización total del sistema[cite: 672].
+        \item \textbf{EstadísticasMgr}: Es el componente analítico encargado de procesar los datos en bruto para generar información de valor, como el cálculo de rachas de uso y la detección de patrones de impacto emocional entre etiquetas y humor[cite: 673].
+    \end{itemize}
+
+    \item \textbf{Capa de Acceso a Datos:} Representada por el componente \texttt{Base de Datos MongoDB}. Siguiendo el principio de inversión de dependencias, los gestores del backend no conocen los detalles técnicos de cómo se guardan los datos. Simplemente requieren una interfaz común de acceso (\texttt{IDataAccess}), la cual es proporcionada por este componente de persistencia[cite: 674, 675]. Esto permite que MoodNest sea tecnológicamente agnóstico: si en el futuro se decidiera cambiar MongoDB por otra tecnología, la lógica de negocio permanecería intacta.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/diagrama_componentes.pdf}
+    \caption{Diagrama de Componentes de la Arquitectura de MoodNest.}
+    \label{fig:diagrama_componentes}
+\end{figure}
+
+\subsubsection{Organización del Código (Diagrama de Paquetes)}
+
+La arquitectura lógica no solo se define por sus componentes funcionales, sino también por cómo se organiza físicamente el código fuente para garantizar la escalabilidad y el trabajo colaborativo. Para representar esta jerarquía, se ha elaborado un Diagrama de Paquetes UML (Figura \ref{fig:diagrama_paquetes}), que actúa como un mapa del proyecto, agrupando las clases y módulos según su responsabilidad técnica.
+
+La elección de esta estructura no es arbitraria; se basa en el principio de separación de responsabilidades (\textit{Separation of Concerns}). Al dividir el proyecto en paquetes claramente delimitados, se consigue que un cambio en la lógica de acceso a datos no afecte a la interfaz de usuario, y que la lógica de negocio permanezca aislada de las peticiones HTTP.
+
+\paragraph{Estructura del Backend (Spring Boot)}
+
+En el servidor, se ha adoptado una \textbf{Arquitectura por Capas} (\textit{Layered Architecture}), que es el estándar en entornos empresariales con Spring Boot. Esta organización permite que el flujo de datos sea unidireccional y predecible:
+
+\begin{itemize}
+    \item \textbf{Paquete \texttt{controllers}}: Actúa como la frontera del sistema. Contiene las clases que interceptan las peticiones entrantes del cliente, validan los parámetros básicos y mapean las URLs de la API REST. Su única responsabilidad es recibir la solicitud y entregar la respuesta, delegando cualquier cálculo al siguiente nivel.
+    \item \textbf{Paquete \texttt{services}}: Es el "cerebro" de la aplicación. Aquí se implementa la lógica de negocio pura, como el cálculo de rachas de días consecutivos o el análisis de impacto de las etiquetas. Al estar aislada en servicios, esta lógica puede ser reutilizada o testeada de forma independiente.
+    \item \textbf{Paquete \texttt{repositories}}: Funciona como una capa de abstracción sobre MongoDB. Utiliza las interfaces de Spring Data para realizar operaciones de persistencia sin necesidad de escribir consultas manuales complejas, facilitando el mantenimiento si la tecnología de base de datos cambiara en el futuro.
+    \item \textbf{Paquete \texttt{models} y \texttt{dto}}: Se ha realizado una distinción crítica entre las entidades de base de datos (\texttt{models}), que reflejan la estructura de las colecciones de MongoDB, y los Objetos de Transferencia de Datos (\texttt{dto}). Estos últimos permiten enviar al frontend únicamente la información necesaria, protegiendo datos sensibles como las contraseñas cifradas.
+    \item \textbf{Paquete \texttt{security}}: Contiene la configuración de Spring Security y la lógica necesaria para interceptar y validar los tokens JWT. Es el guardián que asegura que solo los usuarios autenticados accedan a sus propios datos emocionales.
+\end{itemize}
+
+
+
+\paragraph{Estructura del Frontend (React)}
+
+En el lado del cliente, la organización se basa en un paradigma de \textbf{Arquitectura Basada en Componentes}. El objetivo es tratar la interfaz de usuario como un conjunto de piezas de Lego reutilizables, lo que agiliza el desarrollo y garantiza la coherencia visual:
+
+\begin{itemize}
+    \item \textbf{Paquete \texttt{pages}}: Representa las vistas de alto nivel o pantallas completas a las que el usuario puede navegar (como el Panel Principal o el Calendario). Su función es orquestar los componentes más pequeños para darles sentido dentro de una ruta específica.
+    \item \textbf{Paquete \texttt{components}}: Almacena los elementos visuales atómicos y reutilizables, como botones, tarjetas de registro o las visualizaciones de Chart.js. Esta separación permite modificar el diseño de un botón en un solo archivo y que el cambio se refleje en toda la aplicación.
+    \item \textbf{Paquete \texttt{services}}: Encapsula toda la comunicación con el exterior. En lugar de realizar llamadas a la API directamente desde los componentes visuales, se centralizan aquí mediante librerías como Axios. Esto desacopla la interfaz de la infraestructura de red.
+    \item \textbf{Paquete \texttt{context} y \texttt{hooks}}: Estos paquetes gestionan el estado global y la lógica compartida. El \texttt{context} permite que datos como la sesión del usuario o el tema visual estén disponibles en cualquier parte de la aplicación sin necesidad de pasarlos manualmente entre componentes, mientras que los \texttt{hooks} permiten reciclar lógica compleja de forma elegante.
+\end{itemize}
+
+Esta organización modular permite que MoodNest sea un sistema robusto donde cada archivo tiene un propósito único y una ubicación lógica, minimizando el riesgo de errores durante la fase de implementación y facilitando la incorporación de futuras funcionalidades.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/diagrama_paquetes.pdf}
+    \caption{Organización de paquetes y dependencias de MoodNest.}
+    \label{fig:diagrama_paquetes}
+\end{figure}
