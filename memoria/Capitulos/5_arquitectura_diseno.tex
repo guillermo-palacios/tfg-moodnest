@@ -105,3 +105,96 @@ Esta organización modular permite que MoodNest sea un sistema robusto donde cad
     \caption{Organización de paquetes y dependencias de MoodNest.}
     \label{fig:diagrama_paquetes}
 \end{figure}
+
+
+\newpage
+
+\subsection{Diseño del Modelo de Datos}
+
+El núcleo de MoodNest reside en la capacidad de almacenar, relacionar y analizar el historial emocional del usuario. A diferencia de los sistemas tradicionales, la naturaleza de los registros diarios es altamente dinámica: un registro puede contener múltiples etiquetas con puntuaciones específicas, anotaciones de longitud variable o carecer por completo de ellas. 
+
+Para dar respuesta a esta flexibilidad sin comprometer el rendimiento, se ha descartado el modelo relacional tradicional (SQL) en favor de una base de datos NoSQL orientada a documentos, concretamente MongoDB. Este paradigma permite almacenar la información en formato BSON (Binary JSON), garantizando una lectura ágil y evitando las costosas operaciones de cruce de tablas JOINs que mermarían la escalabilidad del sistema \cita{}.
+
+\subsubsection{Modelo Conceptual del Dominio}
+
+El sistema se articula en torno a tres entidades principales: el \texttt{Usuario}, la \texttt{Etiqueta} y el \texttt{RegistroDiario}. La Figura \ref{fig:diagrama_conceptual} ilustra el modelo de dominio y la cardinalidad entre estos elementos. Un usuario actúa como entidad raíz, poseyendo una colección de etiquetas personalizadas y un historial de registros diarios.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Imagenes/diagrama_clases.pdf}
+    \caption{Diagrama de Clases Conceptual del Dominio de MoodNest.}
+    \label{fig:diagrama_conceptual}
+\end{figure}
+
+\subsubsection{Patrones de Diseño NoSQL y Esquemas Físicos}
+
+En el modelado de bases de datos orientadas a documentos, es crucial definir si los datos relacionados se anidan (\textit{Embedding}) o se referencian (\textit{Referencing}) \cita{}. 
+
+Para la relación entre los \texttt{RegistrosDiarios} y las \texttt{Etiquetas}, se ha optado por el Patrón de Referenciación. Dado que las etiquetas tienen un ciclo de vida propio (pueden ser modificadas en color o nombre, o ser desactivadas por el usuario), anidarlas dentro de cada registro diario generaría una redundancia masiva e inconsistencias en las actualizaciones históricas. Por tanto, se han diseñado tres colecciones independientes. A continuación, se detallan los esquemas físicos en formato JSON que dan cobertura a los Requisitos de Información (RI) analizados previamente.
+
+\paragraph{Colección \texttt{usuarios}}
+Almacena las credenciales de acceso, la configuración de personalización de la interfaz y escala de ánimo y las métricas de uso.
+
+\begin{lstlisting}[style=estiloJSON]
+{
+  "_id": ObjectId("64b8f..."),
+  "nombre": "Guillermo",
+  "email": "usuario@email.com",
+  "password": "$2a$10$hashed_password_string...",
+  "preferencias_sistema": {
+    "tema": "oscuro",
+    "color_principal": "#3498db",
+    "familia_iconos": "minimalista"
+  },
+  "escala_personalizada": {
+    "1": "Terrible",
+    "5": "Normal",
+    "10": "Excelente"
+  },
+  "racha_actual": 12,
+  "fecha_registro": ISODate("2026-05-01T10:00:00Z"),
+  "fecha_ultimo_registro": ISODate("2026-05-09T18:30:00Z")
+}
+\end{lstlisting}
+
+\paragraph{Colección \texttt{etiquetas}}
+Actúa como el catálogo personalizado de factores contextuales de cada usuario. Se ha incluido un campo booleano ''activa'' para permitir un borrado lógico, garantizando que si el usuario elimina una etiqueta, esta no desaparezca de los registros históricos del pasado.
+
+\begin{lstlisting}[style=estiloJSON]
+{
+  "_id": ObjectId("64c1a..."),
+  "id_usuario": ObjectId("64b8f..."),
+  "nombre": "Deporte",
+  "color": "#2ecc71",
+  "activa": true,
+  "fecha_creacion": ISODate("2026-05-02T09:15:00Z"),
+  "fecha_ultimo_uso": ISODate("2026-05-09T18:30:00Z")
+}
+\end{lstlisting}
+
+\paragraph{Colección \texttt{registros\_diarios}}
+Es la colección transaccional principal. Implementa el patrón de referenciación mediante el array \texttt{etiquetas\_asociadas}, el cual guarda únicamente el identificador de la etiqueta y la puntuación numérica opcional asignada a ese factor específico en ese día concreto.
+
+\begin{lstlisting}[style=estiloJSON]
+{
+  "_id": ObjectId("64d5e..."),
+  "id_usuario": ObjectId("64b8f..."),
+  "fecha_asignada": ISODate("2026-05-09T00:00:00Z"),
+  "puntuacion_global": 8,
+  "comentario": "Hoy ha sido un dia bastante productivo.",
+  "etiquetas_asociadas": [
+    {
+      "id_etiqueta": ObjectId("64c1a..."),
+      "puntuacion": 9
+    },
+    {
+      "id_etiqueta": ObjectId("64c2b..."),
+      "puntuacion": null
+    }
+  ],
+  "fecha_creacion": ISODate("2026-05-09T18:30:00Z"),
+  "fecha_modificacion": ISODate("2026-05-09T18:30:00Z")
+}
+\end{lstlisting}
+
+Con la definición de estas tres colecciones, se da por finalizado el diseño de la capa de persistencia. Esta arquitectura física basada en documentos JSON da cobertura total y estricta a los Requisitos de Información extraídos durante la fase de análisis \cita{}. La combinación de la flexibilidad inherente de MongoDB con el uso estratégico del patrón de referenciación garantiza que el modelo de datos de MoodNest sea robusto, altamente escalable y perfectamente capaz de soportar la evolución del historial emocional del usuario a lo largo de los años.

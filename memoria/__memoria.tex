@@ -62,6 +62,9 @@
 \newcommand{\cmark}{\textcolor[HTML]{008000}{\ding{51}}} % Tick verde
 \newcommand{\xmark}{\textcolor[HTML]{FF0000}{\ding{55}}} % Cruz roja
 \newcommand{\revision}[1]{\textcolor{blue}{#1}}
+\newcommand{\cita}[1]{\textcolor{red}{\textbf{(Añadir Cita)}}}
+\newcommand{\notaazul}[1]{\textcolor{blue}{\textbf{[#1]}}}
+
 
 % Definir los nombres de los meses con mayúscula inicial
 \renewcommand{\monthname}[1][\month]{%
@@ -76,6 +79,24 @@
 \newenvironment{code}{\captionsetup{type=lstlisting}}{}    
 \renewcommand{\lstlistingname}{Código}    
 \renewcommand*{\lstlistlistingname}{Índice de Códigos}
+
+% Configuración del estilo para JSON/Código
+\lstdefinestyle{estiloJSON}{
+    backgroundcolor=\color{fondoCodigo},   
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    frame=single, % Esto crea el recuadro
+    rulecolor=\color{bordeCodigo}, % Color del recuadro
+    aboveskip=1em,
+    belowskip=1em
+}
 
 % Configuración para diagramas de flujo
 \newfloat{diagrama}{htbp}{loc}
