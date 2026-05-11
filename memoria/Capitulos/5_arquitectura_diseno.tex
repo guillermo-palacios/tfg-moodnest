@@ -33,35 +33,35 @@ La integridad del sistema se apoya en flujos de comunicación diferenciados: los
 
 \subsection{Arquitectura Lógica del Sistema}
 
-Una vez definida la infraestructura física y el entorno de ejecución, es fundamental detallar la organización interna del software de MoodNest. El diseño de la arquitectura lógica no es una mera distribución de archivos, sino la materialización de los principios de ingeniería de software de \textbf{alta cohesión} y \textbf{bajo acoplamiento}[cite: 615, 664]. 
+Una vez definida la infraestructura física y el entorno de ejecución, es fundamental detallar la organización interna del software de MoodNest. El diseño de la arquitectura lógica no es una mera distribución de archivos, sino la materialización de los principios de ingeniería de software de \textbf{alta cohesión} y \textbf{bajo acoplamiento}. 
 
 El objetivo primordial de esta estructura es garantizar que el sistema sea mantenible a largo plazo y fácilmente escalable. Para ello, se ha optado por una arquitectura desacoplada que separa la lógica de presentación de la lógica de negocio y la persistencia de datos. Esta organización permite que los cambios en una capa (por ejemplo, una actualización en la interfaz visual) tengan un impacto nulo o mínimo en las demás capas (como la base de datos). Para representar esta estructura, se han elaborado un Diagrama de Componentes y un Diagrama de Paquetes siguiendo el estándar UML.
 
 \subsubsection{Diseño de Componentes}
 
-El Diagrama de Componentes (Figura \ref{fig:diagrama_componentes}) ofrece una visión de alto nivel de los módulos funcionales que componen MoodNest y, lo más importante, de cómo estos interactúan a través de interfaces explícitas[cite: 659, 665]. 
+El Diagrama de Componentes (Figura \ref{fig:diagrama_componentes}) ofrece una visión de alto nivel de los módulos funcionales que componen MoodNest y, lo más importante, de cómo estos interactúan a través de interfaces explícitas. 
 
 
 
 En esta vista, el sistema se divide en tres estratos principales, cada uno con una responsabilidad única y bien definida:
 
 \begin{itemize}
-    \item \textbf{Capa de Presentación (Frontend):} Se materializa en el componente \texttt{MoodNest SPA}. Este módulo es el encargado de toda la interacción directa con el usuario, incluyendo el renderizado de los elementos visuales de la interfaz y la gestión del estado local en el navegador[cite: 666, 667]. Es un componente "delgado" en términos de reglas de negocio; su función no es procesar datos, sino solicitarlos y presentarlos. Para ello, actúa como un consumidor que se conecta a los servicios del backend mediante interfaces requeridas o "enchufes"[cite: 668].
+    \item \textbf{Capa de Presentación (Frontend):} Se materializa en el componente \texttt{MoodNest SPA}. Este módulo es el encargado de toda la interacción directa con el usuario, incluyendo el renderizado de los elementos visuales de la interfaz y la gestión del estado local en el navegador. Es un componente "delgado" en términos de reglas de negocio; su función no es procesar datos, sino solicitarlos y presentarlos. Para ello, actúa como un consumidor que se conecta a los servicios del backend mediante interfaces requeridas o ''enchufes''.
     
-    \item \textbf{Capa de Lógica de Negocio (Backend):} Es el núcleo del sistema, implementado sobre el framework Spring Boot. Para evitar un código monolítico y difícil de gestionar, esta capa se ha modularizado en "Gestores" independientes que encapsulan dominios de información específicos[cite: 669]:
+    \item \textbf{Capa de Lógica de Negocio (Backend):} Es el núcleo del sistema, implementado sobre el framework Spring Boot. Para evitar un código monolítico y difícil de gestionar, esta capa se ha modularizado en "Gestores" independientes que encapsulan dominios de información específicos:
     \begin{itemize}
-        \item \textbf{UsuariosMgr}: Centraliza la seguridad y gestión de identidad, resolviendo las operaciones críticas de registro, autenticación mediante JWT y mantenimiento del perfil de usuario[cite: 670].
-        \item \textbf{RegistrosDiariosMgr}: Gestiona la lógica principal de la aplicación, controlando el ciclo de vida completo (creación, lectura, actualización y borrado) de las entradas de estado de ánimo diarias[cite: 671].
-        \item \textbf{EtiquetasMgr}: Administra el catálogo de factores contextuales (actividades, personas, eventos) que el usuario puede asociar a sus registros, permitiendo una personalización total del sistema[cite: 672].
-        \item \textbf{EstadísticasMgr}: Es el componente analítico encargado de procesar los datos en bruto para generar información de valor, como el cálculo de rachas de uso y la detección de patrones de impacto emocional entre etiquetas y humor[cite: 673].
+        \item \textbf{UsuariosMgr}: Centraliza la seguridad y gestión de identidad, resolviendo las operaciones críticas de registro, autenticación mediante JWT y mantenimiento del perfil de usuario.
+        \item \textbf{RegistrosDiariosMgr}: Gestiona la lógica principal de la aplicación, controlando el ciclo de vida completo (creación, lectura, actualización y borrado) de las entradas de estado de ánimo diarias.
+        \item \textbf{EtiquetasMgr}: Administra el catálogo de factores contextuales (actividades, personas, eventos) que el usuario puede asociar a sus registros, permitiendo una personalización total del sistema.
+        \item \textbf{EstadísticasMgr}: Es el componente analítico encargado de procesar los datos en bruto para generar información de valor, como el cálculo de rachas de uso y la detección de patrones de impacto emocional entre etiquetas y humor.
     \end{itemize}
 
-    \item \textbf{Capa de Acceso a Datos:} Representada por el componente \texttt{Base de Datos MongoDB}. Siguiendo el principio de inversión de dependencias, los gestores del backend no conocen los detalles técnicos de cómo se guardan los datos. Simplemente requieren una interfaz común de acceso (\texttt{IDataAccess}), la cual es proporcionada por este componente de persistencia[cite: 674, 675]. Esto permite que MoodNest sea tecnológicamente agnóstico: si en el futuro se decidiera cambiar MongoDB por otra tecnología, la lógica de negocio permanecería intacta.
+    \item \textbf{Capa de Acceso a Datos:} Representada por el componente \texttt{Base de Datos MongoDB}. Siguiendo el principio de inversión de dependencias, los gestores del backend no conocen los detalles técnicos de cómo se guardan los datos. Simplemente requieren una interfaz común de acceso (\texttt{IDataAccess}), la cual es proporcionada por este componente de persistencia. Esto permite que MoodNest sea tecnológicamente agnóstico: si en el futuro se decidiera cambiar MongoDB por otra tecnología, la lógica de negocio permanecería intacta.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{Imagenes/diagrama_componentes.pdf}
+    \includegraphics[width=0.9\textwidth]{Imagenes/diagrama_componentes.png}
     \caption{Diagrama de Componentes de la Arquitectura de MoodNest.}
     \label{fig:diagrama_componentes}
 \end{figure}
@@ -101,11 +101,10 @@ Esta organización modular permite que MoodNest sea un sistema robusto donde cad
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{Imagenes/diagrama_paquetes.pdf}
+    \includegraphics[width=0.9\textwidth]{Imagenes/diagrama_paquetes.pdf}
     \caption{Organización de paquetes y dependencias de MoodNest.}
     \label{fig:diagrama_paquetes}
 \end{figure}
-
 
 \newpage
 
@@ -121,7 +120,7 @@ El sistema se articula en torno a tres entidades principales: el \texttt{Usuario
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Imagenes/diagrama_clases.pdf}
+    \includegraphics[width=0.8\textwidth]{Imagenes/diagrama_clases.png}
     \caption{Diagrama de Clases Conceptual del Dominio de MoodNest.}
     \label{fig:diagrama_conceptual}
 \end{figure}
@@ -198,3 +197,47 @@ Es la colección transaccional principal. Implementa el patrón de referenciaci�
 \end{lstlisting}
 
 Con la definición de estas tres colecciones, se da por finalizado el diseño de la capa de persistencia. Esta arquitectura física basada en documentos JSON da cobertura total y estricta a los Requisitos de Información extraídos durante la fase de análisis \cita{}. La combinación de la flexibilidad inherente de MongoDB con el uso estratégico del patrón de referenciación garantiza que el modelo de datos de MoodNest sea robusto, altamente escalable y perfectamente capaz de soportar la evolución del historial emocional del usuario a lo largo de los años.
+
+
+\newpage
+\subsection{Diseño del Comportamiento y Seguridad}
+
+El diseño del comportamiento de MoodNest se centra en garantizar una interacción fluida entre el cliente y el servidor, bajo un estricto marco de seguridad que cumpla con el \textbf{RNF4.2 (Protección de datos privados)} \cita{}.
+
+A diferencia de las arquitecturas web tradicionales basadas en sesiones de servidor (\textit{Stateful}), MoodNest implementa una arquitectura \textit{Stateless} mediante el uso de "JSON Web Tokens (JWT)" \cita{}. Esta elección responde a la necesidad de optimizar la escalabilidad del sistema. El JWT consiste en un token digital firmado criptográficamente que funciona como una credencial de identidad autónoma. Al utilizar este mecanismo, el servidor no necesita reservar memoria para mantener el estado de cada usuario; en su lugar, delega en el cliente la responsabilidad de portar su propia identidad en la cabecera de cada petición. Este token viaja codificado y contiene la información mínima necesaria (el identificador del usuario y la fecha de caducidad) asegurando mediante una firma secreta en el backend que la información no ha sido manipulada por terceros. De este modo, se garantiza un acceso seguro a los datos emocionales sin comprometer el rendimiento del servidor.
+
+Para entender mejor cómo MoodNest integra este mecanismo de seguridad, analizaremos tanto el flujo de autenticación y generación del JWT como el proceso de validación que sigue la plataforma para proteger la información del usuario en cada solicitud de acceso a datos sensibles. 
+
+\subsubsection{Fase 1: Autenticación y Generación de Credenciales}
+
+El proceso de seguridad comienza con la identificación del usuario. La Figura \ref{fig:gen_jwt} ilustra la dinámica de autenticación mediante un diagrama de secuencia. Por motivos de claridad técnica, este diagrama se centra en un flujo ideal de inicio de sesión, asumiendo que el flujo de control se gestiona mediante excepciones globales en caso de error en las credenciales.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/diagrama_secuencia_generacionJWT.pdf}
+    \caption{Diagrama de secuencia: Proceso de login y generación de JWT.}
+    \label{fig:gen_jwt}
+\end{figure}
+
+En este flujo, una vez que el componente \texttt{UsuariosMgr} valida la coincidencia del \textit{hash} de la contraseña, el \texttt{JwtService} emite un token firmado. Este es devuelto al navegador en una respuesta \texttt{200 OK} y almacenado de forma persistente en el \texttt{localStorage} del cliente, permitiendo mantener la sesión activa tras recargas de página.
+
+\subsubsection{Fase 2: Acceso a Recursos y Validación de Seguridad}
+
+Cada petición dirigida a un recurso protegido, como la consulta del historial de registros emocionales, requiere la validación de la identidad. Este proceso es crítico para garantizar que ningún usuario pueda acceder a datos ajenos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/diagrama_secuencia_validacionJWT.pdf}
+    \caption{Diagrama de secuencia: Validación de token y acceso a datos privados.}
+    \label{fig:val_jwt}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:val_jwt}, el servidor no confía ciegamente en el token recibido y realiza un proceso de validación en tres capas antes de conceder acceso a los datos sensibles:
+
+\begin{itemize}
+  \item \textbf{Comprobación de autenticidad:} Cuando el backend recibe el token, utiliza una clave secreta que solo el servidor conoce para recalcular la firma de los datos recibidos. Si el resultado de este cálculo coincide con la firma que acompaña al token, el servidor confirma que la identidad del usuario es auténtica y que nadie ha modificado su contenido durante el trayecto.
+  \item \textbf{Verificación de caducidad:} El sistema comprueba que el token todavía se encuentra dentro de su periodo de validez. Si el tiempo ha expirado, el acceso se deniega automáticamente por seguridad.
+  \item \textbf{Acceso restringido a los datos:} Una vez que el token es validado, el servidor extrae el identificador único del usuario que viaja en su interior. Este identificador es el que se utiliza obligatoriamente para filtrar las consultas a la base de datos MongoDB. De esta manera, el sistema garantiza que un usuario solo pueda visualizar o gestionar sus propios registros, bloqueando cualquier intento de acceso a información ajena.
+\end{itemize}
+
+Gracias a este mecanismo, la seguridad de MoodNest no depende de mantener una conexión constante, sino de la validez de la credencial que el usuario presenta en cada interacción.
