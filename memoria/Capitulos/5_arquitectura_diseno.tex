@@ -241,3 +241,111 @@ Como se observa en la Figura \ref{fig:val_jwt}, el servidor no confía ciegament
 \end{itemize}
 
 Gracias a este mecanismo, la seguridad de MoodNest no depende de mantener una conexión constante, sino de la validez de la credencial que el usuario presenta en cada interacción.
+
+\newpage
+\subsection{Diseño de Interfaz y Guía de Estilo Visual}
+
+El diseño de la interfaz de MoodNest se ha concebido bajo los principios de usabilidad, claridad y "cero fricción". A continuación se detallan los elementos que componen la identidad visual del sistema.
+
+\subsubsection{Identidad de Marca y Logotipo}
+
+Para la identidad gráfica de MoodNest se ha diseñado un isotipo que fusiona el monograma de la marca con su funcionalidad principal. El logotipo consiste en una línea continua en forma de cinta que dibuja la letra "M", finalizando en una flecha ascendente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth]{Imagenes/logo_moodnest.png}
+    \caption{Logotipo oficial de MoodNest: Monograma con tendencia ascendente.}
+    \label{fig:logo_marca}
+\end{figure}
+
+Esta simbología representa la continuidad del registro diario y el objetivo de crecimiento personal del usuario.
+
+\subsubsection{Paleta de Colores Corporativa}
+
+Se ha definido una paleta de colores que induce a la calma, utilizando el azul noche para garantizar una lectura cómoda.
+
+\begin{itemize}
+    \item \colorboxsquare{MoodPrimario} \textbf{Color Primario (\texttt{\#5B61C4}):} Identidad principal y botones de acción.
+    \item \colorboxsquare{MoodSecundario} \textbf{Color Secundario (\texttt{\#A9ACE0}):} Elementos de apoyo y acentos visuales.
+    \item \colorboxsquare{MoodTexto} \textbf{Color de Texto (\texttt{\#1E1E2F}):} Azul noche profundo para legibilidad máxima.
+    \item \colorboxsquare{white} \textbf{Fondos (\texttt{\#F8F9FA}):} Lienzo neutro para reducir la fatiga visual.
+\end{itemize}
+
+\subsubsection{Escala Semántica Emocional}
+
+Para representar las puntuaciones del 1 al 10 de forma intuitiva, se utiliza la siguiente escala cromática:
+
+\begin{itemize}
+    \item \colorboxsquare{MoodTerrible} \textbf{1 - 2 (Terrible):} Rojo - Estado de malestar agudo.
+    \item \colorboxsquare{MoodRegular} \textbf{3 - 4 (Regular):} Naranja - Tensión o incomodidad.
+    \item \colorboxsquare{MoodNormal} \textbf{MoodNormal} \textbf{5 - 6 (Normal):} Amarillo - Estado neutro.
+    \item \colorboxsquare{MoodBien} \textbf{7 - 8 (Bien):} Verde Lima - Tranquilidad y bienestar.
+    \item \colorboxsquare{MoodPrimario} \textbf{9 - 10 (Excelente):} Índigo Primario - Máximo bienestar y éxito emocional.
+\end{itemize}
+
+\subsubsection{Tipografía}
+
+La jerarquía de textos combina elegancia y funcionalidad técnica:
+
+\begin{itemize}
+    \item \textbf{PT Serif:} Reservada para títulos y encabezados. Aporta un carácter reflexivo y humano.
+    \item \textbf{Lato:} Utilizada para el contenido dinámico y formularios por su alta legibilidad.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Imagenes/tipografia_moodnest.png}
+    \caption{Combinación tipográfica: PT Serif para títulos y Lato para cuerpo de texto.}
+    \label{fig:tipografia}
+\end{figure}
+
+\subsubsection{Wireframes y Arquitectura de la Información}
+
+Una vez definida la guía de estilo, se procedió al diseño estructural de las pantallas principales del sistema mediante \textit{wireframes} de fidelidad media. Se ha optado por un enfoque \textit{Mobile-First}, dado que el registro de emociones es una actividad rápida y cotidiana que el usuario realizará mayoritariamente desde su dispositivo móvil.
+
+Para mantener la regla de ''cero fricción'', la navegación principal se estructura mediante una barra inferior (\textit{Bottom Navigation Bar}) que permite al usuario saltar entre los distintos módulos con un solo toque. A continuación, se presentan las cinco pantallas que conforman el flujo principal de la aplicación.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/wf_bienvenida.png}
+        \caption{Pantalla de Bienvenida y Onboarding.}
+        \label{fig:wf_bienvenida}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/wf_inicio.png}
+        \caption{Vista de Inicio (Dashboard con racha).}
+        \label{fig:wf_inicio}
+    \end{minipage}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:wf_bienvenida}, el primer punto de contacto del usuario es una vista de bienvenida que explica el valor de la aplicación y capta su interés antes del acceso. Una vez dentro, la vista de Inicio (Figura \ref{fig:wf_inicio}) focaliza la atención en la retención del usuario mediante un mensaje motivacional basado en su racha de días consecutivos, ofreciendo además un acceso rápido a sus últimos registros históricos.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/wf_registro.png}
+        \caption{Formulario de Nuevo Registro.}
+        \label{fig:wf_registro}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/wf_historial.png}
+        \caption{Vista Historial (Calendario mensual).}
+        \label{fig:wf_historial}
+    \end{minipage}
+\end{figure}
+
+El núcleo interactivo de MoodNest recae en la creación y consulta de datos. La Figura \ref{fig:wf_registro} muestra el formulario de creación de un nuevo registro diario, diseñado para que el usuario pueda crear un registro diario de la forma más rapida y simple posible. Por su parte, la Vista Historial (Figura \ref{fig:wf_historial}) actúa como un mapa de calor mensual donde cada día refleja la puntuación del usuario para ese día, permitiendo desplegar los detalles y etiquetas de un día concreto interactuando directamente sobre el calendario.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{Imagenes/wf_estadisticas.png}
+    \caption{Vista de Análisis Estadístico.}
+    \label{fig:wf_estadisticas}
+\end{figure}
+
+Finalmente, la Figura \ref{fig:wf_estadisticas} expone el panel analítico. Esta vista traduce los datos brutos en descubrimientos de valor, identificando mediante un análisis automatizado qué etiquetas actúan como el ''mejor o peor aliado'' del usuario, cuantificando su impacto directo en el estado de ánimo y presentando distribuciones porcentuales en gráficos circulares y de barras.
