@@ -12,4 +12,7 @@ public interface RegistroDiarioRepository extends MongoRepository<RegistroDiario
     
     // Busca un registro concreto asegurándose de que pertenece a ese usuario (Seguridad)
     Optional<RegistroDiario> findByIdAndIdUsuario(String id, String idUsuario);
+    
+    // Busca todos los registros históricos de un usuario (Necesario para las Estadísticas)
+    List<RegistroDiario> findByIdUsuario(String idUsuario);
 }
