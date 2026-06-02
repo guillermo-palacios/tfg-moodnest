@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             // Token inválido, caducado, o manipulado -> Se ignora y Spring Security lanzará el 403
+            //System.out.println("⚠️ ERROR DEL PORTERO JWT: " + e.getMessage());
         }
         
         // 5. Continúa el flujo hacia el Controlador
