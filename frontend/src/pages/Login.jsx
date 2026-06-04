@@ -21,36 +21,26 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">MoodNest</h2>
-        {error && <p className="mb-4 rounded bg-red-100 p-2 text-sm text-red-600">{error}</p>}
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input 
-              type="email" required
-              className="mt-1 w-full rounded border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              value={email} onChange={(e) => setEmail(e.target.value)} 
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-            <input 
-              type="password" required
-              className="mt-1 w-full rounded border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              value={password} onChange={(e) => setPassword(e.target.value)} 
-            />
-          </div>
-          <button type="submit" className="w-full rounded bg-indigo-600 p-2 py-2 font-bold text-white transition hover:bg-indigo-700">
-            Iniciar Sesión
-          </button>
-          <p className="mt-4 text-center text-sm text-gray-600">
-            ¿No tienes cuenta? <Link to="/register" className="text-indigo-600 hover:underline">Regístrate aquí</Link>
-          </p>
-        </form>
-      </div>
+    <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md border border-gray-100">
+      <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">Iniciar Sesión</h2>
+      {error && <p className="mb-4 rounded bg-red-100 p-2 text-sm text-red-600">{error}</p>}
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* ... (Tus inputs de Email y Contraseña se quedan igual) ... */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" required className="mt-1 w-full rounded border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+          <input type="password" required className="mt-1 w-full rounded border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </div>
+        <button type="submit" className="w-full rounded bg-indigo-600 p-2 py-2 font-bold text-white transition hover:bg-indigo-700">Entrar</button>
+      </form>
+      
+      <p className="mt-6 text-center text-sm text-gray-600">
+        ¿No tienes cuenta? <Link to="/register" className="font-semibold text-indigo-600 hover:underline">Regístrate aquí</Link>
+      </p>
     </div>
   );
 }

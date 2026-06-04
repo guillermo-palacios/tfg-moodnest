@@ -1,29 +1,48 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
+import PublicLayout from './components/PublicLayout';
+import Welcome from './pages/Welcome';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
 import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Historial from './pages/Historial';
+
+const NuevoRegistroTemp = () => <div className="p-8 text-center text-gray-500">Formulario en construcción...</div>;
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Ruta pública */}
-          <Route path="/login" element={<Login />} />
+          {/* Rutas Públicas */}
+          <Route path="/" element={<PublicLayout><Welcome /></PublicLayout>} />
+          <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
+          <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
           
-          <Route path="/register" element={<Register />} />
-
-          {/* Rutas protegidas */}
-          <Route path="/dashboard" element={
+          {/* ... (Tus rutas privadas se quedan igual) ... */}
+          
+          {/* Rutas Protegidas (Envueltas en el Layout) */}
+          <Route element={
             <ProtectedRoute>
-              <Dashboard />
+              <Layout>
+                {/* IMPORTANTE: Outlet se usa de otra forma, aquí pasamos children, así que Layout envuelve las rutas */}
+              </Layout>
             </ProtectedRoute>
-          } />
+          }>
+            {/* Como estamos usando Layout con children en v6, lo estructuramos así: */}
+          </Route>
 
-          {/* Redirección por defecto */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          {/* ESTA ES LA ESTRUCTURA CORRECTA EN REACT ROUTER V6 */}
+          <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
+
+          {/* Dejamos preparadas las rutas futuras para que no den error al hacer clic en el menú */}
+          <Route path="/historial" element={<ProtectedRoute><Layout><Historial /></Layout></ProtectedRoute>} />
+          <Route path="/estadisticas" element={<ProtectedRoute><Layout><div className="text-center text-gray-500 mt-10">Estadísticas en construcción...</div></Layout></ProtectedRoute>} />
+
+          {/* Redirección para URLs inválidas */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
