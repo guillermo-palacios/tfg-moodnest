@@ -3,8 +3,12 @@ package com.palacios.moodnest.controllers;
 import com.palacios.moodnest.dto.EscalaRequest;
 import com.palacios.moodnest.dto.InterfazRequest;
 import com.palacios.moodnest.models.Usuario;
+import com.palacios.moodnest.repositories.UsuarioRepository;
 import com.palacios.moodnest.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +19,21 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final UsuarioRepository usuarioRepository;
+
+
+    @GetMapping("/me")
+    public ResponseEntity<?> obtenerUsuarioActual(Authentication auth) {
+        // Busca al usuario en el repositorio a partir de auth.getName() (que suele ser el ID o email del token)
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(auth.getName());
+        
+        if (usuario.isPresent()) {
+            return ResponseEntity.ok(usuario.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     // PUT: http://localhost:8080/api/usuario/escala
     @PutMapping("/escala")

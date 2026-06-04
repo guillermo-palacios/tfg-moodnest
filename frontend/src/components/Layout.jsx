@@ -25,10 +25,27 @@ export default function Layout({ children }) {
       
       {/* 1. BARRA SUPERIOR PRINCIPAL (Morada) */}
       <header className="sticky top-0 z-50 flex items-center justify-between bg-indigo-600 px-6 py-4 shadow-md">
-        <div className="text-2xl font-extrabold tracking-wide text-white">MoodNest</div>
-        <button onClick={logout} className="text-sm font-medium text-indigo-100 transition hover:text-white">
-          Cerrar Sesión
-        </button>
+        <Link to="/dashboard" className="text-2xl font-extrabold tracking-wide text-white hover:opacity-90 transition-opacity">
+          MoodNest
+        </Link>
+        <div className="flex items-center space-x-5">
+          {/* Icono de Perfil */}
+          <Link 
+            to="/perfil" 
+            className={`rounded-full p-1.5 transition-colors ${
+              location.pathname === '/perfil' ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'
+            }`}
+            title="Mi Perfil"
+          >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </Link>
+          
+          <button onClick={logout} className="text-sm font-medium text-indigo-100 transition hover:text-white border-l border-indigo-500 pl-4">
+            Cerrar Sesión
+          </button>
+        </div>
       </header>
 
       {/* 2. SUBMENÚ DESKTOP (Blanco, debajo de la morada) */}

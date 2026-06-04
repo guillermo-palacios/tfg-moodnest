@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Historial from './pages/Historial';
+import Perfil from './pages/Perfil';
 
 const NuevoRegistroTemp = () => <div className="p-8 text-center text-gray-500">Formulario en construcción...</div>;
 
@@ -35,9 +36,8 @@ export default function App() {
           </Route>
 
           {/* ESTA ES LA ESTRUCTURA CORRECTA EN REACT ROUTER V6 */}
+          <Route path="/perfil" element={<ProtectedRoute><Layout><Perfil /></Layout></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
-
-          {/* Dejamos preparadas las rutas futuras para que no den error al hacer clic en el menú */}
           <Route path="/historial" element={<ProtectedRoute><Layout><Historial /></Layout></ProtectedRoute>} />
           <Route path="/estadisticas" element={<ProtectedRoute><Layout><div className="text-center text-gray-500 mt-10">Estadísticas en construcción...</div></Layout></ProtectedRoute>} />
 

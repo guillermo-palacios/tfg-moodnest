@@ -5,6 +5,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -21,6 +24,7 @@ public class Usuario {
     @Indexed(unique = true) // El email debe ser único
     private String email;
     
+    @JsonIgnore
     private String password;
     
     @Field("preferencias_sistema")
