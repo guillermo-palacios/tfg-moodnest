@@ -5,12 +5,13 @@ import RegistroModal from '../components/RegistroModal';
 export default function Historial() {
     const [fechaActual, setFechaActual] = useState(new Date());
     const [registros, setRegistros] = useState([]);
-    const [etiquetasCatalogo, setEtiquetasCatalogo] = useState([]); // NUEVO: Para saber los nombres
+    const [etiquetasCatalogo, setEtiquetasCatalogo] = useState([]); 
     const [cargando, setCargando] = useState(false);
-    const [registroSeleccionado, setRegistroSeleccionado] = useState(null);
+    
+    // NUEVO PATRÓN: Solo guardamos el día seleccionado, el registro se calcula solo.
+    const [diaSeleccionado, setDiaSeleccionado] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Cargar catálogo de etiquetas solo la primera vez que entramos
     useEffect(() => {
         const cargarEtiquetas = async () => {
             try {
@@ -27,10 +28,17 @@ export default function Historial() {
         setCargando(true);
         try {
             const año = fechaActual.getFullYear();
-            const mes = fechaActual.getMonth();
+            const mes = fechaActual.getMonth(); // 0 a 11
 
-            const primerDia = new Date(año, mes, 1).toISOString().split('T')[0] + "T00:00:00";
-            const ultimoDia = new Date(año, mes + 1, 0).toISOString().split('T')[0] + "T23:59:59";
+            // Helper para asegurar que el mes y el día tengan siempre 2 dígitos (ej: "05")
+            const pad = (num) => String(num).padStart(2, '0');
+
+            const mesStr = pad(mes + 1);
+            const ultimoDiaNum = new Date(año, mes + 1, 0).getDate(); // Nos da 28, 30 o 31 correctamente
+
+            // Construimos la cadena en formato YYYY-MM-DD local, sin usar toISOString()
+            const primerDia = `${año}-${mesStr}-01T00:00:00`;
+            const ultimoDia = `${año}-${mesStr}-${pad(ultimoDiaNum)}T23:59:59`;
 
             const res = await api.get(`/registros?inicio=${primerDia}&fin=${ultimoDia}`);
             setRegistros(res.data || []);
@@ -46,8 +54,8 @@ export default function Historial() {
         if (window.confirm("¿Estás seguro de que quieres eliminar este registro permanentemente?")) {
             try {
                 await api.delete(`/registros/${id}`);
-                setRegistroSeleccionado(null); // Limpiamos la selección
-                cargarRegistrosMes(); // Recargamos el calendario
+                cargarRegistrosMes(); 
+                // Al borrarlo, el diaSeleccionado sigue activo y pasará a mostrar el botón de "Crear" automáticamente
             } catch (error) {
                 alert("Error al eliminar el registro.");
             }
@@ -56,6 +64,7 @@ export default function Historial() {
 
     useEffect(() => {
         cargarRegistrosMes();
+        setDiaSeleccionado(null); // Limpiamos la selección al cambiar de mes
     }, [fechaActual]);
 
     const mesAnterior = () => setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 1));
@@ -80,67 +89,67 @@ export default function Historial() {
 
     const obtenerRegistroDelDia = (fechaDia) => {
         if (!fechaDia) return null;
-        const fechaString = fechaDia.toISOString().split('T')[0];
+        const year = fechaDia.getFullYear();
+        const month = String(fechaDia.getMonth() + 1).padStart(2, '0');
+        const day = String(fechaDia.getDate()).padStart(2, '0');
+        const fechaString = `${year}-${month}-${day}`;
         return registros.find(r => r.fechaAsignada.startsWith(fechaString));
     };
 
-    // Colores de fondo (para los círculos)
     const colorPuntuacion = (nota) => {
-        if (nota >= 9) return 'bg-indigo-500 text-white shadow-md border-transparent';
-        if (nota >= 7) return 'bg-green-500 text-white shadow-md border-transparent';
-        if (nota >= 5) return 'bg-yellow-400 text-white shadow-md border-transparent';
-        if (nota >= 3) return 'bg-orange-500 text-white shadow-md border-transparent';
-        return 'bg-red-500 text-white shadow-md border-transparent';
+        if (nota >= 9) return 'bg-mood-9 text-white border-transparent shadow-md';
+        if (nota >= 7) return 'bg-mood-7 text-white border-transparent shadow-md';
+        if (nota >= 5) return 'bg-mood-5 text-white border-transparent shadow-md';
+        if (nota >= 3) return 'bg-mood-3 text-white border-transparent shadow-md';
+        return 'bg-mood-1 text-white border-transparent shadow-md';
     };
 
-    // NUEVO: Colores de borde (para el panel de detalles)
     const borderColorPuntuacion = (nota) => {
-        if (nota >= 9) return 'border-indigo-500';
-        if (nota >= 7) return 'border-green-500';
-        if (nota >= 5) return 'border-yellow-400';
-        if (nota >= 3) return 'border-orange-500';
-        return 'border-red-500';
+        if (nota >= 9) return 'border-mood-9';
+        if (nota >= 7) return 'border-mood-7';
+        if (nota >= 5) return 'border-mood-5';
+        if (nota >= 3) return 'border-mood-3';
+        return 'border-mood-1';
     };
 
     const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
     const diasCuadricula = obtenerDiasDelMes();
 
+    // Calculamos si hay un registro en el día actualmente seleccionado
+    const registroActual = diaSeleccionado ? obtenerRegistroDelDia(diaSeleccionado) : null;
+
     return (
-        <div className="mx-auto max-w-6xl space-y-6">
+        <div className="mx-auto max-w-6xl space-y-6 animate-in fade-in duration-300">
 
             <div className="mb-8">
-                <h1 className="text-3xl font-extrabold text-gray-800">Tu Historial</h1>
-                <p className="text-gray-600 mt-2">Navega por los meses y selecciona un día para ver tus notas.</p>
+                <h1 className="text-3xl font-extrabold text-main">Tu Historial</h1>
+                <p className="text-main/70 mt-2">Navega por los meses y selecciona un día para ver tus notas.</p>
             </div>
 
             <div className="flex flex-col gap-8 lg:flex-row">
 
                 {/* COLUMNA IZQUIERDA: EL CALENDARIO */}
-                <div className="flex-1 overflow-hidden rounded-3xl bg-white shadow-sm border border-gray-100">
-
-                    {/* Cabecera del Calendario (Ahora morada como tu Wireframe) */}
-                    <div className="flex items-center justify-between bg-indigo-600 px-6 py-4 text-white lg:px-8">
-                        <button onClick={mesAnterior} className="rounded-full p-2 text-indigo-100 transition hover:bg-indigo-700 hover:text-white">
+                <div className="flex-1 overflow-hidden rounded-3xl bg-surface shadow-sm border border-gray-200 dark:border-gray-800 transition-colors duration-300">
+                    <div className="flex items-center justify-between bg-primary px-6 py-4 text-white lg:px-8 transition-colors duration-300">
+                        <button onClick={mesAnterior} className="rounded-full p-2 text-white/80 transition hover:bg-white/20 hover:text-white">
                             <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" /></svg>
                         </button>
                         <h2 className="text-2xl font-bold capitalize tracking-wide">
                             {nombresMeses[fechaActual.getMonth()]} {fechaActual.getFullYear()}
                         </h2>
-                        <button onClick={mesSiguiente} className="rounded-full p-2 text-indigo-100 transition hover:bg-indigo-700 hover:text-white">
+                        <button onClick={mesSiguiente} className="rounded-full p-2 text-white/80 transition hover:bg-white/20 hover:text-white">
                             <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
 
                     <div className="p-6 lg:p-8">
-                        {/* Días de la semana */}
-                        <div className="mb-4 grid grid-cols-7 text-center text-sm font-black text-gray-400">
+                        <div className="mb-4 grid grid-cols-7 text-center text-sm font-black text-main/40">
                             {diasSemana.map(dia => <div key={dia}>{dia}</div>)}
                         </div>
 
-                        {/* Cuadrícula de días */}
                         {cargando ? (
-                            <div className="flex h-64 items-center justify-center text-indigo-500">
+                            <div className="flex h-64 items-center justify-center text-primary">
                                 <svg className="h-8 w-8 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                             </div>
                         ) : (
@@ -150,17 +159,17 @@ export default function Historial() {
 
                                     const registro = obtenerRegistroDelDia(dia);
                                     const esHoy = dia.toDateString() === new Date().toDateString();
-                                    const estaSeleccionado = registroSeleccionado?.id === registro?.id && registro !== null;
+                                    const estaSeleccionado = diaSeleccionado && dia.toDateString() === diaSeleccionado.toDateString();
 
                                     return (
                                         <button
                                             key={index}
-                                            onClick={() => setRegistroSeleccionado(registro || 'vacio')}
+                                            onClick={() => setDiaSeleccionado(dia)}
                                             className={`mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full text-base font-bold transition-all hover:scale-110 
-                        ${registro ? colorPuntuacion(registro.puntuacionGlobal) : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'}
-                        ${esHoy && !registro ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}
-                        ${estaSeleccionado ? 'ring-4 ring-gray-900 ring-offset-2' : ''}
-                      `}
+                                                ${registro ? colorPuntuacion(registro.puntuacionGlobal) : 'bg-canvas text-main/70 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800'}
+                                                ${esHoy && !registro ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-surface' : ''}
+                                                ${estaSeleccionado ? 'ring-4 ring-main ring-offset-2 dark:ring-offset-surface' : ''}
+                                            `}
                                         >
                                             {dia.getDate()}
                                         </button>
@@ -173,62 +182,65 @@ export default function Historial() {
 
                 {/* COLUMNA DERECHA: DETALLE DEL DÍA */}
                 <div className="flex w-full flex-col lg:w-1/3">
-                    {registroSeleccionado === null ? (
-                        <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 p-6 text-center">
-                            <svg className="mb-4 h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                            <p className="font-medium text-gray-500">Toca un día en el calendario para ver los detalles.</p>
+                    {!diaSeleccionado ? (
+                        // ESTADO 1: No hay ningún día clickado
+                        <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-canvas p-6 text-center">
+                            <svg className="mb-4 h-12 w-12 text-main/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            <p className="font-medium text-main/50">Toca un día en el calendario para ver los detalles.</p>
                         </div>
-                    ) : registroSeleccionado === 'vacio' ? (
-                        <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl bg-white p-6 shadow-sm border border-gray-100 text-center">
-                            <p className="font-medium text-gray-600">No hay ningún registro guardado en este día.</p>
+                    ) : !registroActual ? (
+                        // ESTADO 2: Día clickado, pero sin registro (Muestra Botón)
+                        <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl bg-surface p-6 shadow-sm border border-gray-200 dark:border-gray-800 text-center transition-colors animate-in fade-in zoom-in-95 duration-300">
+                            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+                            </div>
+                            <h3 className="mb-1 text-lg font-bold text-main">Día sin registrar</h3>
+                            <p className="mb-6 font-medium text-main/50">
+                                {diaSeleccionado.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                            </p>
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="w-full rounded-xl bg-primary py-3 font-bold text-white shadow-md transition hover:opacity-90 hover:-translate-y-1"
+                            >
+                                Añadir Registro
+                            </button>
                         </div>
                     ) : (
-                        // NUEVO: Aquí aplicamos el borde dinámico de 4px (border-4)
-                        <div className={`flex h-full flex-col rounded-3xl bg-white p-6 shadow-md border-4 lg:p-8 animate-in fade-in slide-in-from-right-4 duration-300 ${borderColorPuntuacion(registroSeleccionado.puntuacionGlobal)}`}>
-                            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Fecha:</span>
-                            <h3 className="text-xl font-bold text-gray-800">
-                                {new Date(registroSeleccionado.fechaAsignada).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                        // ESTADO 3: Día clickado y TIENE registro (Detalles y Editar/Borrar)
+                        <div className={`flex h-full flex-col rounded-3xl bg-surface p-6 shadow-md border-4 lg:p-8 animate-in fade-in slide-in-from-right-4 duration-300 transition-colors ${borderColorPuntuacion(registroActual.puntuacionGlobal)}`}>
+                            <span className="text-sm font-semibold text-main/50 uppercase tracking-wider">Fecha:</span>
+                            <h3 className="text-xl font-bold text-main">
+                                {new Date(registroActual.fechaAsignada).toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}
                             </h3>
 
                             <div className="mt-6 flex items-center space-x-3">
-                                <span className="text-base font-semibold text-gray-700">Puntuación Global:</span>
-                                <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-black ${colorPuntuacion(registroSeleccionado.puntuacionGlobal)}`}>
-                                    {registroSeleccionado.puntuacionGlobal}
+                                <span className="text-base font-semibold text-main/80">Puntuación Global:</span>
+                                <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-black ${colorPuntuacion(registroActual.puntuacionGlobal)}`}>
+                                    {registroActual.puntuacionGlobal}
                                 </div>
                             </div>
 
-                            {registroSeleccionado.comentario && (
+                            {registroActual.comentario && (
                                 <div className="mt-6">
-                                    <span className="text-sm font-semibold text-gray-700">Comentario:</span>
-                                    <p className="mt-1 text-gray-600 italic">"{registroSeleccionado.comentario}"</p>
+                                    <span className="text-sm font-semibold text-main/80">Comentario:</span>
+                                    <p className="mt-1 text-main/70 italic">"{registroActual.comentario}"</p>
                                 </div>
                             )}
 
-                            {registroSeleccionado.etiquetasAsociadas?.length > 0 && (
+                            {registroActual.etiquetasAsociadas?.length > 0 && (
                                 <div className="mt-6">
-                                    <span className="mb-3 block text-sm font-semibold text-gray-700">Etiquetas de hoy:</span>
+                                    <span className="mb-3 block text-sm font-semibold text-main/80">Etiquetas de hoy:</span>
                                     <div className="flex flex-wrap gap-2">
-                                        {registroSeleccionado.etiquetasAsociadas.map((eti, i) => {
-                                            // Buscamos la info de la etiqueta
+                                        {registroActual.etiquetasAsociadas.map((eti, i) => {
                                             const tagInfo = etiquetasCatalogo.find(e => e.id === eti.idEtiqueta);
                                             const nombreTag = tagInfo ? tagInfo.nombre : 'Desconocida';
-                                            // Si la etiqueta tiene color propio lo usamos, si no, usamos un morado por defecto
-                                            const colorTag = tagInfo && tagInfo.color ? tagInfo.color : '#818cf8';
+                                            const colorTag = tagInfo && tagInfo.color ? tagInfo.color : 'rgb(var(--color-primary))';
 
                                             return (
-                                                <span
-                                                    key={i}
-                                                    className="flex items-center rounded-full border-2 bg-white py-1 pl-3 pr-1 text-sm font-semibold text-gray-700 shadow-sm"
-                                                    style={{ borderColor: colorTag }} // Aplicamos el color al borde
-                                                >
+                                                <span key={i} className="flex items-center rounded-full border-2 bg-surface py-1 pl-3 pr-1 text-sm font-semibold text-main shadow-sm transition-colors" style={{ borderColor: colorTag }}>
                                                     <span className={eti.puntuacion ? "mr-2" : "pr-2"}>{nombreTag}</span>
-
-                                                    {/* El circulito con la nota */}
                                                     {eti.puntuacion && (
-                                                        <span
-                                                            className="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm"
-                                                            style={{ backgroundColor: colorTag }} // Aplicamos el color al fondo del círculo
-                                                        >
+                                                        <span className="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm" style={{ backgroundColor: colorTag }}>
                                                             {eti.puntuacion}
                                                         </span>
                                                     )}
@@ -239,16 +251,15 @@ export default function Historial() {
                                 </div>
                             )}
 
-                            {/* Botones de Acción (CRUD) */}
                             <div className="mt-auto pt-8 flex flex-col space-y-3">
                                 <button
                                     onClick={() => setIsModalOpen(true)}
-                                    className="w-full rounded-xl bg-indigo-600 py-3 font-bold text-white shadow-md transition hover:bg-indigo-700"
+                                    className="w-full rounded-xl bg-primary py-3 font-bold text-white shadow-md transition hover:opacity-90"
                                 >
                                     Editar Registro
                                 </button>
                                 <button
-                                    onClick={() => eliminarRegistro(registroSeleccionado.id)}
+                                    onClick={() => eliminarRegistro(registroActual.id)}
                                     className="w-full py-2 text-sm font-semibold text-red-500 hover:text-red-700 transition"
                                 >
                                     Eliminar permanentemente
@@ -263,9 +274,10 @@ export default function Historial() {
             <RegistroModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSuccess={() => { cargarRegistrosMes(); setRegistroSeleccionado(null); }}
+                onSuccess={() => { cargarRegistrosMes(); }}
                 registrosPrevios={registros}
-                registroAEditar={registroSeleccionado} // <--- Le pasamos el registro seleccionado
+                registroAEditar={registroActual} 
+                fechaPorDefecto={diaSeleccionado} // PASAMOS EL DÍA SELECCIONADO AL MODAL
             />
         </div>
     );

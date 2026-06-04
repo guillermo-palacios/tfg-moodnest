@@ -56,4 +56,26 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+
+    // CU3: PUT http://localhost:8080/api/usuario/perfil
+    @PutMapping("/perfil")
+    public ResponseEntity<?> actualizarPerfil(Authentication auth, @RequestBody com.palacios.moodnest.dto.PerfilUpdateRequest request) {
+        try {
+            Usuario usuarioActualizado = usuarioService.actualizarPerfil(auth.getName(), request);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        }
+    }
+
+    // CU5: DELETE http://localhost:8080/api/usuario/cuenta
+    @DeleteMapping("/cuenta")
+    public ResponseEntity<?> eliminarCuenta(Authentication auth, @RequestBody com.palacios.moodnest.dto.EliminarCuentaRequest request) {
+        try {
+            usuarioService.eliminarCuenta(auth.getName(), request.getPassword());
+            return ResponseEntity.ok(java.util.Map.of("message", "Cuenta eliminada correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        }
+    }
 }

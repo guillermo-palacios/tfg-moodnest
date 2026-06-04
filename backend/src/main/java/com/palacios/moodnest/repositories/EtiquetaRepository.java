@@ -14,4 +14,7 @@ public interface EtiquetaRepository extends MongoRepository<Etiqueta, String> {
     
     // Busca si ya existe una etiqueta activa con el mismo nombre (Ignorando mayúsculas/minúsculas)
     Optional<Etiqueta> findByIdUsuarioAndNombreIgnoreCaseAndActivaTrue(String idUsuario, String nombre);
+
+    // Borrado en cascada de todas las etiquetas del usuario
+    void deleteByIdUsuario(String idUsuario);
 }

@@ -15,4 +15,7 @@ public interface RegistroDiarioRepository extends MongoRepository<RegistroDiario
     
     // Busca todos los registros históricos de un usuario (Necesario para las Estadísticas)
     List<RegistroDiario> findByIdUsuario(String idUsuario);
+
+    // Borrado en cascada de todos los registros del usuario
+    void deleteByIdUsuario(String idUsuario);
 }

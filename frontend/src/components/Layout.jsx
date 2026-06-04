@@ -3,61 +3,76 @@ import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 export default function Layout({ children }) {
-  const { logout } = useContext(AuthContext);
+  const { logout, temaColor } = useContext(AuthContext);
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-    )},
-    { name: 'Calendario', path: '/historial', icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-    )},
-    { name: 'Estadísticas', path: '/estadisticas', icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-    )}
+    {
+      name: 'Dashboard', path: '/dashboard', icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+      )
+    },
+    {
+      name: 'Calendario', path: '/historial', icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+      )
+    },
+    {
+      name: 'Estadísticas', path: '/estadisticas', icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        )
+    }
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 pb-16 md:pb-0">
-      
-      {/* 1. BARRA SUPERIOR PRINCIPAL (Morada) */}
-      <header className="sticky top-0 z-50 flex items-center justify-between bg-indigo-600 px-6 py-4 shadow-md">
-        <Link to="/dashboard" className="text-2xl font-extrabold tracking-wide text-white hover:opacity-90 transition-opacity">
-          MoodNest
+    // Hemos quitado bg-gray-50, porque el body ya tiene bg-canvas (claro u oscuro automático)
+    <div className="flex min-h-screen flex-col pb-16 md:pb-0">
+
+      {/* 1. BARRA SUPERIOR PRINCIPAL (Ahora es bg-primary) */}
+      <header className="sticky top-0 z-50 flex items-center justify-between bg-primary px-6 py-4 shadow-md transition-colors duration-300">
+      <Link to="/dashboard" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+          {/* Contenedor blanco para proteger el logo del fondo de color */}
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
+            {/* Cargamos el PNG dinámicamente según el color actual */}
+            <img 
+                src={`/logo-${temaColor}.png`} 
+                alt="Logo MoodNest" 
+                className="h-7 w-auto object-contain"
+                onError={(e) => e.target.src = '/logo-indigo.png'} // Fallback por si la imagen no existe
+            />
+          </div>
+          <span className="text-2xl font-extrabold tracking-wide text-white">MoodNest</span>
         </Link>
+        
         <div className="flex items-center space-x-5">
-          {/* Icono de Perfil */}
-          <Link 
-            to="/perfil" 
-            className={`rounded-full p-1.5 transition-colors ${
-              location.pathname === '/perfil' ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'
-            }`}
+          <Link
+            to="/perfil"
+            className={`rounded-full p-1.5 transition-colors ${isActive('/perfil') ? 'bg-white/20 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'
+              }`}
             title="Mi Perfil"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </Link>
-          
-          <button onClick={logout} className="text-sm font-medium text-indigo-100 transition hover:text-white border-l border-indigo-500 pl-4">
+
+          <button onClick={logout} className="text-sm font-medium text-white/80 transition hover:text-white border-l border-white/30 pl-4">
             Cerrar Sesión
           </button>
         </div>
       </header>
 
-      {/* 2. SUBMENÚ DESKTOP (Blanco, debajo de la morada) */}
-      <nav className="hidden border-b bg-white shadow-sm md:block">
+      {/* 2. SUBMENÚ DESKTOP (bg-surface para adaptarse al modo oscuro) */}
+      <nav className="hidden border-b border-gray-200 dark:border-gray-800 bg-surface shadow-sm md:block transition-colors duration-300">
         <div className="mx-auto flex max-w-4xl justify-center space-x-12 px-4">
           {navItems.map((item) => (
-            <Link key={item.name} to={item.path} 
-              className={`flex items-center space-x-2 border-b-2 px-2 py-4 font-medium transition-colors ${
-                isActive(item.path) 
-                  ? 'border-indigo-600 text-indigo-600' 
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-800'
-              }`}>
+            <Link key={item.name} to={item.path}
+              className={`flex items-center space-x-2 border-b-2 px-2 py-4 font-medium transition-colors ${isActive(item.path)
+                  ? 'border-primary text-primary' // <-- Mágico: color corporativo
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-main'
+                }`}>
               {item.icon}
               <span className="text-base">{item.name}</span>
             </Link>
@@ -70,13 +85,12 @@ export default function Layout({ children }) {
         {children}
       </main>
 
-      {/* 4. MENÚ INFERIOR MÓVIL */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-around border-t bg-white pb-safe pt-2 shadow-lg md:hidden">
+      {/* 4. MENÚ INFERIOR MÓVIL (bg-surface) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-around border-t border-gray-200 dark:border-gray-800 bg-surface pb-safe pt-2 shadow-lg md:hidden transition-colors duration-300">
         {navItems.map((item) => (
-          <Link key={item.name} to={item.path} 
-            className={`flex flex-col items-center p-2 transition-colors ${
-              isActive(item.path) ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'
-            }`}>
+          <Link key={item.name} to={item.path}
+            className={`flex flex-col items-center p-2 transition-colors ${isActive(item.path) ? 'text-primary' : 'text-gray-400 hover:text-main'
+              }`}>
             {item.icon}
             <span className="mt-1 text-xs font-medium">{item.name}</span>
           </Link>

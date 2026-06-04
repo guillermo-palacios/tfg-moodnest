@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Historial from './pages/Historial';
 import Perfil from './pages/Perfil';
+import Estadisticas from './pages/Estadisticas';
 
 const NuevoRegistroTemp = () => <div className="p-8 text-center text-gray-500">Formulario en construcción...</div>;
 
@@ -39,7 +40,7 @@ export default function App() {
           <Route path="/perfil" element={<ProtectedRoute><Layout><Perfil /></Layout></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
           <Route path="/historial" element={<ProtectedRoute><Layout><Historial /></Layout></ProtectedRoute>} />
-          <Route path="/estadisticas" element={<ProtectedRoute><Layout><div className="text-center text-gray-500 mt-10">Estadísticas en construcción...</div></Layout></ProtectedRoute>} />
+          <Route path="/estadisticas" element={<ProtectedRoute><Layout><Estadisticas /></Layout></ProtectedRoute>} />
 
           {/* Redirección para URLs inválidas */}
           <Route path="*" element={<Navigate to="/" replace />} />

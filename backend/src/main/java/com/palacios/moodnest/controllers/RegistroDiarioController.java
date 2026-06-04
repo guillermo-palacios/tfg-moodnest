@@ -61,13 +61,21 @@ public class RegistroDiarioController {
     @GetMapping
     public ResponseEntity<?> obtenerRegistrosMes(
             Authentication auth,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
+            // 1. Forzamos explícitamente el nombre del parámetro en la URL
+            // 2. Lo recibimos como String para evitar que Spring Boot explote antes de tiempo
+            @RequestParam("inicio") String inicioStr,
+            @RequestParam("fin") String finStr) {
         try {
+            // Transformamos el texto a fecha de forma manual (Es 100% seguro)
+            LocalDateTime inicio = LocalDateTime.parse(inicioStr);
+            LocalDateTime fin = LocalDateTime.parse(finStr);
+
             List<RegistroDiario> registros = registroService.obtenerRegistrosPorMes(auth.getName(), inicio, fin);
             return ResponseEntity.ok(registros);
+            
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            // Si la fecha viene mal, ahora sí nos avisará por aquí con un 400 Bad Request
+            return ResponseEntity.badRequest().body("Error al leer las fechas: " + e.getMessage());
         }
     }
 }

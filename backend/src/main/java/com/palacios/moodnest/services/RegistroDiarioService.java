@@ -8,7 +8,9 @@ import com.palacios.moodnest.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit; // Importante para calcular los días matemáticamente
 import java.util.List;
 
 @Service
@@ -41,8 +43,45 @@ public class RegistroDiarioService {
         registro.setFechaCreacion(LocalDateTime.now());
         registro.setFechaModificacion(LocalDateTime.now());
 
-        // TODO: Aquí en la Fase B recalcularemos la racha del usuario
+        // --- LÓGICA DE LA RACHA ---
+        // Extraemos solo el "Día" (ignoramos las horas/minutos para no falsear el cálculo)
+        LocalDate fechaNuevoRegistro = request.getFechaAsignada().toLocalDate();
+        LocalDate fechaUltimo = usuario.getFechaUltimoRegistro() != null
+                ? usuario.getFechaUltimoRegistro().toLocalDate()
+                : null;
+        
+        int rachaActual = usuario.getRachaActual() != null ? usuario.getRachaActual() : 0;
 
+        if (fechaUltimo == null) {
+            // 1. Es su primer registro histórico
+            usuario.setRachaActual(1);
+            usuario.setFechaUltimoRegistro(request.getFechaAsignada());
+        } else {
+            long diasDiferencia = ChronoUnit.DAYS.between(fechaUltimo, fechaNuevoRegistro);
+
+            if (diasDiferencia == 1) {
+                // 2. Registro consecutivo (Justo al día siguiente) -> Sumamos 1
+                usuario.setRachaActual(rachaActual + 1);
+                usuario.setFechaUltimoRegistro(request.getFechaAsignada());
+            } else if (diasDiferencia > 1) {
+                // 3. Han pasado 2 o más días -> Se rompe la racha y vuelve a 1
+                usuario.setRachaActual(1);
+                usuario.setFechaUltimoRegistro(request.getFechaAsignada());
+            } else if (diasDiferencia == 0) {
+                // 4. Ya había registrado algo HOY -> Mantenemos la racha igual
+                if (rachaActual == 0) { 
+                    usuario.setRachaActual(1); // Por si venía de un fallo previo en 0
+                }
+                usuario.setFechaUltimoRegistro(request.getFechaAsignada());
+            }
+            // 5. Si diasDiferencia < 0 (es un registro del pasado para rellenar el calendario): 
+            // Ignoramos la racha y no tocamos la fechaUltimoRegistro para no estropear el progreso actual.
+        }
+
+        // Guardamos el usuario con su nueva racha calculada
+        usuarioRepository.save(usuario); 
+        
+        // Guardamos la nota en sí
         return registroRepository.save(registro);
     }
 
@@ -50,22 +89,18 @@ public class RegistroDiarioService {
     public RegistroDiario actualizarRegistro(String email, String idRegistro, RegistroDiarioRequest request) {
         Usuario usuario = getUsuarioActual(email);
 
-        // Buscamos el registro, asegurándonos de que existe y de que pertenece a este
-        // usuario
         RegistroDiario registro = registroRepository.findByIdAndIdUsuario(idRegistro, usuario.getId())
                 .orElseThrow(() -> new RuntimeException("Registro no encontrado o no tienes permisos para editarlo"));
 
-        // Validamos la regla de negocio: no se permiten fechas futuras
         if (request.getFechaAsignada().isAfter(LocalDateTime.now())) {
             throw new RuntimeException("No se pueden asignar fechas futuras");
         }
 
-        // Actualizamos los datos permitidos
         registro.setFechaAsignada(request.getFechaAsignada());
         registro.setPuntuacionGlobal(request.getPuntuacionGlobal());
         registro.setComentario(request.getComentario());
         registro.setEtiquetasAsociadas(request.getEtiquetasAsociadas());
-        registro.setFechaModificacion(LocalDateTime.now()); // Actualizamos la marca temporal
+        registro.setFechaModificacion(LocalDateTime.now());
 
         return registroRepository.save(registro);
     }
@@ -74,7 +109,6 @@ public class RegistroDiarioService {
     public void eliminarRegistro(String email, String idRegistro) {
         Usuario usuario = getUsuarioActual(email);
 
-        // Verificamos propiedad antes de borrar
         RegistroDiario registro = registroRepository.findByIdAndIdUsuario(idRegistro, usuario.getId())
                 .orElseThrow(() -> new RuntimeException("Registro no encontrado o no tienes permisos para borrarlo"));
 

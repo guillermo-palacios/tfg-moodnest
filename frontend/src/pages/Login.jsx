@@ -14,32 +14,41 @@ export default function Login() {
     setError('');
     try {
       await login(email, password);
-      navigate('/dashboard'); // Si va bien, al panel principal
+      navigate('/dashboard'); 
     } catch (err) {
       setError('Credenciales incorrectas. Inténtalo de nuevo.');
     }
   };
 
   return (
-    <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md border border-gray-100">
-      <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">Iniciar Sesión</h2>
-      {error && <p className="mb-4 rounded bg-red-100 p-2 text-sm text-red-600">{error}</p>}
+    <div className="w-full max-w-md rounded-3xl bg-surface p-8 shadow-md border border-gray-200 dark:border-gray-800 transition-colors duration-300">
       
+      <div className="flex justify-center mb-6">
+        <img src="/logo-indigo.png" alt="MoodNest" className="h-20 w-auto object-contain drop-shadow-md" />
+      </div>
+      
+      <h2 className="mb-6 text-center text-3xl font-bold text-main">Iniciar Sesión</h2>
+      
+      {error && <p className="mb-4 rounded-xl bg-red-100 dark:bg-red-900/30 p-3 text-sm text-red-600 dark:text-red-400 font-medium text-center border border-red-200 dark:border-red-800">{error}</p>}
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* ... (Tus inputs de Email y Contraseña se quedan igual) ... */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input type="email" required className="mt-1 w-full rounded border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label className="block text-sm font-semibold text-main/80 mb-1">Email</label>
+          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} 
+                 className="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-canvas p-3 text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-          <input type="password" required className="mt-1 w-full rounded border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <label className="block text-sm font-semibold text-main/80 mb-1">Contraseña</label>
+          <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} 
+                 className="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-canvas p-3 text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors" />
         </div>
-        <button type="submit" className="w-full rounded bg-indigo-600 p-2 py-2 font-bold text-white transition hover:bg-indigo-700">Entrar</button>
+        <button type="submit" className="mt-2 w-full rounded-xl bg-primary py-3 font-bold text-white shadow-md transition hover:opacity-90">
+            Entrar
+        </button>
       </form>
-      
-      <p className="mt-6 text-center text-sm text-gray-600">
-        ¿No tienes cuenta? <Link to="/register" className="font-semibold text-indigo-600 hover:underline">Regístrate aquí</Link>
+
+      <p className="mt-6 text-center text-sm text-main/60">
+        ¿No tienes cuenta? <Link to="/register" className="font-bold text-primary hover:underline">Regístrate aquí</Link>
       </p>
     </div>
   );
