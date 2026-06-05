@@ -123,12 +123,14 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
             {registros.map((registro) => (
-              <div key={registro.id} className="flex flex-col items-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-surface py-5 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md">
+              <div key={registro.id} className="flex flex-col items-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-surface py-6 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md">
                 <span className="text-sm font-semibold text-main/60">{formatearFecha(registro.fechaAsignada)}</span>
-                <span className="my-3 text-4xl font-black text-main">{registro.puntuacionGlobal}</span>
-                <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${colorPuntuacion(registro.puntuacionGlobal)}`}>
+                
+                {/* CÍRCULO AGRANDADO Y ÚNICO */}
+                <div className={`mt-5 flex h-16 w-16 items-center justify-center rounded-full text-3xl font-black ${colorPuntuacion(registro.puntuacionGlobal)}`}>
                   {registro.puntuacionGlobal}
                 </div>
+                
               </div>
             ))}
           </div>
