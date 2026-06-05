@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast'; // <-- IMPORTAMOS TOAST
 
 export default function Perfil() {
   const { aplicarPreferenciasVisuales, logout } = useContext(AuthContext); 
@@ -16,7 +17,6 @@ export default function Perfil() {
   const [editNombre, setEditNombre] = useState('');
   const [editColor, setEditColor] = useState('');
 
-  // --- NUEVOS ESTADOS CU3 y CU5 ---
   const [perfilForm, setPerfilForm] = useState({ nombre: '', passwordActual: '', nuevaPassword: '' });
   const [passwordBorrado, setPasswordBorrado] = useState('');
   const [cargandoAccion, setCargandoAccion] = useState(false);
@@ -29,14 +29,9 @@ export default function Perfil() {
   const cargarUsuario = async () => {
     try {
       const res = await api.get('/usuario/me');
-      setUsuario({
-        nombre: res.data.nombre || res.data.username, 
-        email: res.data.email,
-        preferenciasSistema: res.data.preferenciasSistema
-      });
+      setUsuario({ nombre: res.data.nombre || res.data.username, email: res.data.email, preferenciasSistema: res.data.preferenciasSistema });
       setPerfilForm(prev => ({ ...prev, nombre: res.data.nombre || '' }));
     } catch (error) {
-      console.error("Error al cargar el usuario real:", error);
       setUsuario({ nombre: 'Usuario Desconocido', email: 'No se pudo cargar el correo' });
     }
   };
@@ -46,20 +41,20 @@ export default function Perfil() {
       const res = await api.get('/etiquetas');
       setEtiquetas(res.data || []);
     } catch (error) {
-      console.error("Error al cargar las etiquetas:", error);
+      toast.error("No se pudieron cargar las etiquetas.");
     } finally {
       setCargando(false);
     }
   };
 
-  // --- LÓGICA ETIQUETAS ---
   const handleCrear = async (e) => {
     e.preventDefault();
     if (!nuevoNombre.trim()) return;
     try {
       await api.post('/etiquetas', { nombre: nuevoNombre.trim(), color: nuevoColor });
       setNuevoNombre(''); setNuevoColor('#6366f1'); cargarEtiquetas();
-    } catch (error) { alert("Error al crear la etiqueta. Quizás ya exista."); }
+      toast.success("Etiqueta añadida al catálogo"); // CU8: Confirmación
+    } catch (error) { toast.error("Error al crear la etiqueta. Quizás ya exista."); }
   };
 
   const handleActivarEdicion = (tag) => {
@@ -71,14 +66,16 @@ export default function Perfil() {
     try {
       await api.put(`/etiquetas/${id}`, { nombre: editNombre.trim(), color: editColor });
       setIdEtiquetaEditando(null); cargarEtiquetas();
-    } catch (error) { alert("Error al actualizar la etiqueta."); }
+      toast.success("Etiqueta actualizada"); // CU8: Confirmación
+    } catch (error) { toast.error("Error al actualizar la etiqueta."); }
   };
 
   const handleEliminar = async (id) => {
     if (window.confirm("¿Seguro que quieres archivar esta etiqueta? Ya no aparecerá en tus nuevos registros.")) {
       try {
         await api.delete(`/etiquetas/${id}`); cargarEtiquetas();
-      } catch (error) { alert("Error al archivar la etiqueta."); }
+        toast.success("Etiqueta archivada"); // CU8: Confirmación
+      } catch (error) { toast.error("Error al archivar la etiqueta."); }
     }
   };
 
@@ -87,7 +84,7 @@ export default function Perfil() {
     aplicarPreferenciasVisuales({ tema: nuevoTema, colorPrincipal: nuevoColor, familiaIconos: usuario.preferenciasSistema?.familiaIconos || 'clasica' });
     try {
       await api.put('/usuario/interfaz', { tema: nuevoTema, colorPrincipal: nuevoColor, familiaIconos: 'default' });
-    } catch (error) { console.error("Error al guardar preferencias:", error); }
+    } catch (error) { toast.error("Error al guardar preferencias de interfaz."); }
   };
 
   const handleCambiarPaleta = async (paletaId) => {
@@ -95,43 +92,41 @@ export default function Perfil() {
     aplicarPreferenciasVisuales({ tema: usuario.preferenciasSistema?.tema || 'claro', colorPrincipal: usuario.preferenciasSistema?.colorPrincipal || 'indigo', familiaIconos: paletaId });
     try {
       await api.put('/usuario/escala', { escalaPersonalizada: {}, familiaIconos: paletaId });
-    } catch(e) { console.error(e); }
+    } catch(e) { toast.error("Error al guardar la paleta de escala."); }
   };
 
-  // --- NUEVA LÓGICA CU3 (GESTIONAR PERFIL) ---
   const handleActualizarPerfil = async (e) => {
     e.preventDefault();
     setCargandoAccion(true);
     try {
       await api.put('/usuario/perfil', perfilForm);
-      alert("¡Perfil actualizado con éxito!");
-      setPerfilForm(prev => ({ ...prev, passwordActual: '', nuevaPassword: '' })); // Limpiamos contraseñas
-      cargarUsuario(); // Recargamos para reflejar cambios
+      toast.success("¡Perfil actualizado con éxito!"); // CU3: Confirmación de éxito
+      setPerfilForm(prev => ({ ...prev, passwordActual: '', nuevaPassword: '' })); 
+      cargarUsuario(); 
     } catch (err) {
-      alert(err.response?.data?.message || "Error al actualizar perfil.");
+      toast.error(err.response?.data?.message || "Error al actualizar perfil."); // CU3: Error validación
     } finally {
       setCargandoAccion(false);
     }
   };
 
-  // --- NUEVA LÓGICA CU5 (ELIMINAR CUENTA) ---
   const handleEliminarCuenta = async (e) => {
     e.preventDefault();
     if (!window.confirm("¡ATENCIÓN! Esta acción es irreversible. ¿Deseas eliminar tu cuenta y todos tus datos?")) return;
     
     setCargandoAccion(true);
     try {
-      // Axios DELETE con body se manda usando la config 'data'
       await api.delete('/usuario/cuenta', { data: { password: passwordBorrado } });
-      alert("Tu cuenta ha sido eliminada. Lamentamos verte partir.");
-      logout(); // Cierra la sesión y redirige al inicio
+      toast.success("Tu cuenta ha sido eliminada. Lamentamos verte partir."); // CU5: Baja confirmada
+      logout(); 
     } catch (err) {
-      alert(err.response?.data?.message || "Error al eliminar la cuenta. Verifica tu contraseña.");
+      toast.error(err.response?.data?.message || "Contraseña incorrecta. Se ha abortado la eliminación."); // CU5: Contraseña errónea
     } finally {
       setCargandoAccion(false);
     }
   };
 
+  // ... (El return() se queda exactamente igual) ...
   return (
     <div className="mx-auto max-w-5xl space-y-8 animate-in fade-in duration-300">
       <div>
@@ -244,7 +239,7 @@ export default function Perfil() {
                         <input type="color" value={editColor} onChange={(e) => setEditColor(e.target.value)} className="h-8 w-10 cursor-pointer border-none bg-transparent" />
                         <div className="flex space-x-2 sm:ml-auto">
                           <button onClick={() => handleGuardarEdicion(tag.id)} className="rounded-lg bg-green-600 px-3 py-1 text-xs font-bold text-white hover:bg-green-700">Guardar</button>
-                          <button onClick={() => setIdEtiquetaEditando(null)} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-canvas px-3 py-1 text-xs font-bold text-main/70 hover:bg-gray-200">Cancelar</button>
+                          <button onClick={() => setIdEtiquetaEditando(null)} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-canvas px-3 py-1 text-xs font-bold text-main/70 hover:bg-gray-200 dark:hover:bg-gray-800">Cancelar</button>
                         </div>
                       </div>
                     ) : (

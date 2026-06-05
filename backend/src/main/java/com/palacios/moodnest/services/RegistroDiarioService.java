@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit; // Importante para calcular los días matemáticamente
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -29,8 +29,8 @@ public class RegistroDiarioService {
     public RegistroDiario crearRegistro(String email, RegistroDiarioRequest request) {
         Usuario usuario = getUsuarioActual(email);
 
-        // Cumplimiento del RF2.2: Bloquear fechas futuras explícitamente
-        if (request.getFechaAsignada().isAfter(LocalDateTime.now())) {
+        // LA SOLUCIÓN SENCILLA: Comparamos solo la FECHA (LocalDate), ignorando las horas
+        if (request.getFechaAsignada().toLocalDate().isAfter(LocalDate.now())) {
             throw new RuntimeException("No se pueden crear registros en fechas futuras");
         }
 
@@ -44,7 +44,6 @@ public class RegistroDiarioService {
         registro.setFechaModificacion(LocalDateTime.now());
 
         // --- LÓGICA DE LA RACHA ---
-        // Extraemos solo el "Día" (ignoramos las horas/minutos para no falsear el cálculo)
         LocalDate fechaNuevoRegistro = request.getFechaAsignada().toLocalDate();
         LocalDate fechaUltimo = usuario.getFechaUltimoRegistro() != null
                 ? usuario.getFechaUltimoRegistro().toLocalDate()
@@ -53,35 +52,24 @@ public class RegistroDiarioService {
         int rachaActual = usuario.getRachaActual() != null ? usuario.getRachaActual() : 0;
 
         if (fechaUltimo == null) {
-            // 1. Es su primer registro histórico
             usuario.setRachaActual(1);
             usuario.setFechaUltimoRegistro(request.getFechaAsignada());
         } else {
             long diasDiferencia = ChronoUnit.DAYS.between(fechaUltimo, fechaNuevoRegistro);
 
             if (diasDiferencia == 1) {
-                // 2. Registro consecutivo (Justo al día siguiente) -> Sumamos 1
                 usuario.setRachaActual(rachaActual + 1);
                 usuario.setFechaUltimoRegistro(request.getFechaAsignada());
             } else if (diasDiferencia > 1) {
-                // 3. Han pasado 2 o más días -> Se rompe la racha y vuelve a 1
                 usuario.setRachaActual(1);
                 usuario.setFechaUltimoRegistro(request.getFechaAsignada());
             } else if (diasDiferencia == 0) {
-                // 4. Ya había registrado algo HOY -> Mantenemos la racha igual
-                if (rachaActual == 0) { 
-                    usuario.setRachaActual(1); // Por si venía de un fallo previo en 0
-                }
+                if (rachaActual == 0) usuario.setRachaActual(1); 
                 usuario.setFechaUltimoRegistro(request.getFechaAsignada());
             }
-            // 5. Si diasDiferencia < 0 (es un registro del pasado para rellenar el calendario): 
-            // Ignoramos la racha y no tocamos la fechaUltimoRegistro para no estropear el progreso actual.
         }
 
-        // Guardamos el usuario con su nueva racha calculada
         usuarioRepository.save(usuario); 
-        
-        // Guardamos la nota en sí
         return registroRepository.save(registro);
     }
 
@@ -92,7 +80,8 @@ public class RegistroDiarioService {
         RegistroDiario registro = registroRepository.findByIdAndIdUsuario(idRegistro, usuario.getId())
                 .orElseThrow(() -> new RuntimeException("Registro no encontrado o no tienes permisos para editarlo"));
 
-        if (request.getFechaAsignada().isAfter(LocalDateTime.now())) {
+        // LA SOLUCIÓN SENCILLA: Igual aquí, solo miramos LocalDate
+        if (request.getFechaAsignada().toLocalDate().isAfter(LocalDate.now())) {
             throw new RuntimeException("No se pueden asignar fechas futuras");
         }
 

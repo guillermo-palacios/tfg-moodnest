@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function Register() {
     const [nombre, setNombre] = useState('');
@@ -16,9 +17,10 @@ export default function Register() {
         setError('');
         try {
             await registerUser(nombre, email, password);
+            toast.success('¡Bienvenido a MoodNest!');
             navigate('/dashboard'); 
         } catch (err) {
-            setError('Error al crear la cuenta. Puede que el email ya exista.');
+            toast.error('Error al crear la cuenta. Puede que el email ya exista.');
         }
     };
 

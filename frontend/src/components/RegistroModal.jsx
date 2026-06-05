@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast'; 
 
 export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPrevios = [], registroAEditar = null, fechaPorDefecto = null }) {
   const [cargando, setCargando] = useState(false);
@@ -14,7 +15,6 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
   const [creandoEtiqueta, setCreandoEtiqueta] = useState(false);
   const [nuevaEtiquetaNombre, setNuevaEtiquetaNombre] = useState('');
 
-  // Devuelve la clase corporativa de la escala
   const colorPuntuacion = (nota) => {
     if (nota >= 9) return 'bg-mood-9 text-white shadow-md';
     if (nota >= 7) return 'bg-mood-7 text-white shadow-md';
@@ -28,7 +28,6 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
       cargarEtiquetas();
       
       if (registroAEditar) {
-        // MODO EDICIÓN
         setFecha(registroAEditar.fechaAsignada.split('T')[0]);
         setPuntuacionGlobal(registroAEditar.puntuacionGlobal);
         setComentario(registroAEditar.comentario || '');
@@ -36,7 +35,6 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
           registroAEditar.etiquetasAsociadas?.map(e => ({ etiquetaId: e.idEtiqueta, puntuacion: e.puntuacion })) || []
         );
       } else {
-        // MODO CREACIÓN: Usamos la fecha que viene del calendario, o la de hoy si no hay
         let f = fechaPorDefecto ? new Date(fechaPorDefecto) : new Date();
         const year = f.getFullYear();
         const month = String(f.getMonth() + 1).padStart(2, '0');
@@ -77,7 +75,10 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
     if (!nombreLimpio) return;
 
     const existe = etiquetasCatalogo.some(e => e.nombre.toLowerCase() === nombreLimpio.toLowerCase());
-    if (existe) { alert("Ya tienes una etiqueta con ese nombre en tu catálogo."); return; }
+    if (existe) { 
+      toast.error("Ya tienes una etiqueta con ese nombre en tu catálogo."); // CU8
+      return; 
+    }
 
     try {
       const res = await api.post('/etiquetas', { nombre: nombreLimpio });
@@ -85,7 +86,8 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
       toggleEtiqueta(res.data.id); 
       setNuevaEtiquetaNombre('');
       setCreandoEtiqueta(false);
-    } catch (err) { alert("Error al crear etiqueta."); }
+      toast.success("Etiqueta añadida.");
+    } catch (err) { toast.error("Error al crear etiqueta."); }
   };
 
   const handleSubmit = async (e) => {
@@ -95,13 +97,17 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
       r => r.fechaAsignada.startsWith(fecha) && r.id !== registroAEditar?.id
     );
     
-    if (yaExisteRegistro) { alert("Ya has creado otro registro para esta fecha."); return; }
+    if (yaExisteRegistro) { 
+      toast.error("Ya has creado otro registro para esta fecha.");
+      return; 
+    }
 
     setCargando(true);
     const etiquetasFormateadas = etiquetasSeleccionadas.map(etiqueta => ({
         idEtiqueta: etiqueta.etiquetaId, puntuacion: etiqueta.puntuacion || null
     }));
 
+    // Todo simple y limpio, como debe ser:
     const registroData = {
       fechaAsignada: `${fecha}T12:00:00`,
       puntuacionGlobal,
@@ -110,16 +116,25 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
     };
 
     try {
-      if (registroAEditar) await api.put(`/registros/${registroAEditar.id}`, registroData);
-      else await api.post('/registros', registroData);
+      if (registroAEditar) {
+        await api.put(`/registros/${registroAEditar.id}`, registroData);
+        toast.success("Registro actualizado correctamente."); 
+      } else {
+        await api.post('/registros', registroData);
+        toast.success("Registro guardado correctamente."); 
+      }
       onSuccess(); 
       onClose();   
-    } catch (err) { alert(err.response?.data?.message || "Error al guardar el registro."); } 
-    finally { setCargando(false); }
+    } catch (err) { 
+      toast.error(err.response?.data?.message || "Error al guardar el registro."); 
+    } finally { 
+      setCargando(false); 
+    }
   };
 
   if (!isOpen) return null;
 
+  // ... (El return() se queda exactamente igual) ...
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/60 p-4 backdrop-blur-sm transition-opacity">
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-thin rounded-3xl bg-surface p-8 shadow-2xl animate-in fade-in zoom-in duration-200">

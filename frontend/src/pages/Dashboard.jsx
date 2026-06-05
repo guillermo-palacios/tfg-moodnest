@@ -15,12 +15,19 @@ export default function Dashboard() {
       setNombreUsuario(resUsuario.data.nombre || 'Usuario'); 
       setRacha(resUsuario.data.rachaActual || 0); 
 
+      // --- CORRECCIÓN DE ZONA HORARIA ---
       const hoy = new Date();
       const haceUnaSemana = new Date();
       haceUnaSemana.setDate(hoy.getDate() - 7);
       
-      const inicio = haceUnaSemana.toISOString().split('.')[0];
-      const fin = hoy.toISOString().split('.')[0];
+      // Helper para asegurar 2 dígitos en mes/día
+      const pad = (num) => String(num).padStart(2, '0');
+
+      // Fecha de Inicio (Hace 7 días a las 00:00:00)
+      const inicio = `${haceUnaSemana.getFullYear()}-${pad(haceUnaSemana.getMonth() + 1)}-${pad(haceUnaSemana.getDate())}T00:00:00`;
+      
+      // Fecha de Fin (Hoy a las 23:59:59, así entra seguro el registro de hoy guardado a las 12:00)
+      const fin = `${hoy.getFullYear()}-${pad(hoy.getMonth() + 1)}-${pad(hoy.getDate())}T23:59:59`;
 
       const resRegistros = await api.get(`/registros?inicio=${inicio}&fin=${fin}`);
       setRegistros(resRegistros.data || []);

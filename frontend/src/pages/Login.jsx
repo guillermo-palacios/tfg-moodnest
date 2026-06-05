@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -14,10 +15,11 @@ export default function Login() {
     setError('');
     try {
       await login(email, password);
+      toast.success('¡Bienvenido de nuevo a MoodNest!');
       navigate('/dashboard'); 
-    } catch (err) {
-      setError('Credenciales incorrectas. Inténtalo de nuevo.');
-    }
+  } catch (err) {
+      toast.error('Credenciales incorrectas. Inténtalo de nuevo.');
+  }
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import RegistroModal from '../components/RegistroModal';
+import toast from 'react-hot-toast';
 
 export default function Historial() {
     const [fechaActual, setFechaActual] = useState(new Date());
@@ -8,7 +9,6 @@ export default function Historial() {
     const [etiquetasCatalogo, setEtiquetasCatalogo] = useState([]); 
     const [cargando, setCargando] = useState(false);
     
-    // NUEVO PATRÓN: Solo guardamos el día seleccionado, el registro se calcula solo.
     const [diaSeleccionado, setDiaSeleccionado] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -28,21 +28,17 @@ export default function Historial() {
         setCargando(true);
         try {
             const año = fechaActual.getFullYear();
-            const mes = fechaActual.getMonth(); // 0 a 11
+            const mes = fechaActual.getMonth(); 
 
-            // Helper para asegurar que el mes y el día tengan siempre 2 dígitos (ej: "05")
             const pad = (num) => String(num).padStart(2, '0');
-
             const mesStr = pad(mes + 1);
-            const ultimoDiaNum = new Date(año, mes + 1, 0).getDate(); // Nos da 28, 30 o 31 correctamente
+            const ultimoDiaNum = new Date(año, mes + 1, 0).getDate(); 
 
-            // Construimos la cadena en formato YYYY-MM-DD local, sin usar toISOString()
             const primerDia = `${año}-${mesStr}-01T00:00:00`;
             const ultimoDia = `${año}-${mesStr}-${pad(ultimoDiaNum)}T23:59:59`;
 
             const res = await api.get(`/registros?inicio=${primerDia}&fin=${ultimoDia}`);
             setRegistros(res.data || []);
-            setRegistroSeleccionado(null);
         } catch (error) {
             console.error("Error al cargar historial:", error);
         } finally {
@@ -55,16 +51,16 @@ export default function Historial() {
             try {
                 await api.delete(`/registros/${id}`);
                 cargarRegistrosMes(); 
-                // Al borrarlo, el diaSeleccionado sigue activo y pasará a mostrar el botón de "Crear" automáticamente
+                toast.success("Registro eliminado correctamente."); // CU7: Confirmación de borrado
             } catch (error) {
-                alert("Error al eliminar el registro.");
+                toast.error("Error al eliminar el registro.");
             }
         }
     };
 
     useEffect(() => {
         cargarRegistrosMes();
-        setDiaSeleccionado(null); // Limpiamos la selección al cambiar de mes
+        setDiaSeleccionado(null);
     }, [fechaActual]);
 
     const mesAnterior = () => setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 1));
@@ -116,9 +112,9 @@ export default function Historial() {
     const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
     const diasCuadricula = obtenerDiasDelMes();
 
-    // Calculamos si hay un registro en el día actualmente seleccionado
     const registroActual = diaSeleccionado ? obtenerRegistroDelDia(diaSeleccionado) : null;
 
+    // ... (El return() se queda exactamente igual) ...
     return (
         <div className="mx-auto max-w-6xl space-y-6 animate-in fade-in duration-300">
 
@@ -183,13 +179,11 @@ export default function Historial() {
                 {/* COLUMNA DERECHA: DETALLE DEL DÍA */}
                 <div className="flex w-full flex-col lg:w-1/3">
                     {!diaSeleccionado ? (
-                        // ESTADO 1: No hay ningún día clickado
                         <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-canvas p-6 text-center">
                             <svg className="mb-4 h-12 w-12 text-main/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             <p className="font-medium text-main/50">Toca un día en el calendario para ver los detalles.</p>
                         </div>
                     ) : !registroActual ? (
-                        // ESTADO 2: Día clickado, pero sin registro (Muestra Botón)
                         <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl bg-surface p-6 shadow-sm border border-gray-200 dark:border-gray-800 text-center transition-colors animate-in fade-in zoom-in-95 duration-300">
                             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                                 <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
@@ -206,7 +200,6 @@ export default function Historial() {
                             </button>
                         </div>
                     ) : (
-                        // ESTADO 3: Día clickado y TIENE registro (Detalles y Editar/Borrar)
                         <div className={`flex h-full flex-col rounded-3xl bg-surface p-6 shadow-md border-4 lg:p-8 animate-in fade-in slide-in-from-right-4 duration-300 transition-colors ${borderColorPuntuacion(registroActual.puntuacionGlobal)}`}>
                             <span className="text-sm font-semibold text-main/50 uppercase tracking-wider">Fecha:</span>
                             <h3 className="text-xl font-bold text-main">
@@ -277,7 +270,7 @@ export default function Historial() {
                 onSuccess={() => { cargarRegistrosMes(); }}
                 registrosPrevios={registros}
                 registroAEditar={registroActual} 
-                fechaPorDefecto={diaSeleccionado} // PASAMOS EL DÍA SELECCIONADO AL MODAL
+                fechaPorDefecto={diaSeleccionado} 
             />
         </div>
     );
