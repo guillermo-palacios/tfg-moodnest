@@ -83,3 +83,53 @@ Para conectar esta estructura con la interfaz visual, el servidor expone una ser
     \caption{Especificación técnica y diseño de endpoints de la API REST} \label{tab:api_endpoints} \\
 \end{xltabular}
 }
+
+
+
+
+\subsection{Implementación de la Interfaz Visual y del Frontend}
+\label{sec:implementacion_frontend}
+
+Para dar vida a la interfaz de MoodNest, decidí construir una Aplicación de Página Única (SPA, \textit{Single Page Application}) utilizando \textbf{React.js}. Para el empaquetado y la configuración inicial del entorno, descarté herramientas tradicionales como \textit{Create React App} en favor de \textbf{Vite}. Esta elección se tradujo en una velocidad de compilación y refresco en desarrollo casi instantánea gracias al uso nativo de módulos ES (\textit{ECMAScript Modules}), lo que agilizó drásticamente el ciclo de pruebas durante la maquetación.
+
+\subsubsection{Estrategia de Diseño Estético: Tailwind CSS y Variables Dinámicas}
+
+El diseño visual debía cumplir dos condiciones críticas: ser completamente responsivo para un uso cómodo en teléfonos móviles y permitir que el usuario personalizara la paleta de colores y el modo visual sin experimentar parpadeos ni recargas de página. Para lograrlo de forma escalable, integré \textbf{Tailwind CSS}.
+
+En lugar de escribir clases rígidas con colores fijos en los componentes (como usar de forma repetida \texttt{bg-indigo-600}), configuré el archivo \texttt{tailwind.config.js} para que apuntase a variables CSS semánticas inyectadas en el documento (\textit{CSS Custom Properties}). De este modo, clases utilitarias de Tailwind como \texttt{bg-primary}, \texttt{text-main} o \texttt{bg-surface} obtienen su valor cromático del elemento raíz \texttt{<html>} en tiempo de ejecución. 
+
+Para solucionar de forma limpia la paleta de estados de ánimo exigida en la escala del 1 al 10, mapeé un conjunto dinámico de propiedades llamadas \texttt{--color-mood-1} hasta \texttt{--color-mood-9}. Así, tanto los botones de registro como los círculos indicadores reaccionan de manera nativa al tema activo (claro u oscuro) modificando únicamente una línea de estilo en la etiqueta raíz.
+
+\subsubsection{El Cerebro de la Aplicación: Centralización del Estado con Context API}
+
+Conforme la aplicación crecía, gestionar el token JWT de autenticación y propagar los cambios estéticos del perfil hacia el resto de las pantallas amenazaba con convertirse en un problema de acoplamiento de código (\textit{prop drilling}). Para resolver esto sin añadir librerías complejas y pesadas de terceros, implementé la \textbf{Context API} nativa de React mediante el componente \texttt{AuthContext}.
+
+Este contexto funciona como el núcleo de control de la sesión privada. Nada más arrancar la aplicación, el componente comprueba si existe un token en el almacenamiento local (\textit{LocalStorage}). Si lo encuentra, lanza de inmediato una petición asíncrona hacia el endpoint \texttt{/api/usuario/me} del backend. Al recibir la respuesta, no solo establece los datos de sesión del usuario, sino que procesa el JSON de sus preferencias del sistema y ejecuta la función \texttt{aplicarPreferenciasVisuales()}. 
+
+Esta función traduce los nombres guardados en MongoDB (como el color principal \textit{emerald} o el tema \textit{oscuro}) a sus valores RGB y añade la clase \texttt{.dark} al HTML de la página. El beneficio directo de esta arquitectura es que cuando el usuario interactúa con los selectores de apariencia en la vista de perfil, la aplicación entera muta de color e iluminación al instante sin alterar el resto de los componentes.
+
+\subsubsection{Diseño de Componentes y Experiencia de Usuario en las Vistas}
+
+La organización visual de las pantallas se estructuró a través de un componente base llamado \texttt{Layout}, encargado de delimitar el comportamiento responsivo. Mediante clases utilitarias de Tailwind, programé un patrón móvil prioritario (\textit{Mobile-First}): en pantallas grandes la navegación se despliega como un submenú superior horizontal de pestañas blancas, mientras que en dispositivos móviles este menú se oculta por completo y pasa a fijarse en la base de la pantalla como una barra de pestañas optimizada para el acceso ergonómico con el pulgar.
+
+Al implementar las tres pantallas principales, apliqué un pulido estricto de Experiencia de Usuario (UX) enfocado en la claridad de los datos:
+
+\begin{itemize}
+    \item \textbf{Dashboard (CU9):} En las primeras pruebas del panel de control, las tarjetas del historial reciente mostraban una redundancia visual molesta al pintar la nota en texto negro y repetirla abajo dentro de un círculo de color. Corregí esto eliminando el texto duplicado y transformando el círculo en el elemento central de la tarjeta, agrandándolo a un tamaño \texttt{h-16 w-16} con tipografía en \texttt{text-3xl}. Asimismo, para evitar colapsar la pantalla, restringí las fechas de este panel a los últimos 7 días estrictos mediante un cálculo local de marcas temporales.
+    \item \textbf{Calendario de Historial (CU10):} Durante las pruebas del historial, descubrí que las conversiones nativas de zona horaria de Javascript a través de \texttt{.toISOString()} restaban dos horas a las fechas en horario peninsular de España, provocando que los registros guardados a las 12:00 del mediodía cayeran en la noche del día anterior y desaparecieran del calendario. Lo solucioné anulando los métodos ISO automáticos y construyendo las cadenas de búsqueda hacia el backend de manera textual e independiente de la zona horaria del navegador. Además, aproveché la columna derecha para mejorar el flujo: si el usuario hace clic en un día vacío, el sistema renderiza un botón contextual que abre la modal con esa fecha exacta precargada, facilitando rellenar los huecos históricos (CU6).
+    \item \textbf{Análisis y Estadísticas (CU11, CU12, CU13):} Para esta pantalla descarté los gráficos basados en SVG tradicionales (que generan miles de nodos en el DOM y ralentizan el navegador) en favor de \textbf{Chart.js} mediante su envoltura \texttt{react-chartjs-2}, que realiza un renderizado ultraeficiente basado en \texttt{HTML5 Canvas}. 
+\end{itemize}
+
+Para la gráfica lineal de evolución temporal, utilicé la propiedad \texttt{spanGaps: false} de Chart.js; esto interrumpe visualmente la línea si encuentra un valor nulo, reflejando de forma honesta los días en los que el usuario no registró su ánimo. 
+
+En la sección de etiquetas, modifiqué el diseño inicial de barras múltiples por el planteamiento del \textit{wireframe}: dos bloques fijos y destacados que exponen directamente al mejor y peor aliado emocional (calculados mediante la desviación matemática en el backend) y un selector interactivo. Al elegir una actividad en este desplegable, se dibuja un gráfico de barras comparativo de dos columnas (Días con la actividad frente a días sin ella) apoyado por un cuadro explicativo que traduce la diferencia matemática a texto legible (ej. ``Mejoran +1.8 Puntos''), pintando sus bordes de verde o rojo según el signo de la desviación para una comprensión analítica instantánea.
+
+Por último, el gráfico de distribución global en formato dona (\textit{Doughnut}) se blindó con un script de ordenación en el cliente. Dado que los rangos de la base de datos podían llegar desordenados, implementé un algoritmo heurístico que clasifica las categorías de peor a mejor (de Días Terribles a Días Increíbles) asociándoles de forma estricta sus colores HEX corporativos. De este modo, la leyenda lateral y las porciones de la dona guardan siempre coherencia lógica para el usuario.
+
+\subsubsection{Sistema de Feedback: Toasts y Gestión de Cargas}
+
+Para sustituir los cuadros de diálogo emergentes del navegador (\texttt{alert()}), los cuales detienen la ejecución del hilo principal y empobrecen la estética de la aplicación, instalé la librería \texttt{react-hot-toast}. Esto me permitió centralizar las alertas del sistema mediante notificaciones flotantes (\textit{Toasts}) animadas y no intrusivas. 
+
+Programé este sistema para dar cobertura de feedback inmediato a los flujos principales y alternativos de los Casos de Uso. Al registrar un usuario (CU1), iniciar sesión (CU2), modificar datos de cuenta (CU3) o consolidar un registro diario (CU6), el cliente lanza un aviso de éxito en color verde. 
+
+En contraposición, si el backend rechaza una petición (como introducir una contraseña de confirmación errónea al intentar dar de baja la cuenta en el CU5, o intentar duplicar dos registros en la misma fecha durante el CU7), el error es capturado por un bloque \texttt{try-catch} que detiene los estados de carga (\textit{Spinners}) y dispara un \textit{Toast} rojo descriptivo, garantizando que el usuario entienda qué ha fallado sin romper su flujo de navegación.
