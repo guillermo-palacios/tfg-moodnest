@@ -8,6 +8,9 @@ import java.util.Optional;
 public interface EtiquetaRepository extends MongoRepository<Etiqueta, String> {
     // Devuelve todas las etiquetas que NO han sido borradas (activa = true)
     List<Etiqueta> findByIdUsuarioAndActivaTrue(String idUsuario);
+
+    // Devuelve todas las etiquetas de un usuario
+    List<Etiqueta> findByIdUsuario(String idUsuario);
     
     // Busca una etiqueta concreta asegurándose de que es del usuario
     Optional<Etiqueta> findByIdAndIdUsuario(String id, String idUsuario);

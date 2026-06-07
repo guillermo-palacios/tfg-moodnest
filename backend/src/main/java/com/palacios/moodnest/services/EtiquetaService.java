@@ -29,16 +29,24 @@ public class EtiquetaService {
         return etiquetaRepository.findByIdUsuarioAndActivaTrue(usuario.getId());
     }
 
+    // Mostrar TODAS las etiquetas (Activas e Inactivas) para el Historial
+    public List<Etiqueta> obtenerTodasLasEtiquetas(String email) {
+        Usuario usuario = getUsuarioActual(email);
+        return etiquetaRepository.findByIdUsuario(usuario.getId()); 
+    }
+
     // Crear
     public Etiqueta crearEtiqueta(String email, EtiquetaRequest request) {
         Usuario usuario = getUsuarioActual(email);
-        
+
         if (request.getNombre() == null || request.getNombre().trim().isEmpty()) {
             throw new RuntimeException("El nombre de la etiqueta no puede estar vacío");
         }
 
         // Regla de Negocio: Evitar nombres duplicados
-        if (etiquetaRepository.findByIdUsuarioAndNombreIgnoreCaseAndActivaTrue(usuario.getId(), request.getNombre().trim()).isPresent()) {
+        if (etiquetaRepository
+                .findByIdUsuarioAndNombreIgnoreCaseAndActivaTrue(usuario.getId(), request.getNombre().trim())
+                .isPresent()) {
             throw new RuntimeException("Ya existe una etiqueta activa con ese nombre");
         }
 
@@ -65,7 +73,9 @@ public class EtiquetaService {
 
         // Si intenta cambiar el nombre, comprobamos que el nuevo no exista ya
         if (!etiqueta.getNombre().equalsIgnoreCase(request.getNombre().trim())) {
-            if (etiquetaRepository.findByIdUsuarioAndNombreIgnoreCaseAndActivaTrue(usuario.getId(), request.getNombre().trim()).isPresent()) {
+            if (etiquetaRepository
+                    .findByIdUsuarioAndNombreIgnoreCaseAndActivaTrue(usuario.getId(), request.getNombre().trim())
+                    .isPresent()) {
                 throw new RuntimeException("Ya existe una etiqueta activa con ese nombre");
             }
         }

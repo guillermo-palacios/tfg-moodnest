@@ -1,11 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
+import { useNavigate} from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
-import toast from 'react-hot-toast'; // <-- IMPORTAMOS TOAST
+import toast from 'react-hot-toast'; 
 
 export default function Perfil() {
   const { aplicarPreferenciasVisuales, logout } = useContext(AuthContext); 
 
+  const [faseBorrado, setFaseBorrado] = useState('inicial');
   const [etiquetas, setEtiquetas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [usuario, setUsuario] = useState({ nombre: 'Cargando...', email: 'Cargando...' });
@@ -16,6 +18,7 @@ export default function Perfil() {
   const [idEtiquetaEditando, setIdEtiquetaEditando] = useState(null);
   const [editNombre, setEditNombre] = useState('');
   const [editColor, setEditColor] = useState('');
+  const navigate = useNavigate();
 
   const [perfilForm, setPerfilForm] = useState({ nombre: '', passwordActual: '', nuevaPassword: '' });
   const [passwordBorrado, setPasswordBorrado] = useState('');
@@ -87,24 +90,24 @@ export default function Perfil() {
     } catch (error) { toast.error("Error al guardar preferencias de interfaz."); }
   };
 
-  const handleCambiarPaleta = async (paletaId) => {
-    setUsuario(prev => ({ ...prev, preferenciasSistema: { ...prev.preferenciasSistema, familiaIconos: paletaId } }));
-    aplicarPreferenciasVisuales({ tema: usuario.preferenciasSistema?.tema || 'claro', colorPrincipal: usuario.preferenciasSistema?.colorPrincipal || 'indigo', familiaIconos: paletaId });
-    try {
-      await api.put('/usuario/escala', { escalaPersonalizada: {}, familiaIconos: paletaId });
-    } catch(e) { toast.error("Error al guardar la paleta de escala."); }
-  };
+  // const handleCambiarPaleta = async (paletaId) => {
+  //   setUsuario(prev => ({ ...prev, preferenciasSistema: { ...prev.preferenciasSistema, familiaIconos: paletaId } }));
+  //   aplicarPreferenciasVisuales({ tema: usuario.preferenciasSistema?.tema || 'claro', colorPrincipal: usuario.preferenciasSistema?.colorPrincipal || 'indigo', familiaIconos: paletaId });
+  //   try {
+  //     await api.put('/usuario/escala', { escalaPersonalizada: {}, familiaIconos: paletaId });
+  //   } catch(e) { toast.error("Error al guardar la paleta de escala."); }
+  // };
 
   const handleActualizarPerfil = async (e) => {
     e.preventDefault();
     setCargandoAccion(true);
     try {
       await api.put('/usuario/perfil', perfilForm);
-      toast.success("¡Perfil actualizado con éxito!"); // CU3: Confirmación de éxito
+      toast.success("¡Cuenta actualizada con éxito!"); 
       setPerfilForm(prev => ({ ...prev, passwordActual: '', nuevaPassword: '' })); 
       cargarUsuario(); 
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error al actualizar perfil."); // CU3: Error validación
+      toast.error(err.response?.data?.message || "Error al actualizar la cuenta."); 
     } finally {
       setCargandoAccion(false);
     }
@@ -112,15 +115,19 @@ export default function Perfil() {
 
   const handleEliminarCuenta = async (e) => {
     e.preventDefault();
-    if (!window.confirm("¡ATENCIÓN! Esta acción es irreversible. ¿Deseas eliminar tu cuenta y todos tus datos?")) return;
     
     setCargandoAccion(true);
     try {
+
       await api.delete('/usuario/cuenta', { data: { password: passwordBorrado } });
-      toast.success("Tu cuenta ha sido eliminada. Lamentamos verte partir."); // CU5: Baja confirmada
+      
+      toast.success("Tu cuenta ha sido eliminada. Lamentamos verte partir.");
       logout(); 
+      navigate('/');
+
     } catch (err) {
-      toast.error(err.response?.data?.message || "Contraseña incorrecta. Se ha abortado la eliminación."); // CU5: Contraseña errónea
+      toast.error(err.response?.data?.message || "Contraseña incorrecta. Se ha abortado la eliminación."); 
+      setPasswordBorrado('');
     } finally {
       setCargandoAccion(false);
     }
@@ -195,16 +202,73 @@ export default function Perfil() {
           </div>
 
           {/* TARJETA 3: ZONA DE PELIGRO (CU5) */}
-          <div className="rounded-3xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/10 p-6 shadow-sm transition-colors duration-300">
-            <h2 className="mb-2 text-xl font-bold text-red-600 dark:text-red-500">Zona de Peligro</h2>
-            <p className="mb-4 text-sm text-red-700/70 dark:text-red-400/80">Una vez elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate bien.</p>
-            <form onSubmit={handleEliminarCuenta} className="space-y-4">
-              <input type="password" required placeholder="Confirma tu contraseña para borrar" value={passwordBorrado} onChange={e => setPasswordBorrado(e.target.value)} className="w-full rounded-xl border border-red-200 dark:border-red-800 bg-white dark:bg-surface p-2.5 text-main focus:border-red-500 focus:outline-none" />
-              <button type="submit" disabled={cargandoAccion} className="w-full rounded-xl border-2 border-red-600 bg-transparent py-3 font-bold text-red-600 transition hover:bg-red-600 hover:text-white disabled:opacity-50">
-                Eliminar Cuenta Permanentemente
+        <div className="rounded-3xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/10 p-6 shadow-sm transition-all duration-300">
+          
+          {/* PASO 1: Estado Inicial */}
+          {faseBorrado === 'inicial' && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-red-600 dark:text-red-500">Zona de Peligro</h2>
+                <p className="text-sm text-red-700/70 dark:text-red-400/80">
+                  Elimina tu cuenta y todos tus datos permanentemente.
+                </p>
+              </div>
+              <button 
+                onClick={() => setFaseBorrado('advertencia')} 
+                className="rounded-xl border-2 border-red-600 bg-transparent px-6 py-2.5 font-bold text-red-600 transition hover:bg-red-600 hover:text-white shrink-0"
+              >
+                Eliminar Cuenta
               </button>
-            </form>
-          </div>
+            </div>
+          )}
+
+          {/* PASOS 2, 3 y 4: Advertencia Crítica y Solicitud de Contraseña */}
+          {faseBorrado === 'advertencia' && (
+            <div className="animate-in slide-in-from-top-4 duration-300">
+              <div className="mb-4 flex items-start space-x-3 rounded-xl bg-red-100 dark:bg-red-900/30 p-4 border border-red-200 dark:border-red-800">
+                <svg className="h-6 w-6 text-red-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <div>
+                  <h3 className="font-bold text-red-800 dark:text-red-400">¡Advertencia Crítica!</h3>
+                  <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                    Esta acción es <strong>completamente irreversible</strong>. Perderás tu racha, historial y etiquetas. Para continuar, introduce tu contraseña actual.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleEliminarCuenta} className="space-y-4">
+                <input 
+                  type="password" 
+                  required 
+                  placeholder="Introduce tu contraseña" 
+                  value={passwordBorrado} 
+                  onChange={e => setPasswordBorrado(e.target.value)} 
+                  className="w-full rounded-xl border border-red-300 dark:border-red-700 bg-white dark:bg-surface p-3 text-main focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500" 
+                />
+                
+                <div className="flex space-x-3">
+                  {/* Flujo Alternativo 2: Cancelar Proceso */}
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setFaseBorrado('inicial');
+                      setPasswordBorrado('');
+                    }}
+                    className="flex-1 rounded-xl bg-white dark:bg-surface border border-gray-300 dark:border-gray-700 py-3 font-semibold text-main hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit" 
+                    disabled={cargandoAccion} 
+                    className="flex-1 rounded-xl bg-red-600 py-3 font-bold text-white transition hover:bg-red-700 disabled:opacity-50 shadow-md"
+                  >
+                    Confirmar Eliminación
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
 
         </div>
 

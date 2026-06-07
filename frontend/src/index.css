@@ -33,6 +33,13 @@
   }
 }
 
+/* Forzar renderizado nítido en las notificaciones sin romper su animación */
+.nitido-toast {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  filter: blur(0); /* Truco maestro: fuerza al navegador a recalcular los píxeles del texto */
+}
+
 /* El tuneo de tu barra de scroll que hicimos el otro día */
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar {

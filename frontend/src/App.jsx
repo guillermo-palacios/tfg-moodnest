@@ -17,16 +17,27 @@ const NuevoRegistroTemp = () => <div className="p-8 text-center text-gray-500">F
 export default function App() {
   return (
     <AuthProvider>
-      <Toaster position="top-center" reverseOrder={false} />
-      <BrowserRouter>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          // Esto fuerza a todo el contenedor a renderizar texto nítido
+          style: {
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+          },
+          // Esto se aplica individualmente a cada notificación al aparecer
+          className: 'nitido-toast'
+        }}
+      />      <BrowserRouter>
         <Routes>
           {/* Rutas Públicas */}
           <Route path="/" element={<PublicLayout><Welcome /></PublicLayout>} />
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
-          
+
           {/* ... (Tus rutas privadas se quedan igual) ... */}
-          
+
           {/* Rutas Protegidas (Envueltas en el Layout) */}
           <Route element={
             <ProtectedRoute>

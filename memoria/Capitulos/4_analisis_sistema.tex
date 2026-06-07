@@ -697,8 +697,8 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la sección de ''Configuración de Perfil''.
-        \item El sistema recupera y muestra el nombre de visualización actual del usuario.
+        \item El caso de uso comienza cuando el usuario accede a la sección de ''Configuración de Cuenta''.
+        \item El sistema recupera y muestra el nombre de visualización actual del usuario y su email.
         \item El usuario modifica su nombre y/o introduce una nueva contraseña en los campos habilitados.
         \item El usuario selecciona la opción "Guardar Cambios".
         \item El sistema valida que los datos introducidos cumplan con los requisitos de formato y seguridad.
@@ -709,7 +709,6 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item \textbf{Validación Fallida}: Si los datos no cumplen con el formato o la contraseña es demasiado débil, el sistema muestra un mensaje de aviso y permite al usuario corregirlos sin abandonar la pantalla.
-        \item \textbf{Cancelar}: El usuario decide no guardar los cambios y pulsa en ''Volver'' o ''Cancelar''. El sistema regresa a la vista anterior sin realizar ninguna modificación en la base de datos.
     \end{enumerate}
     \\ \hline
     Postcondición & Los datos del perfil se actualizan permanentemente. \\ \hline
@@ -840,7 +839,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario selecciona la opción ''Nuevo Registro'' desde el panel principal.
+        \item El caso de uso comienza cuando el usuario selecciona la opción ''Registrar mi Día'' desde el dashboard.
         \item El sistema presenta el formulario de creación, estableciendo la fecha actual por defecto.
         \item El usuario confirma la fecha actual o selecciona una fecha pasada en el selector.
         \item El usuario selecciona obligatoriamente una puntuación global (del 1 al 10) para definir su estado de ánimo general del día.
@@ -856,7 +855,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item \textbf{Validación Fallida}: En el paso 9, si los datos no cumplen con el formato o falta por rellenar algún campo, el sistema muestra un mensaje de aviso y permite al usuario corregirlos sin abandonar la pantalla.
-        \item \textbf{Cancelar}: En cualquier momento antes de guardar, el usuario selecciona "Cancelar" o retrocede. El sistema descarta toda la información introducida y regresa a la pantalla anterior sin realizar cambios en la base de datos.
+        \item \textbf{Cancelar}: En cualquier momento antes de guardar, el usuario selecciona ''Cancelar'' o retrocede. El sistema descarta toda la información introducida y regresa a la pantalla anterior sin realizar cambios en la base de datos.
     \end{enumerate}
     \\ \hline
     Postcondición & El registro se consolida en la base de datos, queda disponible para su consulta en el historial y computa inmediatamente para las gráficas de análisis estadístico. \\ \hline
@@ -890,7 +889,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado y tener al menos un registro previo en su historial. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario selecciona un registro específico desde el historial o el panel principal.
+        \item El caso de uso comienza cuando el usuario selecciona un registro específico desde la vista de Calendario.
         \item El sistema muestra los detalles completos de la entrada y habilita las opciones de ''Editar'' y ''Eliminar''.
         \item El usuario selecciona la opción ''Editar''.
         \item El sistema presenta el formulario del registro con sus datos actuales pre-cargados (fecha, puntuación, etiquetas vinculadas y comentario).
@@ -939,10 +938,10 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a su catálogo de etiquetas y selecciona ''Crear Nueva Etiqueta''.
+        \item El caso de uso comienza cuando el usuario accede a la sección de etiquetas.
         \item El sistema muestra un formulario solicitando un nombre identificativo y la selección de un color para la etiqueta.
         \item El usuario introduce el nombre deseado y selecciona un color.
-        \item El usuario selecciona ''Guardar''.
+        \item El usuario selecciona ''Añadir''.
         \item El sistema verifica que el nombre no esté vacío y que no exista ya una etiqueta activa con el mismo nombre para este usuario.
         \item El sistema registra la nueva etiqueta en la base de datos asignándola al identificador del usuario.
         \item El sistema actualiza la vista del catálogo mostrando la nueva etiqueta disponible para ser usada en futuros registros diarios.
@@ -989,7 +988,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
         \item El caso de uso comienza cuando el usuario inicia sesión exitosamente o navega hacia la pantalla de inicio de la aplicación.
         \item El sistema evalúa la franja horaria local del cliente (mañana, tarde o noche) y verifica si existe un registro creado en la fecha actual.
         \item El sistema genera un mensaje de bienvenida dinámico en base a los parámetros anteriores.
-        \item El sistema calcula la racha actual consultando los días consecutivos con un registro en la base de datos.
+        \item El sistema carga la racha actual del usuario.
         \item El sistema recupera un listado cronológico resumido con las últimas entradas del historial del usuario.
         \item El sistema renderiza el Dashboard mostrando: el mensaje de bienvenida, el contador de racha, el historial reciente y un botón destacado de acceso directo para crear un nuevo registro.
     \end{enumerate} 
@@ -1029,7 +1028,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario selecciona la opción ''Historial'' en el menú de navegación.
+        \item El caso de uso comienza cuando el usuario selecciona el apartado ''Historial'' en el menú de navegación.
         \item El sistema renderiza una vista de calendario, estableciendo por defecto el mes y año actuales.
         \item El sistema consulta la base de datos y resalta visualmente los días que contienen un registro.
         \item El usuario selecciona un día resaltado del calendario.
@@ -1073,7 +1072,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la sección de ''Análisis'' o ''Estadísticas''.
+        \item El caso de uso comienza cuando el usuario accede a la vista de ''Estadísticas''.
         \item El sistema renderiza la interfaz y establece por defecto el filtro temporal en vista ''Semanal'' (últimos 7 días).
         \item El sistema consulta la base de datos para recuperar las puntuaciones globales de los registros de ese periodo.
         \item El sistema genera y muestra un gráfico de líneas que conecta cronológicamente los datos recuperados.
@@ -1081,7 +1080,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Cambiar Filtro Temporal}: En el paso 4, el usuario selecciona un rango diferente (Mensual o Anual). El sistema actualiza el rango de fechas, repite los pasos 3 y 4, y el caso de uso finaliza.
+        \item \textbf{Cambiar Filtro Temporal}: En el paso 4, el usuario selecciona un rango diferente (Mensual o Anual). El sistema actualiza el rango de fechas y vuelve al paso 3.
         \item \textbf{Sin Registros}: Se activa en el paso 3. Si no existen registros el sistema oculta el gráfico y muestra un mensaje de aviso.
     \end{enumerate}
     \\ \hline
@@ -1115,7 +1114,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la página de análisis.
+        \item El caso de uso comienza cuando el usuario accede a la vista de ''Estadísticas''.
         \item El sistema procesa los registros y etiquetas del usuario para calcular tres métricas clave:
         \begin{itemize}[leftmargin=0.5cm, topsep=2pt, itemsep=2pt]
             \item Las etiquetas con mayor desviación positiva y negativa respecto a la puntuación global media de todos los registros históricos del usuario.
@@ -1161,7 +1160,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema y se encuentra dentro de la página de análisis. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la sección de ''Impacto de Etiquetas''.
+        \item El caso de uso comienza cuando el usuario accede a la sección de ''Tus Aliados''.
         \item El sistema muestra un selector con el catálogo de etiquetas del usuario.
         \item El usuario elige una etiqueta en el selector.
         \item El sistema calcula y genera un gráfico de barras que compara visualmente la puntuación global media de todos los registros del usuario frente al promedio específico de los días que contienen la etiqueta seleccionada.

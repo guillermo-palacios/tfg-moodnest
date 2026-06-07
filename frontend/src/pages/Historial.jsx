@@ -15,7 +15,7 @@ export default function Historial() {
     useEffect(() => {
         const cargarEtiquetas = async () => {
             try {
-                const res = await api.get('/etiquetas');
+                const res = await api.get('/etiquetas/todas');
                 setEtiquetasCatalogo(res.data || []);
             } catch (error) {
                 console.error("Error al cargar etiquetas:", error);

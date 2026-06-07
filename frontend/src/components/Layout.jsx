@@ -1,11 +1,14 @@
-import { useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function Layout({ children }) {
   const { logout, temaColor } = useContext(AuthContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const isActive = (path) => location.pathname === path;
 
   const navItems = [
@@ -25,6 +28,13 @@ export default function Layout({ children }) {
         )
     }
   ];
+
+  const handleConfirmLogout = () => {
+    logout();
+    setIsLogoutModalOpen(false);
+    toast.success('Sesión cerrada correctamente');
+    navigate('/'); // Redirigimos a la pantalla de bienvenida (CU4 - Paso 4)
+  };
 
   return (
     // Hemos quitado bg-gray-50, porque el body ya tiene bg-canvas (claro u oscuro automático)
@@ -58,7 +68,7 @@ export default function Layout({ children }) {
             </svg>
           </Link>
 
-          <button onClick={logout} className="text-sm font-medium text-white/80 transition hover:text-white border-l border-white/30 pl-4">
+          <button onClick={() => setIsLogoutModalOpen(true)} className="text-white hover:text-gray-200 font-bold">
             Cerrar Sesión
           </button>
         </div>
@@ -96,6 +106,31 @@ export default function Layout({ children }) {
           </Link>
         ))}
       </nav>
+
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
+          <div className="w-full max-w-sm rounded-3xl bg-surface p-6 shadow-xl border border-gray-200 dark:border-gray-800 animate-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-main mb-2">¿Cerrar Sesión?</h3>
+            <p className="text-main/70 mb-6 text-sm">
+              Tendrás que volver a introducir tus credenciales la próxima vez que quieras acceder.
+            </p>
+            <div className="flex space-x-3">
+              <button 
+                onClick={() => setIsLogoutModalOpen(false)} // Flujo Alternativo 1: Cancelar
+                className="flex-1 rounded-xl bg-gray-100 dark:bg-gray-800 py-3 font-semibold text-main hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleConfirmLogout} // Flujo Principal: Confirmar
+                className="flex-1 rounded-xl bg-red-500 py-3 font-semibold text-white hover:bg-red-600 shadow-md transition"
+              >
+                Sí, salir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

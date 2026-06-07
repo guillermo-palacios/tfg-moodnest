@@ -27,6 +27,16 @@ public class EtiquetaController {
         }
     }
 
+    @GetMapping("/todas")
+    public ResponseEntity<?> obtenerTodasLasEtiquetas(Authentication auth) {
+        try {
+            List<Etiqueta> etiquetas = etiquetaService.obtenerTodasLasEtiquetas(auth.getName());
+            return ResponseEntity.ok(etiquetas);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> crearEtiqueta(Authentication auth, @RequestBody EtiquetaRequest request) {
         try {
@@ -38,7 +48,8 @@ public class EtiquetaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarEtiqueta(Authentication auth, @PathVariable("id") String id, @RequestBody EtiquetaRequest request) {
+    public ResponseEntity<?> actualizarEtiqueta(Authentication auth, @PathVariable("id") String id,
+            @RequestBody EtiquetaRequest request) {
         try {
             Etiqueta etiqueta = etiquetaService.actualizarEtiqueta(auth.getName(), id, request);
             return ResponseEntity.ok(etiqueta);
