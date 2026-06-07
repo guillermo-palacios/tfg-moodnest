@@ -4,6 +4,9 @@ import lombok.Data;
 import java.util.Map;
 import java.util.List;
 
+/**
+ * Objeto de respuesta consolidado con todas las métricas procesadas por el servicio estadístico.
+ */
 @Data
 public class EstadisticasResponse {
     private long totalRegistros;

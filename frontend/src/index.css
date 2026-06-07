@@ -1,4 +1,3 @@
-/* Importación de Google Fonts: Lato y PT Serif */
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap');
 
 @tailwind base;
@@ -6,56 +5,46 @@
 @tailwind utilities;
 
 @layer base {
-  /* TEMA CLARO (Por defecto) */
+  /* TEMA DINÁMICO: 
+     Uso de variables CSS para permitir el cambio de tema en tiempo real 
+     sin necesidad de recargar la página.
+  */
   :root {
-    --color-primary: 91 97 196; /* #5B61C4 en RGB (Tu color corporativo) */
-    --color-text: 30 30 47;     /* #1E1E2F en RGB (Azul noche) */
-    --color-bg: 248 249 250;    /* #F8F9FA en RGB (Lienzo) */
-    --color-surface: 255 255 255; /* #FFFFFF (Tarjetas blancas) */
+    --color-primary: 91 97 196; /* Índigo corporativo */
+    --color-text: 30 30 47;     
+    --color-bg: 248 249 250;    
+    --color-surface: 255 255 255; 
   }
 
-  /* TEMA OSCURO (Se activa cuando HTML tiene la clase 'dark') */
   .dark {
-    --color-primary: 129 140 248; /* Un índigo un pelín más claro para que resalte en negro */
-    --color-text: 248 249 250;    /* El lienzo claro ahora es el texto */
-    --color-bg: 15 23 42;         /* Azul muy oscuro, casi negro */
-    --color-surface: 30 41 59;    /* Gris azulado oscuro para las tarjetas */
+    --color-primary: 129 140 248; 
+    --color-text: 248 249 250;    
+    --color-bg: 15 23 42;         
+    --color-surface: 30 41 59;    
   }
 
-  /* Aplicamos la fuente Lato y los colores globales al body de la página web */
   body {
     @apply font-sans bg-canvas text-main antialiased transition-colors duration-300;
   }
 
-  /* Forzamos que todos los títulos usen tu PT Serif */
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif tracking-wide;
   }
 }
 
-/* Forzar renderizado nítido en las notificaciones sin romper su animación */
+/* TRUCO DE RENDERIZADO: 
+   Forzamos la aceleración por hardware (translateZ) para evitar que las 
+   notificaciones (Toasts) se vean borrosas.
+*/
 .nitido-toast {
   transform: translateZ(0);
   backface-visibility: hidden;
-  filter: blur(0); /* Truco maestro: fuerza al navegador a recalcular los píxeles del texto */
+  filter: blur(0); 
 }
 
-/* El tuneo de tu barra de scroll que hicimos el otro día */
 @layer utilities {
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
-  }
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
-  }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-full; }
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
 }

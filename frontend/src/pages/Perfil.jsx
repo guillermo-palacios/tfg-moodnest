@@ -4,38 +4,54 @@ import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast'; 
 
+/**
+ * Componente Perfil: Panel de configuración integral del usuario.
+ * Permite gestionar: preferencias visuales (tema/color), datos de cuenta, 
+ * catálogo de etiquetas y el flujo de eliminación de cuenta.
+ */
 export default function Perfil() {
   const { aplicarPreferenciasVisuales, logout } = useContext(AuthContext); 
 
-  const [faseBorrado, setFaseBorrado] = useState('inicial');
+  // Estados de gestión de la cuenta
+  const [faseBorrado, setFaseBorrado] = useState('inicial'); // Flujo multi-paso para borrado
+  const [usuario, setUsuario] = useState({ nombre: 'Cargando...', email: 'Cargando...' });
+  const [perfilForm, setPerfilForm] = useState({ nombre: '', passwordActual: '', nuevaPassword: '' });
+  
+  // Estados de gestión de catálogo
   const [etiquetas, setEtiquetas] = useState([]);
   const [cargando, setCargando] = useState(true);
-  const [usuario, setUsuario] = useState({ nombre: 'Cargando...', email: 'Cargando...' });
-
   const [nuevoNombre, setNuevoNombre] = useState('');
   const [nuevoColor, setNuevoColor] = useState('#6366f1');
-
+  
+  // Estados de edición de etiquetas
   const [idEtiquetaEditando, setIdEtiquetaEditando] = useState(null);
   const [editNombre, setEditNombre] = useState('');
   const [editColor, setEditColor] = useState('');
-  const navigate = useNavigate();
-
-  const [perfilForm, setPerfilForm] = useState({ nombre: '', passwordActual: '', nuevaPassword: '' });
+  
   const [passwordBorrado, setPasswordBorrado] = useState('');
   const [cargandoAccion, setCargandoAccion] = useState(false);
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     cargarUsuario();
     cargarEtiquetas();
   }, []);
 
+  /**
+   * Obtiene la información del perfil actual del usuario para hidratar el formulario.
+   */
   const cargarUsuario = async () => {
     try {
       const res = await api.get('/usuario/me');
-      setUsuario({ nombre: res.data.nombre || res.data.username, email: res.data.email, preferenciasSistema: res.data.preferenciasSistema });
+      setUsuario({ 
+        nombre: res.data.nombre, 
+        email: res.data.email, 
+        preferenciasSistema: res.data.preferenciasSistema 
+      });
       setPerfilForm(prev => ({ ...prev, nombre: res.data.nombre || '' }));
     } catch (error) {
-      setUsuario({ nombre: 'Usuario Desconocido', email: 'No se pudo cargar el correo' });
+      setUsuario({ nombre: 'Usuario Desconocido', email: 'Error al cargar' });
     }
   };
 
@@ -50,26 +66,37 @@ export default function Perfil() {
     }
   };
 
+  /**
+   * Gestión de catálogo: Crea una nueva etiqueta en el sistema.
+   */
   const handleCrear = async (e) => {
     e.preventDefault();
     if (!nuevoNombre.trim()) return;
     try {
       await api.post('/etiquetas', { nombre: nuevoNombre.trim(), color: nuevoColor });
-      setNuevoNombre(''); setNuevoColor('#6366f1'); cargarEtiquetas();
-      toast.success("Etiqueta añadida al catálogo"); // CU8: Confirmación
-    } catch (error) { toast.error("Error al crear la etiqueta. Quizás ya exista."); }
+      setNuevoNombre(''); 
+      setNuevoColor('#6366f1'); 
+      cargarEtiquetas();
+      toast.success("Etiqueta añadida al catálogo");
+    } catch (error) { toast.error("Error al crear la etiqueta."); }
   };
 
   const handleActivarEdicion = (tag) => {
-    setIdEtiquetaEditando(tag.id); setEditNombre(tag.nombre); setEditColor(tag.color || '#6366f1');
+    setIdEtiquetaEditando(tag.id); 
+    setEditNombre(tag.nombre); 
+    setEditColor(tag.color || '#6366f1');
   };
 
+  /**
+   * Gestión de catálogo: Actualiza una etiqueta existente.
+   */
   const handleGuardarEdicion = async (id) => {
     if (!editNombre.trim()) return;
     try {
       await api.put(`/etiquetas/${id}`, { nombre: editNombre.trim(), color: editColor });
-      setIdEtiquetaEditando(null); cargarEtiquetas();
-      toast.success("Etiqueta actualizada"); // CU8: Confirmación
+      setIdEtiquetaEditando(null); 
+      cargarEtiquetas();
+      toast.success("Etiqueta actualizada"); 
     } catch (error) { toast.error("Error al actualizar la etiqueta."); }
   };
 
@@ -77,14 +104,20 @@ export default function Perfil() {
     if (window.confirm("¿Seguro que quieres archivar esta etiqueta? Ya no aparecerá en tus nuevos registros.")) {
       try {
         await api.delete(`/etiquetas/${id}`); cargarEtiquetas();
-        toast.success("Etiqueta archivada"); // CU8: Confirmación
+        toast.success("Etiqueta archivada"); 
       } catch (error) { toast.error("Error al archivar la etiqueta."); }
     }
   };
 
+  /**
+   * Persiste las preferencias visuales tanto en el backend como en el DOM actual.
+   */
   const handleCambiarInterfaz = async (nuevoTema, nuevoColor) => {
     setUsuario(prev => ({ ...prev, preferenciasSistema: { ...prev.preferenciasSistema, tema: nuevoTema, colorPrincipal: nuevoColor } }));
-    aplicarPreferenciasVisuales({ tema: nuevoTema, colorPrincipal: nuevoColor, familiaIconos: usuario.preferenciasSistema?.familiaIconos || 'clasica' });
+    aplicarPreferenciasVisuales({ 
+      tema: nuevoTema, 
+      colorPrincipal: nuevoColor, 
+      familiaIconos: usuario.preferenciasSistema?.familiaIconos || 'clasica' });
     try {
       await api.put('/usuario/interfaz', { tema: nuevoTema, colorPrincipal: nuevoColor, familiaIconos: 'default' });
     } catch (error) { toast.error("Error al guardar preferencias de interfaz."); }
@@ -113,6 +146,10 @@ export default function Perfil() {
     }
   };
 
+  /**
+   * Flujo de eliminación de cuenta: Solicita confirmación y validación de contraseña
+   * para prevenir borrados accidentales de datos históricos.
+   */
   const handleEliminarCuenta = async (e) => {
     e.preventDefault();
     
@@ -133,7 +170,6 @@ export default function Perfil() {
     }
   };
 
-  // ... (El return() se queda exactamente igual) ...
   return (
     <div className="mx-auto max-w-5xl space-y-8 animate-in fade-in duration-300">
       <div>
@@ -178,7 +214,7 @@ export default function Perfil() {
             </div>
           </div>
 
-          {/* TARJETA 2: ACTUALIZAR DATOS Y CONTRASEÑA (CU3) */}
+          {/* TARJETA 2: ACTUALIZAR DATOS Y CONTRASEÑA */}
           <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-surface p-6 shadow-sm transition-colors duration-300">
             <h2 className="mb-4 text-xl font-bold text-main">Configuración de Cuenta</h2>
             <form onSubmit={handleActualizarPerfil} className="space-y-4">
@@ -201,7 +237,7 @@ export default function Perfil() {
             </form>
           </div>
 
-          {/* TARJETA 3: ZONA DE PELIGRO (CU5) */}
+          {/* TARJETA 3: ZONA DE PELIGRO */}
         <div className="rounded-3xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/10 p-6 shadow-sm transition-all duration-300">
           
           {/* PASO 1: Estado Inicial */}

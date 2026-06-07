@@ -3,6 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
+/**
+ * Página de autenticación.
+ * Gestiona el formulario de acceso, valida credenciales vía AuthContext y redirige al Dashboard.
+ */
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -10,6 +14,10 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  /**
+   * Maneja el envío del formulario de login.
+   * Si las credenciales son válidas, redirige al usuario al panel de control principal.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -17,9 +25,11 @@ export default function Login() {
       await login(email, password);
       toast.success('¡Bienvenido de nuevo a MoodNest!');
       navigate('/dashboard'); 
-  } catch (err) {
+    } catch (err) {
+      // El error es manejado globalmente por el interceptor de Axios, 
+      // pero este toast sirve como feedback visual inmediato.
       toast.error('Credenciales incorrectas. Inténtalo de nuevo.');
-  }
+    }
   };
 
   return (
@@ -31,18 +41,19 @@ export default function Login() {
       
       <h2 className="mb-6 text-center text-3xl font-bold text-main">Iniciar Sesión</h2>
       
-      {error && <p className="mb-4 rounded-xl bg-red-100 dark:bg-red-900/30 p-3 text-sm text-red-600 dark:text-red-400 font-medium text-center border border-red-200 dark:border-red-800">{error}</p>}
+      {/* Visualización de errores de validación previa */}
+      {error && <p className="mb-4 rounded-xl bg-red-100 p-3 text-sm text-red-600 font-medium text-center border border-red-200">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-semibold text-main/80 mb-1">Email</label>
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} 
-                 className="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-canvas p-3 text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors" />
+                 className="w-full rounded-xl border border-gray-300 bg-canvas p-3 text-main focus:border-primary focus:ring-1 focus:ring-primary transition-colors" />
         </div>
         <div>
           <label className="block text-sm font-semibold text-main/80 mb-1">Contraseña</label>
           <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} 
-                 className="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-canvas p-3 text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors" />
+                 className="w-full rounded-xl border border-gray-300 bg-canvas p-3 text-main focus:border-primary focus:ring-1 focus:ring-primary transition-colors" />
         </div>
         <button type="submit" className="mt-2 w-full rounded-xl bg-primary py-3 font-bold text-white shadow-md transition hover:opacity-90">
             Entrar

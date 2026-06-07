@@ -6,16 +6,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repositorio para la gestión de persistencia de los registros de estado de ánimo.
+ */
 public interface RegistroDiarioRepository extends MongoRepository<RegistroDiario, String> {
-    // Busca los registros de un usuario entre dos fechas (Ideal para el Calendario)
+    
+    /**
+     * Recupera registros en un rango temporal dado, filtrados por el ID de usuario.
+     */
     List<RegistroDiario> findByIdUsuarioAndFechaAsignadaBetween(String idUsuario, LocalDateTime inicio, LocalDateTime fin);
     
-    // Busca un registro concreto asegurándose de que pertenece a ese usuario (Seguridad)
+    /**
+     * Busca un registro por ID asegurando la pertenencia al usuario.
+     */
     Optional<RegistroDiario> findByIdAndIdUsuario(String id, String idUsuario);
     
-    // Busca todos los registros históricos de un usuario (Necesario para las Estadísticas)
+    /**
+     * Obtiene el historial completo de un usuario.
+     */
     List<RegistroDiario> findByIdUsuario(String idUsuario);
 
-    // Borrado en cascada de todos los registros del usuario
+    /**
+     * Ejecuta un borrado en cascada (físico) al eliminar la cuenta de un usuario.
+     */
     void deleteByIdUsuario(String idUsuario);
 }

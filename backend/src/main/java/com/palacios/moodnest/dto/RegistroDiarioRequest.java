@@ -5,7 +5,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
+/**
+ * Petición para crear o actualizar un registro diario.
+ */
 @Data
 public class RegistroDiarioRequest {
     private LocalDateTime fechaAsignada;

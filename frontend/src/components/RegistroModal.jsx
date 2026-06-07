@@ -3,6 +3,17 @@ import { createPortal } from 'react-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast'; 
 
+
+/**
+ * Modal dinámico para la creación y edición de registros diarios.
+ * * @param {Object} props
+ * @param {boolean} props.isOpen - Estado de visibilidad del modal.
+ * @param {Function} props.onClose - Función para cerrar el modal.
+ * @param {Function} props.onSuccess - Callback ejecutado tras guardar exitosamente.
+ * @param {Array} props.registrosPrevios - Historial actual para prevenir registros duplicados por fecha.
+ * @param {Object|null} props.registroAEditar - Objeto de registro si estamos en modo edición, null si es nuevo.
+ * @param {string|null} props.fechaPorDefecto - Fecha inicial (ISO) para el formulario.
+ */
 export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPrevios = [], registroAEditar = null, fechaPorDefecto = null }) {
   const [cargando, setCargando] = useState(false);
   const [etiquetasCatalogo, setEtiquetasCatalogo] = useState([]);
@@ -14,7 +25,11 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
 
   const [creandoEtiqueta, setCreandoEtiqueta] = useState(false);
   const [nuevaEtiquetaNombre, setNuevaEtiquetaNombre] = useState('');
-
+  
+  /**
+   * Determina la clase CSS de estilo según la puntuación seleccionada.
+   * Proporciona feedback visual inmediato del "estado de ánimo".
+   */
   const colorPuntuacion = (nota) => {
     if (nota >= 9) return 'bg-mood-9 text-white shadow-md';
     if (nota >= 7) return 'bg-mood-7 text-white shadow-md';
@@ -23,11 +38,16 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
     return 'bg-mood-1 text-white shadow-md';
   };
 
+  /**
+   * Efecto de inicialización: carga etiquetas y formatea los datos 
+   * dependiendo de si el formulario está en modo "Creación" o "Edición".
+   */
   useEffect(() => {
     if (isOpen) {
       cargarEtiquetas();
       
       if (registroAEditar) {
+        // Modo Edición: Mapeamos los datos del registro existente al estado local
         setFecha(registroAEditar.fechaAsignada.split('T')[0]);
         setPuntuacionGlobal(registroAEditar.puntuacionGlobal);
         setComentario(registroAEditar.comentario || '');
@@ -35,6 +55,7 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
           registroAEditar.etiquetasAsociadas?.map(e => ({ etiquetaId: e.idEtiqueta, puntuacion: e.puntuacion })) || []
         );
       } else {
+        // Modo Creación: Calculamos la fecha actual o usamos la pasada por props
         let f = fechaPorDefecto ? new Date(fechaPorDefecto) : new Date();
         const year = f.getFullYear();
         const month = String(f.getMonth() + 1).padStart(2, '0');
@@ -70,13 +91,17 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
     ));
   };
 
+  /**
+   * Crea una nueva etiqueta mediante API y la añade al estado local.
+   * Incluye validación de duplicados para evitar conflictos en el catálogo.
+   */
   const handleCrearEtiqueta = async () => {
     const nombreLimpio = nuevaEtiquetaNombre.trim();
     if (!nombreLimpio) return;
 
     const existe = etiquetasCatalogo.some(e => e.nombre.toLowerCase() === nombreLimpio.toLowerCase());
     if (existe) { 
-      toast.error("Ya tienes una etiqueta con ese nombre en tu catálogo."); // CU8
+      toast.error("Ya tienes una etiqueta con ese nombre en tu catálogo."); 
       return; 
     }
 
@@ -90,9 +115,15 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
     } catch (err) { toast.error("Error al crear etiqueta."); }
   };
 
+  /**
+   * Envío del formulario. 
+   * Incluye validación de unicidad de fecha (no permitir dos registros el mismo día)
+   * y gestión de llamadas API (PUT para editar, POST para crear).
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validar duplicidad de fecha (excluyendo el propio registro si estamos editando)
     const yaExisteRegistro = registrosPrevios.some(
       r => r.fechaAsignada.startsWith(fecha) && r.id !== registroAEditar?.id
     );
@@ -134,9 +165,8 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
 
   if (!isOpen) return null;
 
-  // ... (El return() se queda exactamente igual) ...
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/60 p-4 backdrop-blur-sm transition-opacity">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 p-4 backdrop-blur-sm transition-opacity">
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-thin rounded-3xl bg-surface p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
         
         <div className="mb-6 flex items-center justify-between">

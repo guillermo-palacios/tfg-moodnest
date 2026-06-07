@@ -3,6 +3,10 @@ import api from '../services/api';
 import RegistroModal from '../components/RegistroModal';
 import toast from 'react-hot-toast';
 
+/**
+ * Componente Historial: Visualizador mensual de registros mediante calendario interactivo.
+ * Permite navegar cronológicamente, visualizar detalles por día y gestionar el borrado/edición de los registros.
+ */
 export default function Historial() {
     const [fechaActual, setFechaActual] = useState(new Date());
     const [registros, setRegistros] = useState([]);
@@ -12,6 +16,10 @@ export default function Historial() {
     const [diaSeleccionado, setDiaSeleccionado] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    /**
+     * Carga el catálogo completo de etiquetas (incluyendo las inactivas).
+     * Necesario para que el Historial pueda mostrar el nombre de etiquetas aunque hayan sido borradas lógicamente.
+     */
     useEffect(() => {
         const cargarEtiquetas = async () => {
             try {
@@ -24,6 +32,10 @@ export default function Historial() {
         cargarEtiquetas();
     }, []);
 
+    /**
+     * Recupera los registros del mes seleccionado utilizando un rango de fechas ISO.
+     * Calcula dinámicamente el primer y último día del mes activo.
+     */
     const cargarRegistrosMes = async () => {
         setCargando(true);
         try {
@@ -46,6 +58,10 @@ export default function Historial() {
         }
     };
 
+    /**
+     * Elimina permanentemente un registro diario.
+     * @param {string} id - Identificador único del registro a borrar.
+     */
     const eliminarRegistro = async (id) => {
         if (window.confirm("¿Estás seguro de que quieres eliminar este registro permanentemente?")) {
             try {
@@ -63,15 +79,22 @@ export default function Historial() {
         setDiaSeleccionado(null);
     }, [fechaActual]);
 
+    // Funciones de navegación temporal
     const mesAnterior = () => setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 1));
     const mesSiguiente = () => setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 1));
 
+    /**
+     * Algoritmo de generación de cuadrícula:
+     * Calcula los días vacíos previos al primer lunes del mes (offset) y llena el resto.
+     * @returns {Array} Array de objetos Date o null para los espacios vacíos.
+     */
     const obtenerDiasDelMes = () => {
         const año = fechaActual.getFullYear();
         const mes = fechaActual.getMonth();
         const primerDia = new Date(año, mes, 1);
         const ultimoDia = new Date(año, mes + 1, 0);
 
+        // Ajuste de offset: JS .getDay() empieza en domingo (0), nosotros queremos lunes (1)
         let offset = primerDia.getDay() - 1;
         if (offset === -1) offset = 6;
 
@@ -83,6 +106,9 @@ export default function Historial() {
         return dias;
     };
 
+    /**
+     * Helper para vincular el registro de la API con un día específico de la cuadrícula.
+     */
     const obtenerRegistroDelDia = (fechaDia) => {
         if (!fechaDia) return null;
         const year = fechaDia.getFullYear();
@@ -92,6 +118,7 @@ export default function Historial() {
         return registros.find(r => r.fechaAsignada.startsWith(fechaString));
     };
 
+    // Estilos dinámicos para el calendario
     const colorPuntuacion = (nota) => {
         if (nota >= 9) return 'bg-mood-9 text-white border-transparent shadow-md';
         if (nota >= 7) return 'bg-mood-7 text-white border-transparent shadow-md';
@@ -114,7 +141,6 @@ export default function Historial() {
 
     const registroActual = diaSeleccionado ? obtenerRegistroDelDia(diaSeleccionado) : null;
 
-    // ... (El return() se queda exactamente igual) ...
     return (
         <div className="mx-auto max-w-6xl space-y-6 animate-in fade-in duration-300">
 

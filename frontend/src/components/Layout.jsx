@@ -3,6 +3,12 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
+/**
+ * Layout privado principal. Envuelve todas las páginas protegidas del Dashboard.
+ * Gestiona la navegación (Desktop/Mobile), el cambio de tema y la sesión de usuario.
+ * @param {Object} props - Propiedades del componente.
+ * @param {React.ReactNode} props.children - Contenido de la página a renderizar.
+ */
 export default function Layout({ children }) {
   const { logout, temaColor } = useContext(AuthContext);
   const location = useLocation();
@@ -29,23 +35,24 @@ export default function Layout({ children }) {
     }
   ];
 
+  /**
+   * Ejecuta el cierre de sesión y redirige al usuario al inicio.
+   */
   const handleConfirmLogout = () => {
     logout();
     setIsLogoutModalOpen(false);
     toast.success('Sesión cerrada correctamente');
-    navigate('/'); // Redirigimos a la pantalla de bienvenida (CU4 - Paso 4)
+    navigate('/'); 
   };
 
   return (
-    // Hemos quitado bg-gray-50, porque el body ya tiene bg-canvas (claro u oscuro automático)
     <div className="flex min-h-screen flex-col pb-16 md:pb-0">
 
-      {/* 1. BARRA SUPERIOR PRINCIPAL (Ahora es bg-primary) */}
+      {/* HEADER: Contiene branding y acceso al perfil */}
       <header className="sticky top-0 z-50 flex items-center justify-between bg-primary px-6 py-4 shadow-md transition-colors duration-300">
       <Link to="/dashboard" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
-          {/* Contenedor blanco para proteger el logo del fondo de color */}
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
-            {/* Cargamos el PNG dinámicamente según el color actual */}
+            {/* Carga dinámica del logo según el color configurado en el perfil */}
             <img 
                 src={`/logo-${temaColor}.png`} 
                 alt="Logo MoodNest" 
@@ -74,13 +81,13 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      {/* 2. SUBMENÚ DESKTOP (bg-surface para adaptarse al modo oscuro) */}
+      {/* SUBMENÚ DESKTOP: Navegación horizontal para pantallas grandes */}
       <nav className="hidden border-b border-gray-200 dark:border-gray-800 bg-surface shadow-sm md:block transition-colors duration-300">
         <div className="mx-auto flex max-w-4xl justify-center space-x-12 px-4">
           {navItems.map((item) => (
             <Link key={item.name} to={item.path}
               className={`flex items-center space-x-2 border-b-2 px-2 py-4 font-medium transition-colors ${isActive(item.path)
-                  ? 'border-primary text-primary' // <-- Mágico: color corporativo
+                  ? 'border-primary text-primary' 
                   : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-main'
                 }`}>
               {item.icon}
@@ -90,12 +97,12 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      {/* 3. CONTENIDO DE LA PÁGINA */}
+      {/* CONTENIDO DE LA PÁGINA */}
       <main className="flex-1 p-4 md:p-8">
         {children}
       </main>
 
-      {/* 4. MENÚ INFERIOR MÓVIL (bg-surface) */}
+      {/* MENÚ INFERIOR MÓVIL: Navegación fija ergonómica para dispositivos táctiles */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-around border-t border-gray-200 dark:border-gray-800 bg-surface pb-safe pt-2 shadow-lg md:hidden transition-colors duration-300">
         {navItems.map((item) => (
           <Link key={item.name} to={item.path}
@@ -107,6 +114,7 @@ export default function Layout({ children }) {
         ))}
       </nav>
 
+      {/* MODAL DE CIERRE DE SESIÓN: Flujo de confirmación para evitar cierres accidentales */}
       {isLogoutModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
           <div className="w-full max-w-sm rounded-3xl bg-surface p-6 shadow-xl border border-gray-200 dark:border-gray-800 animate-in zoom-in-95 duration-200">

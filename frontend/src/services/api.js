@@ -1,7 +1,10 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-
+/**
+ * Instancia configurada de Axios para peticiones a la API.
+ * Define el timeout global para cumplir con el RNF de Disponibilidad.
+ */
 const api = axios.create({
   baseURL: '/api',
   timeout: 5000,
@@ -10,6 +13,9 @@ const api = axios.create({
   },
 });
 
+/**
+ * Interceptor de peticiones: Adjunta el JWT automáticamente en la cabecera 'Authorization'.
+ */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -18,36 +24,34 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Para controlar caídas de Base de Datos/Servidor
+/**
+ * Interceptor de respuestas: Gestiona errores globales de red y expiración de sesión.
+ */
 api.interceptors.response.use(
-  (response) => response, // Si la respuesta va bien (200 OK), pasa de largo
+  (response) => response, 
   (error) => {
-    // CASO A: El servidor no responde o la base de datos está caída (Timeout / Network Error)
+    // CASO A: Fallo de conexión o Timeout del backend 
     if (error.code === 'ECONNABORTED' || !error.response) {
-      toast.error('Error de conexión: El servidor o la base de datos no responden. Reinténtalo en unos instantes.', {
-        id: 'error-conexion-global', // Evita que se dupliquen mil toasts si fallan varias peticiones a la vez
+      toast.error('Error de conexión: El servidor no responde. Inténtalo de nuevo.', {
+        id: 'error-conexion-global',
         duration: 5000
       });
       return Promise.reject(error);
     }
 
-    // CASO B: El token ha caducado o es inválido (Error 403 / 401)
+    // CASO B: El token ha caducado (401) o acceso denegado (403)
     if (error.response?.status === 401 || error.response?.status === 403) {
-      // Si el error viene del login, no avisamos de token caducado (es simplemente credenciales mal)
+      // Ignoramos el error si estamos en el proceso de login
       if (!error.config.url.includes('/auth/login')) {
-        toast.error('La sesión ha expirado. Por favor, vuelve a iniciar sesión.');
+        toast.error('La sesión ha expirado. Redirigiendo...');
         localStorage.removeItem('token');
-        window.location.href = '/login'; // Redirección limpia
+        window.location.href = '/login'; 
       }
     }
 
-    // Si el error es controlado, 
-    // dejamos que el propio componente maneje su Toast específico
     return Promise.reject(error);
   }
 );

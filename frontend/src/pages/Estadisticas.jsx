@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+
+// Importación de componentes de Chart.js y registro de módulos para el renderizado Canvas
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +30,11 @@ ChartJS.register(
   Filler
 );
 
+/**
+ * Componente de visualización estadística.
+ * Procesa el histórico de registros para generar gráficos de evolución, distribución emocional 
+ * y análisis de impacto de actividades (etiquetas).
+ */
 export default function Estadisticas() {
   const [filtroTiempo, setFiltroTiempo] = useState('semana');
   const [statsGenerales, setStatsGenerales] = useState(null);
@@ -38,7 +45,10 @@ export default function Estadisticas() {
   
   const [etiquetaSeleccionada, setEtiquetaSeleccionada] = useState('');
   const [cargando, setCargando] = useState(true);
-
+  
+  /**
+   * Mapea puntuaciones numéricas a colores corporativos según la escala MoodNest.
+   */
   const obtenerColorNota = (nota) => {
     if (nota >= 9) return '#5B61C4'; 
     if (nota >= 7) return '#84CC16'; 
@@ -54,12 +64,16 @@ export default function Estadisticas() {
     return `${anio}-${mes}-${dia}`; 
   };
 
+  /**
+   * Carga inicial desde el backend. Se realiza al montar el componente.
+   */
   useEffect(() => {
     const cargarEstadisticas = async () => {
       try {
         const res = await api.get('/estadisticas');
         setStatsGenerales(res.data);
         
+        // Seleccionamos la primera etiqueta disponible para inicializar el gráfico de impacto
         if (res.data.impactoEtiquetas) {
             const keys = Object.keys(res.data.impactoEtiquetas);
             if (keys.length > 0) setEtiquetaSeleccionada(keys[0]);
@@ -73,6 +87,9 @@ export default function Estadisticas() {
     cargarEstadisticas();
   }, []);
 
+  /**
+   * Efecto reactivo: Reprocesa los gráficos cuando cambia el filtro de tiempo o llegan datos del backend.
+   */
   useEffect(() => {
     if (statsGenerales && statsGenerales.evolucionTemporal) {
       procesarGraficoLineas(statsGenerales.evolucionTemporal);
@@ -81,12 +98,17 @@ export default function Estadisticas() {
     }
   }, [filtroTiempo, statsGenerales]);
 
+  /**
+   * Procesa la evolución temporal. 
+   * Flujo: Si filtro = 'año', agregamos datos por mes. Si es 'semana'/'mes', filtramos por día.
+   */
   const procesarGraficoLineas = (evolucionCompleta) => {
     const hoy = new Date();
     let etiquetasEjeX = [];
     let notasEjeY = [];
 
     if (filtroTiempo === 'año') {
+      // Lógica de agregación mensual
       const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
       for (let i = 11; i >= 0; i--) {
         const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
@@ -95,6 +117,8 @@ export default function Estadisticas() {
           const rd = new Date(r.fecha);
           return rd.getFullYear() === d.getFullYear() && rd.getMonth() === d.getMonth();
         });
+
+        // Si hay registros, promediamos. Si no, insertamos null para romper la línea (spanGaps: false)
         if (registrosDelMes.length > 0) {
           const media = registrosDelMes.reduce((sum, r) => sum + r.puntuacion, 0) / registrosDelMes.length;
           notasEjeY.push(parseFloat(media.toFixed(1)));
@@ -103,6 +127,7 @@ export default function Estadisticas() {
         }
       }
     } else {
+      // Lógica de filtrado diario
       const dias = filtroTiempo === 'semana' ? 7 : 30;
       for (let i = dias - 1; i >= 0; i--) {
         const d = new Date();
@@ -120,7 +145,8 @@ export default function Estadisticas() {
         label: filtroTiempo === 'año' ? 'Nota Media' : 'Estado de ánimo',
         data: notasEjeY,
         borderColor: '#5B61C4', backgroundColor: 'rgba(91, 97, 196, 0.15)', 
-        fill: true, tension: 0.4, spanGaps: false, pointBackgroundColor: '#ffffff', pointBorderColor: '#5B61C4', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 7,
+        fill: true, tension: 0.4, spanGaps: false, // spanGaps: false rompe la línea si hay null
+        pointBackgroundColor: '#ffffff', pointBorderColor: '#5B61C4', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 7,
       }]
     });
   };

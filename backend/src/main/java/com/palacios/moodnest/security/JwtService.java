@@ -12,6 +12,9 @@ import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
+/**
+ * Servicio encargado de las operaciones criptográficas sobre los Tokens JWT.
+ */
 @Service
 public class JwtService {
 
@@ -21,7 +24,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    // 1. Generar un Token nuevo (Para cuando el usuario haga Login)
+    /**
+     * Crea un JWT firmado con el algoritmo HS256.
+     * @param email Correo electrónico usado como 'Subject' del token.
+     * @return El token en formato String.
+     */
     public String generarToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
@@ -31,18 +38,22 @@ public class JwtService {
                 .compact();
     }
 
-    // 2. Extraer el Email del Token (Para saber quién está haciendo la petición)
+    /**
+     * Extrae el email del payload del token.
+     */
     public String extraerEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 3. Comprobar si un Token es válido (Firma correcta y no caducado)
+    /**
+     * Valida la firma criptográfica y la fecha de expiración.
+     */
     public boolean esTokenValido(String token, String email) {
         final String emailExtraido = extraerEmail(token);
         return (emailExtraido.equals(email)) && !isTokenExpired(token);
     }
 
-    // --- Métodos internos de apoyo ---
+    // --- MÉTODOS INTERNOS DE APOYO (Helpers Criptográficos) ---
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -57,6 +68,9 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+    /**
+     * Parsea el token utilizando la clave secreta para verificar su firma.
+     */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
@@ -65,7 +79,9 @@ public class JwtService {
                 .getBody();
     }
 
-    // Transforma el texto del application.properties en una llave criptográfica real
+    /**
+     * Convierte la cadena de texto de configuración en una llave criptográfica HMAC robusta.
+     */
     private Key getSignInKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);

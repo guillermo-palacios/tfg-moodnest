@@ -11,7 +11,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-// Data -> Genera las funciones básicas (Getters, Setters, etc)
+/**
+ * Representa la identidad, seguridad y configuración del usuario en el sistema.
+ */
 @Data
 @Document(collection = "usuarios")
 public class Usuario {
@@ -21,15 +23,20 @@ public class Usuario {
     
     private String nombre;
     
+    /** Índice único para garantizar que no existan cuentas duplicadas en el sistema. */
     @Indexed(unique = true)
     private String email;
     
+    /** JsonIgnore impide que la contraseña encriptada se exponga accidentalmente en las APIs. */
     @JsonIgnore
     private String password;
     
     @Field("preferencias_sistema")
     private PreferenciasSistema preferenciasSistema;
     
+    /** * Mapa flexible para la personalización de la escala emocional (CU14).
+     * Clave: Nivel (1-10), Valor: Descripción textual personalizada.
+     */
     @Field("escala_personalizada")
     private Map<String, String> escalaPersonalizada; 
     
@@ -42,10 +49,13 @@ public class Usuario {
     @Field("fecha_ultimo_registro")
     private LocalDateTime fechaUltimoRegistro;
 
+    /**
+     * Preferencias visuales persistidas para mantener el aspecto de la app entre sesiones.
+     */
     @Data
     public static class PreferenciasSistema {
 
-        private String tema;
+        private String tema; // "claro" o "oscuro"
         
         @Field("color_principal")
         private String colorPrincipal;

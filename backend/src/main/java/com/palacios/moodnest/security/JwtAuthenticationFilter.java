@@ -13,43 +13,54 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Filtro de seguridad que intercepta peticiones HTTP para validar la identidad mediante JWT.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
+    /**
+     * Flujo de filtrado:
+     * 1. Extrae el token de la cabecera 'Authorization'.
+     * 2. Valida la integridad criptográfica.
+     * 3. Establece la identidad en el contexto de seguridad de Spring.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
         final String authHeader = request.getHeader("Authorization");
 
-        // 1. Comprobar si hay un token en la cabecera 
+        // Si no hay token, delegamos al siguiente filtro de seguridad (que decidirá si el acceso está permitido)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Extraer el token
         final String jwt = authHeader.substring(7);
         
         try {
-            // 3. Extraer el email. Si el token es falso, modificado o caducado, esto lanzará un error
+            // Extracción y validación
             final String userEmail = jwtService.extraerEmail(jwt);
 
-            // 4. Si hay email y aún no está autenticado en este hilo
+            // Si el token es legítimo y no hay sesión previa abierta, autorizamos al usuario
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userEmail, null, new ArrayList<>()
                 );
+                // Inyectamos la autenticación en el hilo de ejecución actual
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (Exception e) {
+            // Seguridad defensiva: ante cualquier error en el token (caducado, firma errónea),
+            // se limpia el contexto para evitar suplantaciones.
+            SecurityContextHolder.clearContext();
         }
         
-        // 5. Continúa el flujo hacia el Controlador
         filterChain.doFilter(request, response);
     }
 }

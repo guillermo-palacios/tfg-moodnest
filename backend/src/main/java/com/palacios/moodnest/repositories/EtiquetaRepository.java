@@ -5,19 +5,33 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repositorio para la gestión del catálogo de etiquetas personales.
+ */
 public interface EtiquetaRepository extends MongoRepository<Etiqueta, String> {
-    // Devuelve todas las etiquetas que NO han sido borradas (activa = true)
+    
+    /**
+     * Recupera únicamente las etiquetas activas para su selección en nuevos registros.
+     */
     List<Etiqueta> findByIdUsuarioAndActivaTrue(String idUsuario);
 
-    // Devuelve todas las etiquetas de un usuario
+    /**
+     * Recupera el catálogo completo (incluyendo etiquetas archivadas/inactivas).
+     */
     List<Etiqueta> findByIdUsuario(String idUsuario);
     
-    // Busca una etiqueta concreta asegurándose de que es del usuario
+    /**
+     * Valida la existencia y pertenencia de una etiqueta específica.
+     */
     Optional<Etiqueta> findByIdAndIdUsuario(String id, String idUsuario);
     
-    // Busca si ya existe una etiqueta activa con el mismo nombre (Ignorando mayúsculas/minúsculas)
+    /**
+     * Valida la unicidad de nombre dentro del catálogo del usuario, ignorando mayúsculas/minúsculas.
+     */
     Optional<Etiqueta> findByIdUsuarioAndNombreIgnoreCaseAndActivaTrue(String idUsuario, String nombre);
 
-    // Borrado en cascada de todas las etiquetas del usuario
+    /**
+     * Borrado en cascada para limpiar las etiquetas vinculadas al eliminar la cuenta.
+     */
     void deleteByIdUsuario(String idUsuario);
 }

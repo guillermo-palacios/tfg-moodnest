@@ -4,6 +4,8 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import PublicLayout from './components/PublicLayout';
+
+// Páginas
 import Welcome from './pages/Welcome';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,8 +14,10 @@ import Historial from './pages/Historial';
 import Perfil from './pages/Perfil';
 import Estadisticas from './pages/Estadisticas';
 
-const NuevoRegistroTemp = () => <div className="p-8 text-center text-gray-500">Formulario en construcción...</div>;
-
+/**
+ * Componente raíz: Configura el proveedor de autenticación, 
+ * el sistema de notificaciones y la jerarquía de rutas.
+ */
 export default function App() {
   return (
     <AuthProvider>
@@ -21,41 +25,24 @@ export default function App() {
         position="top-center"
         reverseOrder={false}
         toastOptions={{
-          // Esto fuerza a todo el contenedor a renderizar texto nítido
-          style: {
-            WebkitFontSmoothing: 'antialiased',
-            MozOsxFontSmoothing: 'grayscale',
-          },
-          // Esto se aplica individualmente a cada notificación al aparecer
+          style: { WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' },
           className: 'nitido-toast'
         }}
-      />      <BrowserRouter>
+      />
+      <BrowserRouter>
         <Routes>
-          {/* Rutas Públicas */}
-          <Route path="/" element={<PublicLayout><Welcome /></PublicLayout>} />
-          <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
-          <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
+          {/* Rutas Públicas: Layout diseñado para landings y formularios */}
+          <Route element={<PublicLayout><Welcome /></PublicLayout>} path="/" />
+          <Route element={<PublicLayout><Login /></PublicLayout>} path="/login" />
+          <Route element={<PublicLayout><Register /></PublicLayout>} path="/register" />
 
-          {/* ... (Tus rutas privadas se quedan igual) ... */}
-
-          {/* Rutas Protegidas (Envueltas en el Layout) */}
-          <Route element={
-            <ProtectedRoute>
-              <Layout>
-                {/* IMPORTANTE: Outlet se usa de otra forma, aquí pasamos children, así que Layout envuelve las rutas */}
-              </Layout>
-            </ProtectedRoute>
-          }>
-            {/* Como estamos usando Layout con children en v6, lo estructuramos así: */}
-          </Route>
-
-          {/* ESTA ES LA ESTRUCTURA CORRECTA EN REACT ROUTER V6 */}
-          <Route path="/perfil" element={<ProtectedRoute><Layout><Perfil /></Layout></ProtectedRoute>} />
+          {/* Rutas Protegidas: Envueltas en ProtectedRoute y Layout privativo */}
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
           <Route path="/historial" element={<ProtectedRoute><Layout><Historial /></Layout></ProtectedRoute>} />
           <Route path="/estadisticas" element={<ProtectedRoute><Layout><Estadisticas /></Layout></ProtectedRoute>} />
+          <Route path="/perfil" element={<ProtectedRoute><Layout><Perfil /></Layout></ProtectedRoute>} />
 
-          {/* Redirección para URLs inválidas */}
+          {/* Catch-all: Redirección de seguridad para URLs no definidas */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
