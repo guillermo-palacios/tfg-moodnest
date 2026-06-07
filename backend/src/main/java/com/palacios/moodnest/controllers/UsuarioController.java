@@ -24,7 +24,6 @@ public class UsuarioController {
 
     @GetMapping("/me")
     public ResponseEntity<?> obtenerUsuarioActual(Authentication auth) {
-        // Busca al usuario en el repositorio a partir de auth.getName() (que suele ser el ID o email del token)
         Optional<Usuario> usuario = usuarioRepository.findByEmail(auth.getName());
         
         if (usuario.isPresent()) {

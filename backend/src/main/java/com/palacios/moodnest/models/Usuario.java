@@ -21,7 +21,7 @@ public class Usuario {
     
     private String nombre;
     
-    @Indexed(unique = true) // El email debe ser único
+    @Indexed(unique = true)
     private String email;
     
     @JsonIgnore
@@ -31,7 +31,7 @@ public class Usuario {
     private PreferenciasSistema preferenciasSistema;
     
     @Field("escala_personalizada")
-    private Map<String, String> escalaPersonalizada; // REVISAR LO DEL MAP
+    private Map<String, String> escalaPersonalizada; 
     
     @Field("racha_actual")
     private Integer rachaActual;
@@ -42,7 +42,6 @@ public class Usuario {
     @Field("fecha_ultimo_registro")
     private LocalDateTime fechaUltimoRegistro;
 
-    // Clase interna para respetar la estructura anidada de preferencias
     @Data
     public static class PreferenciasSistema {
 

@@ -25,11 +25,10 @@ public class RegistroDiarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
-    // CU6: Crear Registro Diario
+    // Crear Registro Diario
     public RegistroDiario crearRegistro(String email, RegistroDiarioRequest request) {
         Usuario usuario = getUsuarioActual(email);
 
-        // LA SOLUCIÓN SENCILLA: Comparamos solo la FECHA (LocalDate), ignorando las horas
         if (request.getFechaAsignada().toLocalDate().isAfter(LocalDate.now())) {
             throw new RuntimeException("No se pueden crear registros en fechas futuras");
         }
@@ -73,14 +72,13 @@ public class RegistroDiarioService {
         return registroRepository.save(registro);
     }
 
-    // CU7: Editar un registro existente
+    // Editar un registro existente
     public RegistroDiario actualizarRegistro(String email, String idRegistro, RegistroDiarioRequest request) {
         Usuario usuario = getUsuarioActual(email);
 
         RegistroDiario registro = registroRepository.findByIdAndIdUsuario(idRegistro, usuario.getId())
                 .orElseThrow(() -> new RuntimeException("Registro no encontrado o no tienes permisos para editarlo"));
 
-        // LA SOLUCIÓN SENCILLA: Igual aquí, solo miramos LocalDate
         if (request.getFechaAsignada().toLocalDate().isAfter(LocalDate.now())) {
             throw new RuntimeException("No se pueden asignar fechas futuras");
         }
@@ -94,7 +92,7 @@ public class RegistroDiarioService {
         return registroRepository.save(registro);
     }
 
-    // CU7: Eliminar un registro de forma permanente
+    // Eliminar un registro de forma permanente
     public void eliminarRegistro(String email, String idRegistro) {
         Usuario usuario = getUsuarioActual(email);
 
@@ -104,7 +102,7 @@ public class RegistroDiarioService {
         registroRepository.delete(registro);
     }
 
-    // CU10: Visualizar Historial (Obtener los de un mes)
+    // Visualizar Historial (Obtener los de un mes)
     public List<RegistroDiario> obtenerRegistrosPorMes(String email, LocalDateTime inicio, LocalDateTime fin) {
         Usuario usuario = getUsuarioActual(email);
         return registroRepository.findByIdUsuarioAndFechaAsignadaBetween(usuario.getId(), inicio, fin);

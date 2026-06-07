@@ -76,13 +76,12 @@ public class EtiquetaService {
         return etiquetaRepository.save(etiqueta);
     }
 
-    // Borrado Lógico (CU8 - Flujo Alternativo 2)
+    // Borrado Lógico
     public void eliminarEtiqueta(String email, String idEtiqueta) {
         Usuario usuario = getUsuarioActual(email);
         Etiqueta etiqueta = etiquetaRepository.findByIdAndIdUsuario(idEtiqueta, usuario.getId())
                 .orElseThrow(() -> new RuntimeException("Etiqueta no encontrada o sin permisos"));
 
-        // En lugar de borrar de la base de datos (etiquetaRepository.delete()), la ocultamos
         etiqueta.setActiva(false);
         etiquetaRepository.save(etiqueta);
     }

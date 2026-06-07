@@ -22,7 +22,7 @@ public class AuthService {
 
     // Lógica de Registro de Usuarios
     public AuthResponse registrar(AuthRequest request) {
-        // Validación básica: comprobar si el email ya existe en MongoDB (RI-01 de tu memoria)
+        // Comprobar si el email ya existe en MongoDB
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("El email ya está registrado");
         }
@@ -30,11 +30,11 @@ public class AuthService {
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre());
         usuario.setEmail(request.getEmail());
-        // ¡CRUCIAL! Encriptamos la contraseña con BCrypt antes de guardar
+        // Encriptamos la contraseña con BCrypt antes de guardar
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setFechaRegistro(LocalDateTime.now());
         
-        // Inicializamos preferencias por defecto tal y como definiste en tu esquema JSON
+        // Inicializamos preferencias por defecto
         Usuario.PreferenciasSistema prefs = new Usuario.PreferenciasSistema();
         prefs.setTema("claro");
         prefs.setColorPrincipal("#4A90E2");
@@ -45,7 +45,7 @@ public class AuthService {
 
         usuarioRepository.save(usuario);
 
-        // Le generamos y devolvemos su token de acceso
+        // Generamos y devolvemos su token de acceso
         String jwtToken = jwtService.generarToken(usuario.getEmail());
         return new AuthResponse(jwtToken);
     }
@@ -55,13 +55,13 @@ public class AuthService {
         Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Comparamos la contraseña que mete en Postman con el hash encriptado de MongoDB
+        // Comparamos la contraseña con el hash encriptado de MongoDB
         if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
             throw new RuntimeException("Credenciales incorrectas");
         }
 
         // Si es correcto, actualizamos su última fecha de acceso y generamos Token
-        usuario.setFechaUltimoRegistro(LocalDateTime.now()); // Nota: usa el nombre exacto de tu modelo si cambia, ej: fechaUltimoRegistro
+        usuario.setFechaUltimoRegistro(LocalDateTime.now()); 
         usuarioRepository.save(usuario);
 
         String jwtToken = jwtService.generarToken(usuario.getEmail());

@@ -1,9 +1,0 @@
-com/palacios/moodnest/models/RegistroDiario$EtiquetaAsociada.class
-com/palacios/moodnest/repositories/UsuarioRepository.class
-com/palacios/moodnest/models/Usuario$PreferenciasSistema.class
-com/palacios/moodnest/MoodnestApplication.class
-com/palacios/moodnest/repositories/RegistroDiarioRepository.class
-com/palacios/moodnest/models/Etiqueta.class
-com/palacios/moodnest/models/RegistroDiario.class
-com/palacios/moodnest/models/Usuario.class
-com/palacios/moodnest/repositories/EtiquetaRepository.class

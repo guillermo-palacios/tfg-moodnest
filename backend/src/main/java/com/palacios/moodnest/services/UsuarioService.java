@@ -18,7 +18,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RegistroDiarioRepository registroRepository;
     private final EtiquetaRepository etiquetaRepository;
-    private final PasswordEncoder passwordEncoder; // Inyectamos el encriptador
+    private final PasswordEncoder passwordEncoder; 
 
     public Usuario guardarEscalaPersonalizada(String email, EscalaRequest request) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -40,7 +40,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    // CU3: Gestionar Perfil (Modificar Nombre y/o Contraseña)
+    // Gestionar Perfil (Modificar Nombre y/o Contraseña)
     public Usuario actualizarPerfil(String email, PerfilUpdateRequest request) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -64,16 +64,16 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    // CU5: Eliminar Cuenta (Permanente y con borrado en cascada)
+    // Eliminar Cuenta (Permanente y con borrado en cascada)
     public void eliminarCuenta(String email, String passwordConfirmacion) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Medida de seguridad crı́tica: Validar contraseña antes de borrar
+        // Validar contraseña antes de borrar
         if (!passwordEncoder.matches(passwordConfirmacion, usuario.getPassword())) {
             throw new RuntimeException("Contraseña incorrecta. Se ha abortado la eliminación de la cuenta.");
         }
 
-        // Borrado en cascada exigido por el CU5
+        // Borrado en cascada
         registroRepository.deleteByIdUsuario(usuario.getId());
         etiquetaRepository.deleteByIdUsuario(usuario.getId());
         

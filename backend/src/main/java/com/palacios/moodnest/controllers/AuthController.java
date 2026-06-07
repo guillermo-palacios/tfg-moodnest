@@ -30,7 +30,7 @@ public class AuthController {
         try {
             return ResponseEntity.ok(authService.login(request));
         } catch (Exception e) {
-            // Si las credenciales fallan, devolvemos un HTTP 401 Unauthorized tal y como exige el TFG
+            // Si las credenciales fallan, devolvemos un HTTP 401 Unauthorized
             return ResponseEntity.status(401).body(new AuthResponse("Error: " + e.getMessage()));
         }
     }

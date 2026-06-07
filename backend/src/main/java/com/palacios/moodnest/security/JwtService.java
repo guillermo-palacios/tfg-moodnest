@@ -15,7 +15,6 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // Cogemos los valores que acabas de poner en el application.properties
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -28,7 +27,7 @@ public class JwtService {
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // Firma con nuestra clave
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -66,7 +65,7 @@ public class JwtService {
                 .getBody();
     }
 
-    // Transforma el texto de tu application.properties en una llave criptográfica real
+    // Transforma el texto del application.properties en una llave criptográfica real
     private Key getSignInKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);

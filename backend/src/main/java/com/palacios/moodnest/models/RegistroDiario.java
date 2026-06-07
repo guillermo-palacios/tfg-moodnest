@@ -34,13 +34,11 @@ public class RegistroDiario {
     @Field("fecha_modificacion")
     private LocalDateTime fechaModificacion;
 
-    // Clase interna para representar el array de objetos de etiquetas referenciadas
     @Data
     public static class EtiquetaAsociada {
         @Field("id_etiqueta")
         private String idEtiqueta;
         
-        // Puede ser null
         private Integer puntuacion; 
     }
 }

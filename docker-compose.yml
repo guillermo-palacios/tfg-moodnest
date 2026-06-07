@@ -1,0 +1,42 @@
+services:
+  # 1. CONTENEDOR DE LA BASE DE DATOS (Ahora se llama mongo-server)
+  mongo-server:
+    image: mongo:latest
+    container_name: moodnest_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - moodnest_data:/data/db
+    networks:
+      - moodnest_net
+    restart: unless-stopped
+
+  # 2. CONTENEDOR DEL BACKEND
+  backend:
+    build: ./backend
+    container_name: moodnest_backend
+    ports:
+      - "8080:8080"
+    networks:
+      - moodnest_net
+    depends_on:
+      - mongo-server
+    restart: unless-stopped
+
+  # 3. CONTENEDOR DEL FRONTEND
+  frontend:
+    build: ./frontend
+    container_name: moodnest_frontend
+    ports:
+      - "5173:80"
+    networks:
+      - moodnest_net
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  moodnest_data:
+
+networks:
+  moodnest_net:

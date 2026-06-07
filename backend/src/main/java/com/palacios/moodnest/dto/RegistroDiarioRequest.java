@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class RegistroDiarioRequest {
     private LocalDateTime fechaAsignada;
-    private Integer puntuacionGlobal; // Valor del 1 al 10
+    private Integer puntuacionGlobal; 
     private String comentario;
     private List<EtiquetaAsociada> etiquetasAsociadas;
 }

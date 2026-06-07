@@ -3,13 +3,12 @@ import api from '../services/api';
 
 export const AuthContext = createContext();
 
-// Un diccionario que traduce el nombre del color elegido a su valor RGB real
 const DICCIONARIO_COLORES = {
-  indigo: '91 97 196',  // #5B61C4
-  emerald: '16 185 129', // #10B981
-  rose: '244 63 94',     // #F43F5E
-  amber: '245 158 11',    // #F59E0B
-  blue: '59 130 246',    // #3B82F6
+  indigo: '91 97 196',
+  emerald: '16 185 129',
+  rose: '244 63 94',
+  amber: '245 158 11',
+  blue: '59 130 246',
 };
 
 export const AuthProvider = ({ children }) => {
@@ -17,18 +16,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [temaColor, setTemaColor] = useState('indigo');
 
-  // Función mágica que inyecta el Tema y el Color en el HTML
   const aplicarPreferenciasVisuales = (preferencias) => {
     const html = document.documentElement;
 
-    // 1. Aplicamos el Modo Claro/Oscuro
     if (preferencias?.tema === 'oscuro') {
       html.classList.add('dark');
     } else {
       html.classList.remove('dark');
     }
 
-    // 2. Aplicamos el Color Principal
     const colorNombre = preferencias?.colorPrincipal || 'indigo';
     setTemaColor(colorNombre);
 
@@ -40,15 +36,19 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       const token = localStorage.getItem('token');
       if (token) {
-        setUser({ token });
         try {
-          // Si hay token, nos descargamos su perfil para pintar la app de su color
+          setUser({ token });
           const res = await api.get('/usuario/me');
           aplicarPreferenciasVisuales(res.data.preferenciasSistema);
         } catch (error) {
-          throw error;
+          // CORRECCIÓN: En lugar de hacer "throw error" y romper la app,
+          // asumimos que el token es viejo/inválido y lo borramos.
+          console.warn("Token inválido o base de datos reiniciada. Limpiando sesión...");
+          localStorage.removeItem('token');
+          setUser(null);
         }
       }
+      // CRÍTICO: Esto debe ejecutarse SIEMPRE, haya habido error o no.
       setLoading(false);
     };
 
@@ -63,7 +63,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', token);
       setUser({ token });
 
-      // Al hacer login, forzamos la descarga de sus colores
       const resUser = await api.get('/usuario/me');
       aplicarPreferenciasVisuales(resUser.data.preferenciasSistema);
 
@@ -81,7 +80,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', token);
       setUser({ token });
 
-      // Por defecto, lo ponemos en modo claro y color indigo
       aplicarPreferenciasVisuales({ tema: 'claro', colorPrincipal: 'indigo' });
       return true;
     } catch (error) {
@@ -92,11 +90,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
-    // Devolvemos la app a su estado original al cerrar sesión
     aplicarPreferenciasVisuales({ tema: 'claro', colorPrincipal: 'indigo' });
   };
 
-  // Exponemos la función aplicarPreferenciasVisuales para que Perfil.jsx pueda usarla
   return (
     <AuthContext.Provider value={{ user, login, registerUser, logout, loading, aplicarPreferenciasVisuales, temaColor }}>
       {children}

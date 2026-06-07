@@ -25,13 +25,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         final String authHeader = request.getHeader("Authorization");
 
-        // 1. Comprobar si hay un token en la cabecera (Si no, lo dejamos pasar, pero la puerta lo bloqueará)
+        // 1. Comprobar si hay un token en la cabecera 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Extraer el token (quitando la palabra "Bearer ")
+        // 2. Extraer el token
         final String jwt = authHeader.substring(7);
         
         try {
@@ -41,15 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 4. Si hay email y aún no está autenticado en este hilo
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 
-                // Le decimos a Spring: "Este usuario es legítimo y ha demostrado quién es, déjalo pasar"
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userEmail, null, new ArrayList<>()
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (Exception e) {
-            // Token inválido, caducado, o manipulado -> Se ignora y Spring Security lanzará el 403
-            //System.out.println("⚠️ ERROR DEL PORTERO JWT: " + e.getMessage());
         }
         
         // 5. Continúa el flujo hacia el Controlador

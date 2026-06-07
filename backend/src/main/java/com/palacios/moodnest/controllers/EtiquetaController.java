@@ -51,7 +51,6 @@ public class EtiquetaController {
     public ResponseEntity<?> eliminarEtiqueta(Authentication auth, @PathVariable("id") String id) {
         try {
             etiquetaService.eliminarEtiqueta(auth.getName(), id);
-            // El mensaje refleja el Borrado Lógico
             return ResponseEntity.ok().body("{\"mensaje\": \"Etiqueta archivada correctamente\"}");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());

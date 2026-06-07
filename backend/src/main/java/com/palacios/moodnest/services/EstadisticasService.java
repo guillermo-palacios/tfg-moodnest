@@ -41,7 +41,7 @@ public class EstadisticasService {
         double promedioGlobal = registros.stream().mapToInt(RegistroDiario::getPuntuacionGlobal).average().orElse(0.0);
         stats.setPromedioGlobal(Math.round(promedioGlobal * 100.0) / 100.0);
 
-        // 2. CU11: Evolución Temporal (Ordenada cronológicamente para el gráfico de líneas)
+        // 2. Evolución Temporal (Ordenada cronológicamente para el gráfico de líneas)
         List<EvolucionTemporal> evolucion = registros.stream()
                 .sorted(Comparator.comparing(RegistroDiario::getFechaAsignada))
                 .map(r -> {
@@ -52,7 +52,7 @@ public class EstadisticasService {
                 }).collect(Collectors.toList());
         stats.setEvolucionTemporal(evolucion);
 
-        // 3. CU12: Promedio por Día de la Semana
+        // 3. Promedio por Día de la Semana
         Map<String, Double> porDia = registros.stream()
                 .collect(Collectors.groupingBy(
                         r -> traducirDia(r.getFechaAsignada().getDayOfWeek().name()),
@@ -60,7 +60,7 @@ public class EstadisticasService {
                 ));
         stats.setPromediosPorDiaSemana(porDia);
 
-        // 4. CU12: Distribución de Rangos (¡Con los textos exactos de tu wireframe!)
+        // 4. Distribución de Rangos
         Map<String, Long> distribucion = registros.stream()
                 .collect(Collectors.groupingBy(r -> {
                     int p = r.getPuntuacionGlobal();
@@ -72,7 +72,7 @@ public class EstadisticasService {
                 }, Collectors.counting()));
         stats.setDistribucionRangos(distribucion);
 
-        // 5. CU12 y CU13: Análisis de Impacto de Etiquetas (Con vs Sin)
+        // 5. Análisis de Impacto de Etiquetas 
         List<Etiqueta> misEtiquetas = etiquetaRepository.findByIdUsuarioAndActivaTrue(usuario.getId());
         Map<String, DetalleImpactoEtiqueta> impactoEtiquetas = new HashMap<>();
         
@@ -80,7 +80,6 @@ public class EstadisticasService {
         double maxImpacto = -10.0, minImpacto = 10.0;
 
         for (Etiqueta etiqueta : misEtiquetas) {
-            // Separamos los días que Tienen la etiqueta de los que NO la tienen
             List<RegistroDiario> diasCon = registros.stream()
                     .filter(r -> r.getEtiquetasAsociadas() != null && r.getEtiquetasAsociadas().stream().anyMatch(e -> e.getIdEtiqueta().equals(etiqueta.getId())))
                     .collect(Collectors.toList());

@@ -34,7 +34,7 @@ public class RegistroDiarioController {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarRegistro(
             Authentication auth, 
-            @PathVariable("id") String id, // <-- ¡Aquí está la magia añadida!
+            @PathVariable("id") String id, 
             @RequestBody RegistroDiarioRequest request) {
         try {
             RegistroDiario registroActualizado = registroService.actualizarRegistro(auth.getName(), id, request);
@@ -48,7 +48,7 @@ public class RegistroDiarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarRegistro(
             Authentication auth, 
-            @PathVariable("id") String id) { // <-- ¡Y aquí también!
+            @PathVariable("id") String id) { 
         try {
             registroService.eliminarRegistro(auth.getName(), id);
             return ResponseEntity.ok().body("{\"mensaje\": \"Registro eliminado correctamente\"}");
@@ -61,12 +61,9 @@ public class RegistroDiarioController {
     @GetMapping
     public ResponseEntity<?> obtenerRegistrosMes(
             Authentication auth,
-            // 1. Forzamos explícitamente el nombre del parámetro en la URL
-            // 2. Lo recibimos como String para evitar que Spring Boot explote antes de tiempo
             @RequestParam("inicio") String inicioStr,
             @RequestParam("fin") String finStr) {
         try {
-            // Transformamos el texto a fecha de forma manual (Es 100% seguro)
             LocalDateTime inicio = LocalDateTime.parse(inicioStr);
             LocalDateTime fin = LocalDateTime.parse(finStr);
 
@@ -74,7 +71,6 @@ public class RegistroDiarioController {
             return ResponseEntity.ok(registros);
             
         } catch (Exception e) {
-            // Si la fecha viene mal, ahora sí nos avisará por aquí con un 400 Bad Request
             return ResponseEntity.badRequest().body("Error al leer las fechas: " + e.getMessage());
         }
     }

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AuthRequest {
-    private String nombre; // Solo se usará en el registro
+    private String nombre; 
     private String email;
     private String password;
 }

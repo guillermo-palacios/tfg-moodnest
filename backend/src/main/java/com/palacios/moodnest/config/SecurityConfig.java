@@ -23,7 +23,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter; // <--- Inyectamos a nuestro portero
+    private final JwtAuthenticationFilter jwtAuthFilter; 
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,7 +40,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
-            // Añadimos el filtro para que se ejecute ANTES de la puerta por defecto
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -49,12 +48,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // 1. Permitir peticiones desde tu Frontend de Vite
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        // 2. Permitir todos los métodos HTTP que hemos programado
+        
+        configuration.setAllowedOriginPatterns(Arrays.asList("*")); 
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // 3. Permitir que React nos envíe el token y el formato JSON
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        configuration.setAllowCredentials(true);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
