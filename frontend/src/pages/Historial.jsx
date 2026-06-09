@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 import RegistroModal from '../components/RegistroModal';
 import toast from 'react-hot-toast';
@@ -10,27 +11,43 @@ import toast from 'react-hot-toast';
 export default function Historial() {
     const [fechaActual, setFechaActual] = useState(new Date());
     const [registros, setRegistros] = useState([]);
-    const [etiquetasCatalogo, setEtiquetasCatalogo] = useState([]); 
+    const [etiquetasCatalogo, setEtiquetasCatalogo] = useState([]);
     const [cargando, setCargando] = useState(false);
-    
+
     const [diaSeleccionado, setDiaSeleccionado] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const location = useLocation();
+    const detalleRef = useRef(null);
 
     /**
-     * Carga el catálogo completo de etiquetas (incluyendo las inactivas).
-     * Necesario para que el Historial pueda mostrar el nombre de etiquetas aunque hayan sido borradas lógicamente.
-     */
+         * Carga el catálogo completo de etiquetas (incluyendo las inactivas).
+         * Lo extraemos del useEffect para poder llamarlo tras crear nuevos registros.
+         */
+    const cargarEtiquetas = async () => {
+        try {
+            const res = await api.get('/etiquetas/todas');
+            setEtiquetasCatalogo(res.data || []);
+        } catch (error) {
+            console.error("Error al cargar etiquetas:", error);
+        }
+    };
+
     useEffect(() => {
-        const cargarEtiquetas = async () => {
-            try {
-                const res = await api.get('/etiquetas/todas');
-                setEtiquetasCatalogo(res.data || []);
-            } catch (error) {
-                console.error("Error al cargar etiquetas:", error);
-            }
-        };
         cargarEtiquetas();
     }, []);
+
+    /**
+     * Escucha si venimos del Dashboard con una fecha concreta
+     */
+    useEffect(() => {
+        if (location.state?.fechaSeleccionada) {
+            const fecha = new Date(location.state.fechaSeleccionada);
+            setFechaActual(fecha);
+            setDiaSeleccionado(fecha);
+
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state]);
 
     /**
      * Recupera los registros del mes seleccionado utilizando un rango de fechas ISO.
@@ -40,11 +57,11 @@ export default function Historial() {
         setCargando(true);
         try {
             const año = fechaActual.getFullYear();
-            const mes = fechaActual.getMonth(); 
+            const mes = fechaActual.getMonth();
 
             const pad = (num) => String(num).padStart(2, '0');
             const mesStr = pad(mes + 1);
-            const ultimoDiaNum = new Date(año, mes + 1, 0).getDate(); 
+            const ultimoDiaNum = new Date(año, mes + 1, 0).getDate();
 
             const primerDia = `${año}-${mesStr}-01T00:00:00`;
             const ultimoDia = `${año}-${mesStr}-${pad(ultimoDiaNum)}T23:59:59`;
@@ -66,7 +83,7 @@ export default function Historial() {
         if (window.confirm("¿Estás seguro de que quieres eliminar este registro permanentemente?")) {
             try {
                 await api.delete(`/registros/${id}`);
-                cargarRegistrosMes(); 
+                cargarRegistrosMes();
                 toast.success("Registro eliminado correctamente."); // CU7: Confirmación de borrado
             } catch (error) {
                 toast.error("Error al eliminar el registro.");
@@ -76,12 +93,31 @@ export default function Historial() {
 
     useEffect(() => {
         cargarRegistrosMes();
-        setDiaSeleccionado(null);
+        //setDiaSeleccionado(null);
     }, [fechaActual]);
 
     // Funciones de navegación temporal
-    const mesAnterior = () => setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 1));
-    const mesSiguiente = () => setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 1));
+    const mesAnterior = () => {
+        setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 1));
+        setDiaSeleccionado(null);
+    };
+
+    const mesSiguiente = () => {
+        setFechaActual(new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 1));
+        setDiaSeleccionado(null); 
+    };
+
+
+    const handleDiaClick = (dia) => {
+        setDiaSeleccionado(dia);
+        
+        setTimeout(() => {
+            if (detalleRef.current) {
+                // Hacemos scroll suave hasta el contenedor
+                detalleRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    };
 
     /**
      * Algoritmo de generación de cuadrícula:
@@ -186,7 +222,7 @@ export default function Historial() {
                                     return (
                                         <button
                                             key={index}
-                                            onClick={() => setDiaSeleccionado(dia)}
+                                            onClick={() => handleDiaClick(dia)}
                                             className={`mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full text-base font-bold transition-all hover:scale-110 
                                                 ${registro ? colorPuntuacion(registro.puntuacionGlobal) : 'bg-canvas text-main/70 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800'}
                                                 ${esHoy && !registro ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-surface' : ''}
@@ -203,7 +239,7 @@ export default function Historial() {
                 </div>
 
                 {/* COLUMNA DERECHA: DETALLE DEL DÍA */}
-                <div className="flex w-full flex-col lg:w-1/3">
+                <div ref={detalleRef} className="flex w-full flex-col lg:w-1/3">
                     {!diaSeleccionado ? (
                         <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-canvas p-6 text-center">
                             <svg className="mb-4 h-12 w-12 text-main/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -212,7 +248,7 @@ export default function Historial() {
                     ) : !registroActual ? (
                         <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl bg-surface p-6 shadow-sm border border-gray-200 dark:border-gray-800 text-center transition-colors animate-in fade-in zoom-in-95 duration-300">
                             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+                                <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                             </div>
                             <h3 className="mb-1 text-lg font-bold text-main">Día sin registrar</h3>
                             <p className="mb-6 font-medium text-main/50">
@@ -293,10 +329,13 @@ export default function Historial() {
             <RegistroModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSuccess={() => { cargarRegistrosMes(); }}
+                onSuccess={() => {
+                    cargarRegistrosMes();
+                    cargarEtiquetas();
+                }}
                 registrosPrevios={registros}
-                registroAEditar={registroActual} 
-                fechaPorDefecto={diaSeleccionado} 
+                registroAEditar={registroActual}
+                fechaPorDefecto={diaSeleccionado}
             />
         </div>
     );

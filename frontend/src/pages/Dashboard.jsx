@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import RegistroModal from '../components/RegistroModal';
 
 /**
  * Componente Dashboard: Vista principal del usuario tras el login.
- * Muestra el saludo personalizado, la racha actual y el histórico de los últimos 7 días.
+ * Muestra el saludo personalizado, la racha actual y el histórico de los últimos 5 registros ordenados.
  */
 export default function Dashboard() {
   const [registros, setRegistros] = useState([]);
@@ -12,11 +13,17 @@ export default function Dashboard() {
   const [nombreUsuario, setNombreUsuario] = useState(''); 
   const [cargando, setCargando] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
 
   /**
    * Carga los datos iniciales necesarios para el panel.
    * - Obtiene perfil de usuario para mostrar saludo y racha.
-   * - Solicita el histórico de registros de la última semana (rango definido dinámicamente).
+   * - Solicita el histórico de registros ampliando el rango para garantizar la captura de las 5 últimas entradas.
    */
   const cargarDatos = async () => {
     try {
@@ -24,29 +31,15 @@ export default function Dashboard() {
       setNombreUsuario(resUsuario.data.nombre || 'Usuario'); 
       setRacha(resUsuario.data.rachaActual || 0); 
 
-      // --- CÁLCULO DE RANGO PARA EL HISTORIAL ---
-      // Calculamos un rango de 7 días hacia atrás desde hoy para mostrar en el Dashboard
-      const hoy = new Date();
-      const haceUnaSemana = new Date();
-      haceUnaSemana.setDate(hoy.getDate() - 7);
-      
-      const pad = (num) => String(num).padStart(2, '0');
-
-      const inicio = `${haceUnaSemana.getFullYear()}-${pad(haceUnaSemana.getMonth() + 1)}-${pad(haceUnaSemana.getDate())}T00:00:00`;
-      const fin = `${hoy.getFullYear()}-${pad(hoy.getMonth() + 1)}-${pad(hoy.getDate())}T23:59:59`;
-
-      const resRegistros = await api.get(`/registros?inicio=${inicio}&fin=${fin}`);
+      const resRegistros = await api.get('/registros/ultimos?limite=5');
       setRegistros(resRegistros.data || []);
+      
     } catch (error) {
       console.error("Error al cargar el panel:", error);
     } finally {
       setCargando(false);
     }
   };
-
-  useEffect(() => {
-    cargarDatos();
-  }, []);
 
   /**
    * Asigna dinámicamente una clase de Tailwind basándose en la puntuación del registro.
@@ -83,6 +76,8 @@ export default function Dashboard() {
     return <div className="flex h-64 items-center justify-center text-main/50">Cargando tu panel...</div>;
   }
 
+
+
   return (
     <div className="mx-auto max-w-3xl space-y-8 animate-in fade-in duration-300">
 
@@ -97,7 +92,7 @@ export default function Dashboard() {
           </p>
         </div>
         
-        {/* Indicador de Racha (Gamificación) */}
+        {/* Indicador de Racha */}
         <div className="flex flex-col items-center justify-center rounded-2xl bg-orange-50 dark:bg-orange-900/20 px-4 py-3 border border-orange-100 dark:border-orange-800">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-800 text-orange-500 dark:text-orange-400">
             <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.66 11.2c-.23-.3-.51-.56-.77-.82-.67-.6-1.43-1.03-2.07-1.66C13.33 7.26 13 4.85 13.95 3c-.95.23-1.78.75-2.49 1.32-2.59 2.08-3.61 5.75-2.39 8.9.04.1.08.2.08.33 0 .22-.15.42-.35.5-.22.1-.46.04-.64-.12a7.3 7.3 0 0 1-1.38-1.66c-.34-.55-.65-1.15-.9-1.77-.38 1.44-.2 3.03.49 4.34.8 1.5 2.1 2.65 3.73 3.12 1.35.39 2.84.28 4.1-.25 1.54-.64 2.76-1.87 3.4-3.4.63-1.54.5-3.29-.24-4.75z" /></svg>
@@ -108,7 +103,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* SECCIÓN 2: BOTÓN DE ACCIÓN (Registro Rápido) */}
+      {/* SECCIÓN 2: BOTÓN DE ACCIÓN */}
       <div className="flex flex-col items-center justify-center py-4">
         <button
           onClick={() => setIsModalOpen(true)}
@@ -122,7 +117,7 @@ export default function Dashboard() {
         <span className="mt-4 text-sm font-medium text-main/50">Tómate un momento para ti</span>
       </div>
 
-      {/* SECCIÓN 3: HISTORIAL RECIENTE */}
+      {/* SECCIÓN 3: HISTORIAL RECIENTE (MÁXIMO 5 REGISTROS ORDENADOS) */}
       <div className="pt-2">
         <h2 className="mb-4 text-xl font-bold text-main">Echa un vistazo a Tus Últimos Registros:</h2>
         
@@ -133,14 +128,17 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
             {registros.map((registro) => (
-              <div key={registro.id} className="flex flex-col items-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-surface py-6 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md">
+              <button 
+                key={registro.id} 
+                onClick={() => navigate('/historial', { state: { fechaSeleccionada: registro.fechaAsignada } })}
+                className="flex w-full flex-col items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-surface py-6 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
+              >
                 <span className="text-sm font-semibold text-main/60">{formatearFecha(registro.fechaAsignada)}</span>
                 
-                {/* Visualización de la puntuación en un círculo estético */}
                 <div className={`mt-5 flex h-16 w-16 items-center justify-center rounded-full text-3xl font-black ${colorPuntuacion(registro.puntuacionGlobal)}`}>
                   {registro.puntuacionGlobal}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}

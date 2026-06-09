@@ -375,7 +375,7 @@ export default function Estadisticas() {
         <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-surface p-6 shadow-sm transition-colors duration-300">
           <h2 className="mb-1 text-lg font-bold text-main">Distribución Global</h2>
           <p className="mb-6 text-sm text-main/50">Porcentaje de días según la nota</p>
-          <div className="h-64 w-full flex items-center justify-center">
+          <div className="h-64 w-full">
             {datosDistribucion?.labels.length > 0 ? (
               <Doughnut data={datosDistribucion} options={opcionesDistribucion} />
             ) : (

@@ -68,4 +68,14 @@ public class RegistroDiarioController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
+    @GetMapping("/ultimos")
+    public ResponseEntity<?> getUltimosRegistros(Authentication auth, @RequestParam(defaultValue = "5") int limite) {
+        try {
+            List<RegistroDiario> ultimos = registroService.obtenerUltimosRegistrosCreados(auth.getName(), limite);
+            return ResponseEntity.ok(ultimos);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 }

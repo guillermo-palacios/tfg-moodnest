@@ -1,6 +1,8 @@
 package com.palacios.moodnest.repositories;
 
 import com.palacios.moodnest.models.RegistroDiario;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +18,11 @@ public interface RegistroDiarioRepository extends MongoRepository<RegistroDiario
      */
     List<RegistroDiario> findByIdUsuarioAndFechaAsignadaBetween(String idUsuario, LocalDateTime inicio, LocalDateTime fin);
     
+    /** 
+     * Busca por usuario, ordena por fechaCreacion descendente y permite paginar/limitar
+     */
+    List<RegistroDiario> findByIdUsuarioOrderByFechaCreacionDesc(String idUsuario, Pageable pageable);
+
     /**
      * Busca un registro por ID asegurando la pertenencia al usuario.
      */

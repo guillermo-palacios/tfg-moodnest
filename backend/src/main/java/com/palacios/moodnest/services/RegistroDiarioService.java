@@ -7,11 +7,13 @@ import com.palacios.moodnest.repositories.RegistroDiarioRepository;
 import com.palacios.moodnest.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Servicio encargado de la lógica de negocio para la gestión de los registros de estado de ánimo.
@@ -44,10 +46,11 @@ public class RegistroDiarioService {
         registro.setFechaCreacion(LocalDateTime.now());
         registro.setFechaModificacion(LocalDateTime.now());
 
-        actualizarRacha(usuario, request.getFechaAsignada());
-
-        usuarioRepository.save(usuario); 
-        return registroRepository.save(registro);
+        RegistroDiario guardado = registroRepository.save(registro);
+        
+        recalcularRacha(usuario);
+        
+        return guardado;
     }
 
     /**
@@ -72,7 +75,11 @@ public class RegistroDiarioService {
         registro.setEtiquetasAsociadas(request.getEtiquetasAsociadas());
         registro.setFechaModificacion(LocalDateTime.now());
 
-        return registroRepository.save(registro);
+        RegistroDiario guardado = registroRepository.save(registro);
+        
+        recalcularRacha(usuario);
+        
+        return guardado;
     }
 
     /**
@@ -89,6 +96,8 @@ public class RegistroDiarioService {
                 .orElseThrow(() -> new RuntimeException("Registro no encontrado o no tienes permisos para borrarlo"));
 
         registroRepository.delete(registro);
+
+        recalcularRacha(usuario);
     }
 
     /**
@@ -120,33 +129,62 @@ public class RegistroDiarioService {
 
     /**
      * Calcula y evalúa la racha de días consecutivos del usuario.
-     * Solo incrementa si el registro se consolida exactamente al día siguiente del último registrado.
      *
      * @param usuario       Entidad del usuario a actualizar.
-     * @param fechaAsignada Fecha del nuevo registro entrante.
      */
-    private void actualizarRacha(Usuario usuario, LocalDateTime fechaAsignada) {
-        LocalDate fechaNuevoRegistro = fechaAsignada.toLocalDate();
-        LocalDate fechaUltimo = usuario.getFechaUltimoRegistro() != null
-                ? usuario.getFechaUltimoRegistro().toLocalDate()
-                : null;
+    private void recalcularRacha(Usuario usuario) {
+        List<RegistroDiario> todos = registroRepository.findByIdUsuario(usuario.getId());
         
-        int rachaActual = usuario.getRachaActual() != null ? usuario.getRachaActual() : 0;
+        if (todos.isEmpty()) {
+            usuario.setRachaActual(0);
+            usuario.setFechaUltimoRegistro(null);
+            usuarioRepository.save(usuario);
+            return;
+        }
 
-        if (fechaUltimo == null) {
-            usuario.setRachaActual(1);
+        // 1. Extraemos solo las fechas, quitamos duplicados (por si hubiera dos el mismo día) y ordenamos de más nueva a más antigua
+        List<LocalDate> fechasDesc = todos.stream()
+                .map(r -> r.getFechaAsignada().toLocalDate())
+                .distinct()
+                .sorted((a, b) -> b.compareTo(a))
+                .collect(Collectors.toList());
+
+        LocalDate hoy = LocalDate.now();
+        LocalDate ayer = hoy.minusDays(1);
+        
+        LocalDate fechaMasReciente = fechasDesc.get(0);
+        int racha = 0;
+
+        // 2. Si el registro más reciente es anterior a ayer, la racha se ha perdido (0)
+        if (fechaMasReciente.isBefore(ayer)) {
+            usuario.setRachaActual(0);
         } else {
-            long diasDiferencia = ChronoUnit.DAYS.between(fechaUltimo, fechaNuevoRegistro);
-
-            if (diasDiferencia == 1) {
-                usuario.setRachaActual(rachaActual + 1);
-            } else if (diasDiferencia > 1) {
-                usuario.setRachaActual(1);
-            } else if (diasDiferencia == 0 && rachaActual == 0) {
-                usuario.setRachaActual(1); 
+            // 3. Contamos hacia atrás buscando días consecutivos
+            LocalDate fechaEsperada = fechaMasReciente;
+            for (LocalDate fecha : fechasDesc) {
+                if (fecha.equals(fechaEsperada)) {
+                    racha++;
+                    fechaEsperada = fechaEsperada.minusDays(1); // Restamos un día para buscar el anterior
+                } else {
+                    break; // Hueco encontrado, fin de la racha
+                }
             }
+            usuario.setRachaActual(racha);
         }
         
-        usuario.setFechaUltimoRegistro(fechaAsignada);
+        usuario.setFechaUltimoRegistro(fechaMasReciente.atTime(12, 0));
+        usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Recupera los últimos registros agregados al sistema por orden estricto de inserción.
+     *
+     * @param email  Correo del usuario autenticado.
+     * @param limite Cantidad máxima de registros a recuperar (ej. 5).
+     * @return Lista con los últimos N registros creados.
+     */
+    public List<RegistroDiario> obtenerUltimosRegistrosCreados(String email, int limite) {
+        Usuario usuario = obtenerUsuarioActual(email);
+        return registroRepository.findByIdUsuarioOrderByFechaCreacionDesc(usuario.getId(), PageRequest.of(0, limite));
     }
 }
