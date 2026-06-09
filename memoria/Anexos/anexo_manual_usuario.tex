@@ -1,5 +1,152 @@
-\chapter{Manual de Usuario}
+\newpage
+\section{Manual de Usuario}
+\label{sec:manual_usuario}
 
+El presente manual tiene como objetivo proporcionar una guía visual, estructurada y detallada para el usuario final de MoodNest. A través de este documento se explican en profundidad los flujos de interacción de la plataforma, detallando las acciones disponibles en cada pantalla y el comportamiento de los elementos visuales que componen la interfaz.
 
-\section{Introducción}
+\subsection{Pantalla de Bienvenida y Autenticación}
 
+El primer punto de contacto con MoodNest es su página de aterrizaje (\textit{Landing Page}). Diseñada bajo un enfoque minimalista y libre de distracciones, expone de forma directa la propuesta de valor de la plataforma: un espacio seguro para el seguimiento emocional.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/manual_landing.png}
+    \caption{Pantalla pública de bienvenida a MoodNest.}
+    \label{fig:manual_landing}
+\end{figure}
+
+Desde esta vista, el usuario puede acceder a los flujos de autenticación utilizando los botones de navegación superiores. La plataforma diferencia claramente dos acciones:
+
+\begin{itemize}
+    \item \textbf{Inicio de Sesión:} Orientado a usuarios recurrentes. El sistema solicita el correo electrónico y la contraseña. Si las credenciales son incorrectas, el sistema lo notificará mediante una alerta visual flotante (\textit{Toast}) de color rojo.
+    \item \textbf{Registro:} Para nuevos usuarios. El formulario de creación de cuenta solicita un nombre de pila (que será utilizado para personalizar la interfaz), un correo electrónico único y una contraseña segura. 
+\end{itemize}
+
+Visualmente, ambos formularios se presentan en tarjetas limpias y centradas, utilizando el color de acento principal de la aplicación para resaltar el botón de acción (\textit{Call to Action}), guiando el flujo de visión del usuario.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/manual_login.png}
+        \caption{Formulario de Inicio de Sesión.}
+        \label{fig:manual_login}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/manual_registro.png}
+        \caption{Formulario de Registro de nueva cuenta.}
+        \label{fig:manual_registro}
+    \end{minipage}
+\end{figure}
+
+\subsection{El Panel Principal (Dashboard)}
+
+Una vez superada la autenticación, el usuario accede al \textbf{Panel Principal} (\textit{Dashboard}). Esta pantalla actúa como el centro de mando operativo de la aplicación, estructurando la información más relevante de un solo vistazo.
+
+Elementos visuales y acciones disponibles:
+\begin{enumerate}
+    \item \textbf{Navegación Superior:} Una barra persistente permite al usuario alternar entre el Inicio, el Historial, las Estadísticas y su Perfil personal.
+    \item \textbf{Saludo Contextual:} En la parte superior izquierda, el sistema emite un saludo personalizado (ej. \textit{"¡Buenas tardes, Guillermo!"}) que se adapta dinámicamente a la franja horaria local del dispositivo.
+    \item \textbf{Racha de Actividad:} Destacado en un recuadro con un icono de fuego, el sistema contabiliza los días consecutivos que el usuario ha registrado su estado de ánimo, sirviendo como un potente elemento de gamificación para fomentar la retención.
+    \item \textbf{Botón de Registro:} El elemento con mayor jerarquía visual de la pantalla. Un botón grande con el texto \textit{"Registrar mi Día"}, que despliega el formulario principal de la aplicación.
+    \item \textbf{Tus Últimos Registros:} Una cuadrícula inferior que muestra tarjetas individuales con los registros más recientes. Cada tarjeta indica la fecha y destaca la puntuación global en el interior de un círculo tintado con el color semántico correspondiente a dicha nota.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/manual_dashboard.png}
+    \caption{Panel Principal mostrando el saludo, la racha activa y el historial reciente.}
+    \label{fig:manual_dashboard}
+\end{figure}
+
+\subsection{Creación y Gestión de Registros}
+
+Al pulsar en \textit{"Registrar mi Día"}, la aplicación despliega una ventana superpuesta (\textit{Modal}) que permite evaluar la jornada sin abandonar la pantalla actual. Este formulario está diseñado para requerir el mínimo esfuerzo cognitivo:
+
+\begin{itemize}
+    \item \textbf{Selector de Fecha:} Por defecto se preselecciona la fecha actual. El usuario puede modificarla para cubrir días pasados, pero el selector inhabilitará cualquier fecha futura.
+    \item \textbf{Deslizador de Puntuación:} El usuario evalúa su día del 1 al 10. Al mover el control, el círculo indicador superior actualiza dinámicamente tanto el número como su color de fondo (de rojo para días malos a índigo para días excelentes), ofreciendo un \textit{feedback} visual instantáneo.
+    \item \textbf{Selector de Etiquetas:} Muestra el catálogo de actividades en formato de botones o \textit{píldoras}. Al hacer clic en una etiqueta para seleccionarla, esta se resalta y despliega un pequeño campo numérico opcional, permitiendo al usuario puntuar específicamente cómo de buena o mala fue esa actividad concreta en el día.
+    \item \textbf{Creación Rápida de Etiquetas:} Si el usuario necesita una actividad que no existe en su catálogo, puede pulsar el botón \textit{"Nueva"}. Esto transforma el botón en un campo de texto integrado donde, tras escribir el nombre (ej. \textit{"Estudiar"}) y pulsar el icono de confirmación, la etiqueta se añade al catálogo y se selecciona automáticamente (ver Figura \ref{fig:manual_modal_nueva_etiqueta}).
+    \item \textbf{Comentario Libres:} Un área de texto (\textit{textarea}) donde el usuario puede redactar sus pensamientos del día.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/manual_modal_base.png}
+        \caption{Modal de creación de registro con etiquetas seleccionadas.}
+        \label{fig:manual_modal_base}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/manual_modal_nueva_etiqueta.png}
+        \caption{Flujo integrado para la creación de una nueva etiqueta.}
+        \label{fig:manual_modal_nueva_etiqueta}
+    \end{minipage}
+\end{figure}
+
+\subsection{Consulta del Historial}
+
+La pestaña de \textbf{Historial} ofrece una visión de calendario a doble columna, actuando como un mapa de calor temporal de las emociones del usuario. 
+
+La columna izquierda renderiza la matriz mensual. Los días que contienen un registro se rellenan con el color correspondiente a su nota, permitiendo identificar visualmente semanas positivas o rachas negativas. El usuario puede retroceder a meses anteriores utilizando las flechas de navegación de la cabecera.
+
+La columna derecha actúa como un panel de inspección contextual que reacciona en tiempo real a la selección del calendario:
+\begin{itemize}
+    \item \textbf{Día sin registro (Figura \ref{fig:manual_historial_vacio}):} Si el usuario pulsa un día en blanco, el panel mostrará un icono representativo y habilitará un botón de acceso rápido para crear el registro de esa fecha exacta.
+    \item \textbf{Día con registro (Figura \ref{fig:manual_historial_lleno}):} Si se pulsa un día coloreado, el panel revelará todo el detalle: la puntuación global, el texto redactado y las píldoras de las etiquetas utilizadas (mostrando también la sub-puntuación asignada a cada una). En la parte inferior, se habilitan los controles para \textbf{Editar} (que reabre el modal con los datos precargados) o \textbf{Eliminar} el registro permanentemente.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/manual_historial_vacio.png}
+        \caption{Vista Historial: Interacción con un día vacío.}
+        \label{fig:manual_historial_vacio}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagenes/manual_historial_lleno.png}
+        \caption{Vista Historial: Inspección del detalle de un registro.}
+        \label{fig:manual_historial_lleno}
+    \end{minipage}
+\end{figure}
+
+\subsection{Panel Analítico y Estadísticas}
+
+La vista de \textbf{Estadísticas} representa la principal herramienta de autoconocimiento de MoodNest. En ella, el sistema automatiza la detección de patrones de comportamiento mediante cuadros de mando interactivos:
+
+\begin{itemize}
+    \item \textbf{Evolución Temporal:} La gráfica superior (\textit{Chart.js}) traza una línea con la fluctuación de las notas globales. El usuario puede utilizar los botones de filtro (\textit{Semanal, Mensual, Anual}) para modificar la escala del eje temporal y observar tendencias a largo plazo.
+    \item \textbf{Tus Aliados:} Dos tarjetas visualmente contrastadas (verde y rojo) exponen directamente el cálculo del "Mejor Aliado" y "Peor Aliado". El sistema indica qué etiqueta específica está mejorando o empeorando en mayor medida la nota media del usuario.
+    \item \textbf{Impacto de Etiquetas:} En este bloque interactivo, el usuario puede desplegar un menú y seleccionar cualquier actividad de su catálogo. El sistema genera un gráfico de barras comparativo y un texto descriptivo dinámico, revelando matemáticamente si esa actividad está aportando bienestar o malestar a sus jornadas.
+    \item \textbf{Distribuciones Adicionales:} En la zona inferior del panel, la interfaz incluye gráficos complementarios: un gráfico de anillo (\textit{Doughnut}) que clasifica los días por porcentajes cualitativos (Terrible, Normal, Excelente) y un gráfico de barras que extrae el promedio histórico agrupado por los días de la semana.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/manual_estadisticas.png}
+    \caption{Panel analítico mostrando la evolución temporal y el cálculo del impacto emocional.}
+    \label{fig:manual_estadisticas}
+\end{figure}
+
+\subsection{Configuración de Perfil e Interfaz}
+
+Finalmente, la vista de \textbf{Perfil} cede el control total de los datos y de la estética al usuario, dividiéndose en tres grandes bloques de gestión:
+
+\begin{enumerate}
+    \item \textbf{Apariencia:} MoodNest permite alternar de forma nativa entre un Modo Claro (icono de sol) y un Modo Oscuro (icono de luna). Además, el usuario puede seleccionar su color de acento favorito en una paleta circular. Al hacer clic en cualquier opción, toda la interfaz (botones, textos y bordes) se repinta instantáneamente para reflejar las nuevas preferencias de personalización.
+    \item \textbf{Configuración de la Cuenta:} Dos formularios independientes permiten al usuario modificar su nombre de visualización público o actualizar su contraseña de acceso de forma segura.
+    \item \textbf{Zona de Peligro:} Delimitada por un marco rojo de advertencia, esta sección permite la eliminación permanente de la cuenta. Por motivos de seguridad, el sistema exige introducir la contraseña actual para desbloquear el botón de borrado, garantizando que el usuario comprende la irreversibilidad de la pérdida de sus registros y etiquetas.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/manual_perfil.png}
+    \caption{Panel de Perfil mostrando los ajustes visuales y la Zona de Peligro.}
+    \label{fig:manual_perfil}
+\end{figure}

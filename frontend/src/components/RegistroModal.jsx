@@ -123,6 +123,10 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // DEBUG: Mira qué está pasando realmente
+    console.log("Fecha elegida:", fecha);
+    console.log("Registros previos:", registrosPrevios.map(r => r.fechaAsignada));
+
     // Validar duplicidad de fecha (excluyendo el propio registro si estamos editando)
     const yaExisteRegistro = registrosPrevios.some(
       r => r.fechaAsignada.startsWith(fecha) && r.id !== registroAEditar?.id
@@ -138,7 +142,6 @@ export default function RegistroModal({ isOpen, onClose, onSuccess, registrosPre
         idEtiqueta: etiqueta.etiquetaId, puntuacion: etiqueta.puntuacion || null
     }));
 
-    // Todo simple y limpio, como debe ser:
     const registroData = {
       fechaAsignada: `${fecha}T12:00:00`,
       puntuacionGlobal,

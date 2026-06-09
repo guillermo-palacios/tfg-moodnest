@@ -1,39 +1,69 @@
 \newpage
-\section{Fase de Pruebas y Validación (Quality Assurance)}
+\section{Pruebas y Validación del Sistema}
 
-Tras concluir la fase de implementación, el sistema fue sometido a un riguroso proceso de validación empírica (\textit{Quality Assurance}) para garantizar su estabilidad, usabilidad y seguridad antes del despliegue final. Esta fase no solo sirvió para certificar el cumplimiento de la matriz de requisitos, sino también para detectar casos límite (\textit{edge-cases}) y refinar la lógica de negocio mediante ciclos rápidos de \textit{bugfixing}.
+La fase de pruebas constituye un pilar fundamental en el ciclo de vida del desarrollo de software, garantizando que el producto final no solo cumple con las especificaciones funcionales y no funcionales analizadas, sino que también ofrece un nivel óptimo de calidad, seguridad y tolerancia a fallos. En este capítulo se detallan las estrategias de validación aplicadas sobre el ecosistema de MoodNest, abarcando desde la integración de la API REST hasta la experiencia de usuario final.
 
-\subsection{Validación de Requisitos Funcionales}
+\subsection{Pruebas de Integración y API REST (Backend)}
 
-Las pruebas funcionales se ejecutaron simulando el comportamiento de un usuario final, abarcando tanto los flujos principales como los alternativos (introducción de datos erróneos o navegación forzada) definidos en los Casos de Uso.
+Antes de conectar la interfaz visual, se procedió a la validación exhaustiva de la capa de servicios (\textit{backend}) para garantizar la solidez de la lógica de negocio y la seguridad perimetral. Para ello, se empleó la herramienta \textbf{Postman}, simulando las peticiones HTTP que el cliente web realizaría en un entorno real.
 
-\subsubsection{Módulos 1 y 5: Gestión de Usuarios y Preferencias (CU1-CU5)}
-En el módulo de autenticación, se verificó el correcto rechazo de correos duplicados y el manejo de credenciales inválidas. Durante la validación del CU4 (Cerrar Sesión) y CU5 (Eliminar Cuenta), se detectó que los tokens JWT caducados o residuales en el almacenamiento local podían provocar bloqueos en la interfaz (pantallas de carga infinitas) si el servidor reiniciaba la base de datos. Se solucionó implementando un bloque de control en el \texttt{AuthContext} que, ante cualquier fallo de validación del token al arrancar la aplicación, limpia proactivamente el almacenamiento y redirige al usuario a la pantalla pública. 
+El plan de pruebas sobre la API se centró en dos vectores críticos:
+\begin{itemize}
+    \item \textbf{Validación de formatos y respuestas:} Se verificó que todos los \textit{endpoints} respondieran con los códigos de estado HTTP correctos (ej. \texttt{200 OK} para peticiones exitosas, \texttt{400 Bad Request} ante DTOs mal formados, y \texttt{404 Not Found} para recursos inexistentes).
+    \item \textbf{Verificación de seguridad perimetral:} Se lanzaron peticiones intencionadas a rutas protegidas (como \texttt{GET /api/estadisticas}) omitiendo el token JWT en la cabecera \texttt{Authorization}. Como se observa en la Figura \ref{fig:prueba_postman}, el sistema interceptó correctamente la petición, devolviendo un estado \texttt{401 Unauthorized} y blindando el acceso a los datos. Asimismo, se comprobó el aislamiento de usuarios, verificando que un token válido no pudiera mutar el identificador de un registro perteneciente a una cuenta ajena.
+\end{itemize}
 
-Asimismo, se validó la persistencia de las preferencias del sistema. Al cambiar el color de acento, la inyección dinámica de variables CSS en la raíz del documento (\texttt{:root}) demostró cambiar el aspecto de toda la plataforma instantáneamente, manteniendo el estado tras recargar el navegador.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/prueba_postman.png}
+    \caption{Validación de endpoints y seguridad JWT mediante Postman.}
+    \label{fig:prueba_postman}
+\end{figure}
 
-\subsubsection{Módulos 2 y 3: Registros, Historial y Borrado Lógico (CU6-CU10)}
-Las pruebas del núcleo de la aplicación confirmaron la correcta restricción temporal, impidiendo al usuario crear registros en fechas futuras. El algoritmo de cálculo de rachas demostró sumar los días consecutivos correctamente y reiniciar el contador a 1 cuando se detecta un lapso superior a 24 horas sin actividad.
+\subsection{Validación Funcional (Casos de Uso)}
 
-Uno de los retos técnicos más interesantes surgió al probar el CU8 (Gestionar Etiquetas). Se implementó un sistema de \textbf{borrado lógico} para evitar la pérdida de integridad referencial: cuando un usuario elimina una etiqueta, el sistema cambia su estado a inactivo en lugar de borrar el documento de MongoDB. 
+Una vez consolidada la API REST, se ejecutó un plan de pruebas de caja negra sobre el \textit{frontend} utilizando la técnica de recorridos funcionales. Se verificaron uno a uno los flujos principales y alternativos de los Casos de Uso definidos en el análisis.
 
-Durante las pruebas del historial, se detectó que los registros pasados que contenían etiquetas inactivas las mostraban como ``Desconocidas''. Esto ocurría porque el cliente solo solicitaba las etiquetas activas al servidor. Para solucionarlo preservando las reglas de negocio, se dividió la lógica en el backend: se habilitó un \textit{endpoint} para el formulario de creación que devuelve exclusivamente las etiquetas activas, y un \textit{endpoint} maestro para el historial que recupera el catálogo completo, garantizando que los registros antiguos se rendericen perfectamente sin permitir que las etiquetas borradas vuelvan a utilizarse.
+Gran parte de la validación resultó exitosa a la primera iteración. Destacan especialmente el \hyperref[tab:esp_cu6]{CU6 (Crear Registro)}, donde el sistema bloqueó exitosamente los intentos de registrar jornadas en fechas futuras; el \hyperref[tab:esp_cu8]{CU8 (Gestionar Etiquetas)}, donde se comprobó que el borrado lógico ocultaba la etiqueta de los nuevos menús pero preservaba intacto el historial de los registros pasados; y los \hyperref[tab:esp_cu11]{CU11 a CU13 (Estadísticas)}, cuyos algoritmos procesaron adecuadamente los huecos cronológicos sin distorsionar la gráfica evolutiva.
 
-\subsubsection{Módulo 4: Análisis de Datos y Estados Vacíos (CU11-CU13)}
-En el módulo estadístico, se comprobó que los gráficos asimilan correctamente la ausencia de datos. Si el usuario es nuevo, el sistema renderiza ``Empty States'' (pantallas de estado vacío) amigables que invitan a la acción, en lugar de mostrar gráficos en blanco o errores de consola. En el gráfico de donas, el algoritmo heurístico demostró ordenar siempre las categorías de peor a mejor, asociando de forma determinista el color semántico correspondiente a cada porción, facilitando una lectura analítica predecible.
+\subsubsection{Incidencias, Adaptaciones y Desviaciones Detectadas}
+
+Durante la ejecución del plan de pruebas, la interacción real con la interfaz puso de manifiesto áreas de mejora en la Experiencia de Usuario (UX), lo que motivó la refactorización de ciertos flujos respecto a la especificación original:
+
+\begin{itemize}
+    \item \textbf{CU1 (Registrar Usuario):} El análisis inicial estipulaba que, tras un registro exitoso, el sistema debía redirigir al usuario a la pantalla de inicio de sesión. Durante las pruebas, se consideró que esto añadía fricción innecesaria. Se modificó el comportamiento para que el servidor generase y devolviese un token JWT inmediatamente tras el registro, redirigiendo al usuario directamente al Panel Principal (\textit{Dashboard}).
+    
+    \item \textbf{CU4 (Cerrar Sesión):} Se detectó una desviación respecto al flujo planificado. Originalmente se diseñó un cuadro de diálogo de confirmación previa a la salida. Sin embargo, en la implementación inicialmente se creó un modelo de acción directa (\textit{One-Click Logout}), cerrando la sesión instantáneamente y redirigiendo al usuario a la pantalla de inicio de sesión, por lo que tras la revisión del flujo se detectó la contradicción con el CU y se corrigió.
+    
+    \item \textbf{CU5 (Eliminar Cuenta):} En este caso sucedió algo parecido al caso anterior, ya que la cuenta se eliminaba por completo al pulsar el botón sin solicitar las confirmaciones necesarias, por lo que tras detectar el problema se implementó el flujo correcto para la eliminación de la cuenta.
+\end{itemize}
 
 \subsection{Validación de Requisitos No Funcionales (RNF)}
 
-La comprobación de los atributos de calidad del sistema exigió el uso de herramientas de monitorización y de red integradas en el navegador, arrojando resultados sumamente positivos para la viabilidad de la plataforma.
+La evaluación de los atributos de calidad arquitectónica (Rendimiento, Usabilidad, Seguridad y Portabilidad) determinó el grado de madurez técnica del sistema. A continuación se exponen los resultados de las pruebas realizadas sobre los RNF críticos.
 
-\subsubsection{Rendimiento y Tolerancia a Fallos (Bloque 2)}
-Mediante el panel de red (\textit{Network}) de las herramientas de desarrollador, se midió el tiempo de respuesta del servidor (RNF2.1). Las peticiones a la API REST (como la obtención del historial o la recuperación del perfil) promediaron tiempos de respuesta de entre \textbf{13 y 25 milisegundos}, superando holgadamente el límite establecido de 2 segundos. El renderizado del DOM se ejecutó por debajo del límite de 3 segundos (RNF2.2), un tiempo que se verá aún más reducido al compilar y minificar los archivos en el paso a Producción.
+\subsubsection{Rendimiento y Tolerancia a Fallos}
 
-Para validar el RNF2.4 (comportamiento ante falta de respuesta), se forzó la caída controlada del contenedor de la base de datos MongoDB durante la navegación. Inicialmente, las peticiones HTTP del cliente se quedaban esperando indefinidamente. Para otorgar robustez a la arquitectura, se implementó un \textbf{Interceptor de Axios Global} en el frontend y se limitó el \textit{Timeout} del cliente Java a 3 segundos. Tras esta mejora, si la base de datos o el servidor dejan de responder, el interceptor captura la excepción \texttt{ECONNABORTED} de forma centralizada y lanza de inmediato una notificación visual, evitando el bloqueo de la pantalla y manteniendo al usuario informado.
+\begin{itemize}
+    \item \textbf{RNF2.1 y RNF2.2 (Tiempos de Respuesta y Renderizado):} Mediante las herramientas de desarrollador del navegador (\textit{DevTools}), se monitorizó el tráfico de red (Figura \ref{fig:prueba_red}). Las respuestas de la API REST mantuvieron promedios excelentes de entre 12 y 107 milisegundos, manteniendose inferior a los 2 y 3 segundos pedidos por los \hyperref[tab:rnf_total]{RNF}.
+    
+    \item \textbf{RNF2.4 (Caída de Base de Datos y Timeout):} Durante las pruebas de estrés, se forzó la detención del contenedor de MongoDB. Inicialmente, este escenario provocó el bloqueo indefinido del cliente web. Por ello, para solventar este defecto, se reconfiguró el sistema en el \textit{frontend}, donde se inyectó un \texttt{timeout} explícito de 5000ms en el cliente Axios. Tras la corrección, la caída del motor de base de datos se tradujo en una intercepción controlada del error y el lanzamiento inmediato de una notificación de fallo de red al usuario, evitando la congelación de la pantalla.
+\end{itemize}
 
-\subsubsection{Seguridad, Usabilidad y Portabilidad (Bloques 1, 3 y 4)}
-A nivel de usabilidad (RNF3.1), se verificó el comportamiento responsivo mediante emuladores de dispositivos móviles. El menú lateral \textit{desktop} colapsa en una barra de navegación inferior (\textit{Bottom Navigation Bar}) ergonómica sin desbordar los componentes de la cuadrícula. Además, se detectó un problema de renderizado originado por el motor WebKit, el cual provocaba que el texto de las notificaciones flotantes (\textit{Toasts}) se mostrara borroso durante las animaciones al posicionarse en subpíxeles decimales. Esto se solucionó aplicando la propiedad \texttt{transform: translateZ(0)} y \texttt{backface-visibility: hidden} en el CSS global, forzando la aceleración por \textit{hardware} y garantizando la nitidez exigida (RNF3.3).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/prueba_rendimiento_red.png}
+    \caption{Monitorización del rendimiento de red demostrando tiempos de respuesta de la API inferiores a 100ms.}
+    \label{fig:prueba_red}
+\end{figure}
 
-En cuanto a la seguridad, se demostró mediante inspección del almacenamiento local que la eliminación manual del token JWT expulsa automáticamente al usuario a las rutas públicas (RNF4.2). Además, las consultas en la capa repositorio de Spring Data garantizan el aislamiento de los datos (RNF4.3) concatenando invariablemente el ID extraído del contexto de seguridad de la sesión, haciendo tecnológicamente imposible que un usuario acceda a los registros de terceros.
+\subsubsection{Seguridad, Usabilidad y Compatibilidad}
 
-Por último, la portabilidad (RNF1.2 y RNF1.3) quedó demostrada al ejecutar el sistema de forma idéntica, sin necesidad de instalación de \textit{software} adicional, en los motores de navegación Chromium (Google Chrome) y Gecko (Mozilla Firefox).
+\begin{itemize}
+    \item \textbf{Protección Criptográfica (RNF4.1 y RNF4.2):} Se validó de forma satisfactoria el almacenamiento cifrado mediante auditoría de la base de datos, constatando que el \textit{backend} genera firmas irreversibles de 60 caracteres mediante \texttt{BCrypt}. Adicionalmente, la manipulación o borrado manual del token JWT en el almacenamiento local (\textit{LocalStorage}) del navegador provocó la expulsión inmediata y automática del usuario de las rutas privadas gracias al escudo lógico del componente \texttt{<ProtectedRoute>}.
+    \item \textbf{Cifrado de Tráfico (RNF4.4):} Durante el desarrollo local, el sistema operó sobre el protocolo HTTP sin cifrado para agilizar la depuración. El requisito de seguridad de la capa de transporte se cumplirá de forma delegada en la fase de despliegue a Producción, donde se configurará un proxy inverso respaldado por certificados SSL/TLS para forzar la encriptación HTTPS.
+    \item \textbf{Usabilidad y Navegadores (RNF1.2 y RNF3.1):} La compatibilidad Multi-Navegador se certificó ejecutando la aplicación de forma paralela en navegadores basados en motores Chromium (Google Chrome) y motores Gecko (Mozilla Firefox bajo SO Ubuntu Linux), sin encontrar discrepancias de diseño. Asimismo, la simulación de resoluciones móviles confirmó el comportamiento responsivo del componente \texttt{Layout}, ocultando el menú superior en favor de una barra de navegación inferior orientada al pulgar.
+    \item \textbf{Eficiencia de Navegación (RNF3.2 y RNF3.3):} Se superó con éxito la métrica de accesibilidad transaccional: un usuario puede crear un registro diario con un máximo de dos interacciones (clic en el logo de MoodNest y clic en el botón central del Dashboard). A su vez, el sistema centralizado de notificaciones (\texttt{react-hot-toast}) proveyó tiempos de \textit{feedback} visual muy inferiores al límite de medio segundo exigido.
+\end{itemize}
+
+La superación de este marco de pruebas certifica que MoodNest cuenta con una implementación madura, tolerante a fallos y preparada funcionalmente para su entrada en un entorno de producción o uso real.

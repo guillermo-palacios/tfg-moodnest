@@ -1,47 +1,49 @@
 \newpage
 \section{Implementación del Sistema}
 
-Con los diagramas de arquitectura y el diseño conceptual cerrados, el siguiente paso lógico fue la codificación real del sistema. En este capítulo se detalla cómo se ha traducido toda esa teoría a código fuente funcional, abordando los retos técnicos que surgieron durante el desarrollo de MoodNest. Para facilitar la comprensión del proyecto, la explicación se divide entre la lógica del servidor (el \textit{backend}) y la interfaz visual con la que interactúa el usuario (el \textit{frontend}).
+Una vez establecida la arquitectura lógica y el modelo de datos en la fase de diseño, el presente capítulo detalla la materialización de dichos conceptos en código fuente funcional. Para facilitar la comprensión técnica, la exposición se divide en dos grandes bloques: la construcción del servidor (\textit{backend}) y el desarrollo de la interfaz de usuario (\textit{frontend}). 
 
-\subsection{Implementación del Backend y Diseño de la API REST}
+\subsection{Implementación del Backend y Estructura del Código}
 
-La parte central del servidor se ha diseñado como una API REST descentralizada. Su propósito es actuar como un motor intermedio: recibe las peticiones desde el navegador, comprueba que el usuario es quien dice ser, valida que los datos sean correctos antes de guardarlos y realiza los cálculos matemáticos de las estadísticas.
+El núcleo del servidor se ha desarrollado empleando Java 17 y el entorno de trabajo Spring Boot 4.0.6. La base de código se ha construido priorizando un enfoque pragmático y evitando la sobreingeniería, lo cual se refleja en las decisiones de configuración e implementación que se detallan a continuación.
 
-\subsubsection{Justificación del Stack Tecnológico}
+El principal objetivo durante la codificación del servidor backend ha sido mantener una trazabilidad estricta respecto al diseño arquitectónico. Cada módulo planificado en los diagramas lógicos se ha traducido de manera unívoca a paquetes y archivos concretos en el repositorio. La estructura física resultante se divide en las siguientes agrupaciones:
 
-A la hora de elegir las herramientas para el servidor, busqué tecnologías que encajaran bien entre sí y que resolvieran los problemas específicos de la aplicación:
+\subsubsection{Correspondencia Arquitectónica y Jerarquía de Directorios}
+
+La base del código fuente se ha organizado internamente reflejando la Arquitectura por Capas expuesta en la fase de diseño. A continuación, se detallan las carpetas creadas, sus archivos principales y su vinculación con los modelos teóricos:
 
 \begin{itemize}
-    \item \textbf{Spring Boot:} Elegí este \textit{framework} de Java principalmente por su madurez y por las facilidades que da para levantar servicios REST de forma rápida y limpia. Además, la integración con Spring Security me permitió delegar la seguridad perimetral en un sistema de filtros nativos, lo que simplifica mucho la protección de las rutas.
-    \item \textbf{MongoDB:} Para los datos de MoodNest, una base de datos relacional tradicional nos habría limitado bastante. Un registro de ánimo diario cambia mucho de un día para otro: a veces el usuario escribe un párrafo largo, otras veces lo deja vacío, y el número de etiquetas añadidas varía constantemente. Al guardar la información como documentos JSON flexibles en MongoDB, evitamos la rigidez de las celdas fijas y los costosos cruces de tablas (\textit{JOINs}), ganando mucha velocidad de respuesta.
-    \item \textbf{JSON Web Tokens (JWT):} Como queríamos un backend \textit{stateless} (sin estado) para que el servidor no tuviera que consumir memoria guardando las sesiones de los usuarios, implementé JWT. El flujo es sencillo: tras hacer el \textit{login}, el servidor genera un token firmado que el frontend almacena localmente. A partir de ahí, el navegador adjunta ese token en la cabecera \texttt{Authorization: Bearer} de cada petición para que el servidor valide su identidad al vuelo.
+    \item \textbf{Paquete \texttt{models}:} Este directorio es la traducción directa del Modelo Conceptual del Dominio. Contiene exclusivamente tres clases de Java: \texttt{Usuario.java}, \texttt{Etiqueta.java} y \texttt{RegistroDiario.java}. Estas clases definen los atributos exactos y las colecciones que se mapean hacia la base de datos NoSQL, respetando el patrón de referenciación diseñado previamente.
+
+    \item \textbf{Paquete \texttt{dto} (Data Transfer Objects):} En concordancia con el principio de ocultación de la información, se han creado archivos como \texttt{RegistroRequest.java}, \texttt{PerfilRequest.java} o \texttt{AuthResponse.java}. Su contenido está diseñado para aislar las entidades de dominio (\texttt{models}) de la red, garantizando que el \textit{frontend} únicamente envíe y reciba los atributos estrictamente necesarios en formato JSON.
+
+    \item \textbf{Paquete \texttt{repositories}:} Materializa la Capa de Acceso a Datos (interfaz \texttt{IDataAccess} del \hyperref[fig:diagrama_componentes]{diagrama de componentes}). Se han implementado tres interfaces (\texttt{UsuarioRepository.java}, \texttt{EtiquetaRepository.java} y \texttt{RegistroDiarioRepository.java}) que heredan de \texttt{MongoRepository}. Estos archivos carecen de código funcional explícito, delegando en Spring Data la construcción automática de consultas complejas.
+
+    \item \textbf{Paquete \texttt{services}:} Este directorio es el núcleo del \textit{backend}. Es aquí donde se han programado las clases que se corresponden exactamente con los gestores lógicos (Mgrs) definidos en el \hyperref[fig:diagrama_componentes]{diagrama de componentes}:
+    \begin{itemize}
+        \item \texttt{UsuarioService.java}: Materializa el \textbf{UsuariosMgr}. Contiene la lógica de registro, validación de contraseñas y el borrado en cascada de la cuenta (al eliminar una cuenta, localiza y purga sus etiquetas y registros asociados).
+        \item \texttt{RegistroDiarioService.java}: Materializa el \textbf{RegistrosDiariosMgr}. Implementa la lógica transaccional de guardado, el cálculo de las rachas de días consecutivos y las restricciones de fechas futuras.
+        \item \texttt{EtiquetaService.java}: Materializa el \textbf{EtiquetasMgr}. Controla la creación de etiquetas y ejecuta el borrado lógico para preservar el historial.
+        \item \texttt{EstadisticasService.java}: Materializa el \textbf{EstadísticasMgr}. Su contenido implementa algoritmos matemáticos apoyados en la API \textit{Streams} de Java, extrayendo el ''mejor y peor aliado'' emocional en tiempo de ejecución de manera eficiente.
+    \end{itemize}
+
+    \item \textbf{Paquete \texttt{controllers}:} Representa la frontera de la API REST. Se compone de cinco archivos (\textit{AuthController.java, UsuarioController.java, RegistroDiarioController.java, EtiquetaController.java y EstadisticasController.java}). Su contenido se limita a exponer los \textit{endpoints}, interceptar las peticiones HTTP, inyectar el identificador del usuario autenticado y derivar la ejecución a las clases del paquete \texttt{services}.
 \end{itemize}
 
-\subsubsection{Organización del Código: Arquitectura por Capas}
+\subsubsection{Configuración Central y Archivos Clave}
 
-Para que el proyecto fuese mantenible y no terminar con archivos gigantescos llenos de líneas de código mezcladas, organicé el backend en tres capas de responsabilidad única:
+Para orquestar el funcionamiento del sistema y dar soporte a los \hyperref[tab:rnf_total]{Requisitos No Funcionales (RNF)}, se han creado los paquetes \texttt{config} y \texttt{security}, los cuales contienen archivos estructurales críticos para la aplicación:
 
-En el nivel superior están los **Controladores** (\textit{Controllers}), que se encargan de abrir las URLs hacia el exterior. Su única tarea es recibir la petición HTTP, comprobar mediante DTOs (Objetos de Transferencia de Datos) que el JSON que llega tiene un formato válido y pasárselo a la capa de abajo. También es aquí donde Spring Security intercepta el token JWT para saber qué usuario concreto está llamando a la API.
-
-Por debajo se encuentra la capa de **Servicios** (\textit{Services}), que es donde realmente está la lógica del negocio. Aquí programé las reglas de validación (como impedir que un usuario cree un registro en una fecha futura o que duplique el nombre de una etiqueta). También es donde reside el motor matemático de las estadísticas, que procesa el historial de datos usando \textit{Streams} de Java para extraer los promedios y los impactos emocionales.
-
-Por último, en la base están los **Repositorios** (\textit{Repositories}). Son interfaces sencillas que heredan de \texttt{MongoRepository}. Al hacer esto, Spring Data se encarga de generar automáticamente las consultas a la base de datos por debajo, permitiéndome buscar registros por fechas o por usuarios sin tener que escribir código de base de datos a mano.
-
-\subsubsection{Estructura de Persistencia en MongoDB}
-
-El modelo de datos se reparte en tres colecciones de documentos que se relacionan entre sí mediante identificadores (\textit{IDs}):
-
-La colección de \textbf{usuarios} guarda el perfil básico, el correo y la contraseña, la cual se encripta siempre mediante el algoritmo \textbf{BCrypt} antes de tocar la base de datos por seguridad. En este mismo documento decidí anidar las preferencias de la interfaz (el tema oscuro y el color de acento) y los textos de la escala del 1 al 10, ya que al ser datos estáticos es más eficiente leerlos directamente del usuario que crear colecciones aparte.
-
-Las \textbf{etiquetas} forman el catálogo de actividades de cada persona. Un detalle importante de la lógica que programé es el borrado lógico. Si el usuario borra una etiqueta, no la eliminamos físicamente de MongoDB. Si lo hiciéramos, romperíamos los registros del pasado que usaban esa etiqueta. Lo que hacemos es cambiar su campo \texttt{activa} a \texttt{false}; así se oculta en la pantalla para el futuro pero se conserva para las estadísticas históricas.
-
-La colección de \textbf{registros\_diarios} es la que más movimientos recibe. Guarda la fecha asignada, la nota global, el comentario y una lista con los IDs de las etiquetas que se usaron ese día, quedando así todo conectado pero desacoplado.
+\begin{itemize}
+    \item \texttt{SecurityConfig.java} y \texttt{JwtAuthenticationFilter.java}: Traducen a código el protocolo de seguridad diseñado previamente en el apartado \ref{sec:seguridad}. En el primer archivo se desactiva la protección CSRF (innecesaria en arquitecturas \textit{stateless}) y se establecen las políticas CORS. El segundo archivo actúa como el interceptor que extrae la cabecera \texttt{Authorization}, validando matemáticamente la firma del JWT en cada petición.
+\end{itemize}
 
 \subsubsection{Especificación de Endpoints de la API}
 
-Para conectar esta estructura con la interfaz visual, el servidor expone una serie de rutas de comunicación. En la Tabla \ref{tab:api_endpoints} se detalla la especificación técnica de la API REST que he programado, clasificando los métodos HTTP, los datos que requiere cada ruta y lo que devuelve el servidor como respuesta.
+Como resultado de la implementación de los controladores, el servidor expone un total de 17 rutas de comunicación asíncrona. En la Tabla \ref{tab:api_endpoints} se detalla la especificación técnica de la API REST compilada en el código fuente, clasificando los métodos HTTP, los parámetros de entrada requeridos y la naturaleza de las respuestas.
 
-\renewcommand{\arraystretch}{1.3}
+\renewcommand{\arraystretch}{1.4}
 {\footnotesize
 \begin{xltabular}{\textwidth}{|>{\columncolor{white}\bfseries}l|c|X|X|}
     \hline
@@ -59,77 +61,86 @@ Para conectar esta estructura con la interfaz visual, el servidor expone una ser
     \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Módulo 1: Autenticación y Gestión de Usuarios}} \\ \hline
     /api/auth/register & POST & Body (JSON): \textit{nombre, email, password} & 200 OK: Objeto JSON con el Token JWT generado. \\ \hline
     /api/auth/login & POST & Body (JSON): \textit{email, password} & 200 OK: Objeto JSON con el Token JWT generado. \\ \hline
-    /api/usuario/escala & PUT & Cabecera: Token JWT \newline Body (JSON): \textit{EscalaRequest} & 200 OK: Documento de Usuario actualizado con los descriptores de la escala. \\ \hline
-    /api/usuario/interfaz & PUT & Cabecera: Token JWT \newline Body (JSON): \textit{InterfazRequest} & 200 OK: Documento de Usuario actualizado con el nuevo tema y color de acento. \\ \hline
+    /api/usuario/me & GET & Cabecera: Token JWT & 200 OK: Documento JSON con los datos del perfil y preferencias del usuario. \\ \hline
+    /api/usuario/perfil & PUT & Cabecera: Token JWT \newline Body (JSON): \textit{PerfilRequest} & 200 OK: Documento actualizado con el nuevo nombre o credenciales. \\ \hline
+    /api/usuario/interfaz & PUT & Cabecera: Token JWT \newline Body (JSON): \textit{InterfazRequest} & 200 OK: Documento actualizado con el nuevo tema y color de acento. \\ \hline
+    /api/usuario/cuenta & DELETE & Cabecera: Token JWT \newline Body (JSON): \textit{password} & 200 OK: Confirmación del borrado físico permanente de la cuenta y sus datos asociados. \\ \hline
 
     % --- MÓDULO 2: REGISTROS DIARIOS ---
     \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Módulo 2: Gestión de Registros Diarios}} \\ \hline
-    /api/registros & POST & Cabecera: Token JWT \newline Body (JSON): \textit{RegistroRequest} & 200 OK: Documento del \textit{RegistroDiario} almacenado correctamente con sus marcas temporales. \\ \hline
-    /api/registros & GET & Query params: \textit{inicio, fin} (LocalDateTime) & 200 OK: \textit{List<RegistroDiario>} conteniendo las entradas filtradas cronológicamente. \\ \hline
-    /api/registros/\{id\} & PUT & Path param: \textit{id} (String) \newline Body (JSON): \textit{RegistroRequest} & 200 OK: Documento del \textit{RegistroDiario} modificado con los nuevos atributos. \\ \hline
-    /api/registros/\{id\} & DELETE & Path param: \textit{id} (String) & 200 OK: Confirmación en formato JSON del borrado físico permanente de la entrada. \\ \hline
+    /api/registros & POST & Cabecera: Token JWT \newline Body (JSON): \textit{RegistroRequest} & 200 OK: \textit{RegistroDiario} persistido correctamente con sus marcas temporales. \\ \hline
+    /api/registros & GET & Query params: \textit{inicio, fin} (LocalDateTime) & 200 OK: \textit{List$<$RegistroDiario$>$} conteniendo las entradas filtradas cronológicamente. \\ \hline
+    /api/registros/\{id\} & PUT & Path param: \textit{id} (String) \newline Body (JSON): \textit{RegistroRequest} & 200 OK: Documento modificado con los nuevos atributos y etiquetas. \\ \hline
+    /api/registros/\{id\} & DELETE & Path param: \textit{id} (String) & 200 OK: Mensaje JSON confirmando el borrado físico de la entrada. \\ \hline
 
     % --- MÓDULO 3: ETIQUETAS ---
     \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Módulo 3: Catálogo de Etiquetas Personales}} \\ \hline
     /api/etiquetas & POST & Cabecera: Token JWT \newline Body (JSON): \textit{EtiquetaRequest} & 200 OK: Documento de la nueva \textit{Etiqueta} personalizada persistida en el sistema. \\ \hline
-    /api/etiquetas & GET & Cabecera: Token JWT & 200 OK: \textit{List<Etiqueta>} recuperando únicamente las etiquetas activas del usuario. \\ \hline
-    /api/etiquetas/\{id\} & PUT & Path param: \textit{id} (String) \newline Body (JSON): \textit{EtiquetaRequest} & 200 OK: Documento de la \textit{Etiqueta} actualizado en la base de datos NoSQL. \\ \hline
-    /api/etiquetas/\{id\} & DELETE & Path param: \textit{id} (String) & 200 OK: Mensaje de confirmación del archivo y desactivación lógica de la etiqueta. \\ \hline
+    /api/etiquetas & GET & Cabecera: Token JWT & 200 OK: \textit{List$<$Etiqueta$>$} recuperando únicamente las etiquetas activas. \\ \hline
+    /api/etiquetas/todas & GET & Cabecera: Token JWT & 200 OK: \textit{List$<$Etiqueta$>$} incluyendo las inactivas (borrado lógico) para mapeo de historial. \\ \hline
+    /api/etiquetas/\{id\} & PUT & Path param: \textit{id} (String) \newline Body (JSON): \textit{EtiquetaRequest} & 200 OK: Documento de la \textit{Etiqueta} actualizado en la base de datos. \\ \hline
+    /api/etiquetas/\{id\} & DELETE & Path param: \textit{id} (String) & 200 OK: Mensaje de confirmación de la desactivación lógica de la etiqueta. \\ \hline
 
     % --- MÓDULO 4: ESTADÍSTICAS ---
     \multicolumn{4}{|c|}{\cellcolor{gray!20}\textbf{Módulo 4: Análisis de Datos e Impacto Emocional}} \\ \hline
-    /api/estadisticas & GET & Cabecera: Token JWT & 200 OK: Objeto de tipo \textit{EstadisticasResponse} con la evolución, rangos y desviaciones calculadas. \\ \hline
+    /api/estadisticas & GET & Cabecera: Token JWT & 200 OK: Objeto \textit{EstadisticasResponse} con la evolución, distribuciones y cálculo de impacto de actividades. \\ \hline
 
-    \caption{Especificación técnica y diseño de endpoints de la API REST} \label{tab:api_endpoints} \\
+    \caption{Especificación técnica de los endpoints expuestos en la implementación de la API REST.} \label{tab:api_endpoints} \\
 \end{xltabular}
 }
 
 
-
-
-\subsection{Implementación de la Interfaz Visual y del Frontend}
+\subsection{Implementación del Frontend y la Interfaz Visual}
 \label{sec:implementacion_frontend}
 
-Para dar vida a la interfaz de MoodNest, decidí construir una Aplicación de Página Única (SPA, \textit{Single Page Application}) utilizando \textbf{React.js}. Para el empaquetado y la configuración inicial del entorno, descarté herramientas tradicionales como \textit{Create React App} en favor de \textbf{Vite}. Esta elección se tradujo en una velocidad de compilación y refresco en desarrollo casi instantánea gracias al uso nativo de módulos ES (\textit{ECMAScript Modules}), lo que agilizó drásticamente el ciclo de pruebas durante la maquetación.
+El núcleo de la interfaz visual y del cliente web se ha desarrollado empleando la biblioteca React 18.3 y el empaquetador de módulos Vite 5.4. La base de código se ha construido priorizando un enfoque pragmático y evitando la sobreingeniería, lo cual se refleja en las decisiones de configuración e implementación que se detallan a continuación.
+
+El principal objetivo durante la codificación del \textit{frontend} ha sido mantener una trazabilidad estricta respecto al diseño de la Arquitectura Basada en Componentes \cite{component_based_ref}. Cada módulo conceptual planificado se ha traducido de manera unívoca a paquetes y archivos concretos en el repositorio del cliente.
+
+\subsubsection{Correspondencia Arquitectónica y Jerarquía de Directorios}
+
+La estructura física del código fuente se ha organizado en directorios tal y como definimos en nuestro \hyperref[fig:diagrama_paquetes]{Diagrama de Paquetes}:
+
+\begin{itemize}
+    \item \textbf{Paquete \texttt{pages}:} Materializa las vistas de alto nivel a las que el usuario puede navegar mediante \textit{React Router}. Cada archivo aquí centraliza la lógica de presentación de un área funcional:
+    \begin{itemize}
+        \item \texttt{Dashboard.jsx}: Implementa el Dashboard \hyperref[tab:esp_cu9]{(CU9)}, renderizando el mensaje dinámico de bienvenida, la racha, el botón para añadir un nuevo registro y la cuadrícula con los últimos registros.
+        \item \texttt{Historial.jsx}: Implementa la vista del calendario \hyperref[tab:esp_cu10]{(CU10)}. Construye una matriz de doble columna que permite la navegación bidireccional entre meses y la inspección asíncrona de los detalles de un día concreto.
+        \item \texttt{Estadisticas.jsx}: Encapsula el Panel Analítico (\hyperref[tab:esp_cu11]{CU11}, \hyperref[tab:esp_cu12]{CU12}, \hyperref[tab:esp_cu13]{CU13}). Delega el renderizado visual en la librería \texttt{react-chartjs-2}, transformando los datos crudos del servidor en gráficos de líneas, barras y anillos mediante \textit{HTML5 Canvas}.
+        \item \texttt{Perfil.jsx}: Centraliza la gestión de la cuenta (\hyperref[tab:esp_cu3]{CU3}, \hyperref[tab:esp_cu5]{CU5}) y la personalización estética del sistema (\hyperref[tab:esp_cu15]{CU15}).
+    \end{itemize}
+
+    \item \textbf{Paquete \texttt{components}:} Alberga los elementos visuales atómicos e independientes. Destacan archivos como \texttt{Layout.jsx}, que define la estructura de los menús superior e inferior, y \texttt{RegistroModal.jsx}, el cual contiene la modal para el complejo formulario de registro diario.
+
+    \item \textbf{Paquete \texttt{context}:} Contiene el archivo \texttt{AuthContext.jsx}, el cual funciona como el núcleo de control de la sesión privada. Implementa la \textit{Context API} nativa de React para almacenar el estado global del usuario, propagando el token de sesión y las preferencias visuales de forma transversal a todo el árbol de componentes.
+
+    \item \textbf{Paquete \texttt{services}:} Aísla la capa de red. En el archivo \texttt{api.js} se ha instanciado el cliente HTTP Axios 1.16. Este archivo es crítico para la seguridad, ya que su función es anexar automáticamente el token JWT a la cabecera \texttt{Authorization: Bearer} en cada petición saliente dirigida a la API REST.
+\end{itemize}
+
+\subsubsection{Desviaciones respecto al Análisis y Diseño Original}
+
+Durante la fase de codificación de la interfaz de usuario, se identificaron escenarios donde la simplificación de la arquitectura y la reevaluación del alcance beneficiaban la viabilidad y legibilidad del software, dando lugar a dos modificaciones formales respecto a la planificación teórica:
+
+\begin{itemize}
+    \item \textbf{Consolidación de la Lógica en Contextos y Estado Local:} En la planificación inicial del sistema, se previó la creación de un paquete denominado \texttt{hooks} destinado a albergar ganchos personalizados (\textit{Custom Hooks}) \cita{} para la abstracción de operaciones asíncronas y flujos globales. No obstante, con el objetivo de evitar una sobreingeniería del software y mantener un flujo de datos directo, se determinó que la lógica de sesión global quedase centralizada exclusivamente en el componente \texttt{AuthContext} del paquete \texttt{context}. 
+    
+    Por su parte, la gestión del estado transitorio y los efectos secundarios —tales como la petición de datos analíticos o la mutación de formularios— se resolvió de manera directa en las páginas y componentes mediante el uso nativo de los conectores \texttt{useState} y \texttt{useEffect} de React \cite{react_ref}. Esta decisión eliminó la necesidad de implementar una capa intermedia de \textit{hooks} propios, reduciendo la complejidad cognitiva del proyecto sin mermar su modularidad.
+
+    \item \textbf{Aplazamiento del CU14 (Personalizar Escala):} A pesar de haber sido analizado, especificado y diseñado a nivel de base de datos, durante la fase de implementación se decidió descartar el desarrollo funcional del \hyperref[label]{text}Caso de Uso 14 (\textit{Personalización de los textos descriptivos de la escala del 1 al 10}). Tras evaluar la complejidad de propagar diccionarios de texto dinámicos a través de los componentes de renderizado de \textit{Chart.js} y los calendarios, se consideró que dicha característica excedía el alcance de un Producto Mínimo Viable (MVP). Por consiguiente, esta funcionalidad ha sido relegada al catálogo de futuras mejoras del sistema.
+\end{itemize}
 
 \subsubsection{Estrategia de Diseño Estético: Tailwind CSS y Variables Dinámicas}
 
-El diseño visual debía cumplir dos condiciones críticas: ser completamente responsivo para un uso cómodo en teléfonos móviles y permitir que el usuario personalizara la paleta de colores y el modo visual sin experimentar parpadeos ni recargas de página. Para lograrlo de forma escalable, integré \textbf{Tailwind CSS}.
+Para garantizar una interfaz adaptable y altamente personalizable, se integró el \textit{framework} Tailwind CSS \cita{}. En lugar de codificar clases estáticas con colores rígidos, se configuró el archivo \texttt{tailwind.config.js} para referenciar un mapa de variables semánticas (\textit{CSS Custom Properties}).
 
-En lugar de escribir clases rígidas con colores fijos en los componentes (como usar de forma repetida \texttt{bg-indigo-600}), configuré el archivo \texttt{tailwind.config.js} para que apuntase a variables CSS semánticas inyectadas en el documento (\textit{CSS Custom Properties}). De este modo, clases utilitarias de Tailwind como \texttt{bg-primary}, \texttt{text-main} o \texttt{bg-surface} obtienen su valor cromático del elemento raíz \texttt{<html>} en tiempo de ejecución. 
+Esta decisión arquitectónica permite que el componente \texttt{AuthContext.jsx}, al recibir los datos de perfil desde el servidor, ejecute una función de hidratación visual (\texttt{aplicarPreferenciasVisuales()}). Dicha función inyecta los valores color principal seleccionado por el usuario y alterna la clase \texttt{.dark} en el nodo raíz del DOM. El beneficio directo de esta técnica es que las clases utilitarias (como \texttt{bg-primary} o \texttt{bg-surface}) reaccionan en tiempo de ejecución, provocando que la aplicación completa mute de paleta cromática de manera instantánea y sin parpadeos visuales.
 
-Para solucionar de forma limpia la paleta de estados de ánimo exigida en la escala del 1 al 10, mapeé un conjunto dinámico de propiedades llamadas \texttt{--color-mood-1} hasta \texttt{--color-mood-9}. Así, tanto los botones de registro como los círculos indicadores reaccionan de manera nativa al tema activo (claro u oscuro) modificando únicamente una línea de estilo en la etiqueta raíz.
+\subsubsection{Resolución de Retos Técnicos en la Experiencia de Usuario (UX)}
 
-\subsubsection{El Cerebro de la Aplicación: Centralización del Estado con Context API}
-
-Conforme la aplicación crecía, gestionar el token JWT de autenticación y propagar los cambios estéticos del perfil hacia el resto de las pantallas amenazaba con convertirse en un problema de acoplamiento de código (\textit{prop drilling}). Para resolver esto sin añadir librerías complejas y pesadas de terceros, implementé la \textbf{Context API} nativa de React mediante el componente \texttt{AuthContext}.
-
-Este contexto funciona como el núcleo de control de la sesión privada. Nada más arrancar la aplicación, el componente comprueba si existe un token en el almacenamiento local (\textit{LocalStorage}). Si lo encuentra, lanza de inmediato una petición asíncrona hacia el endpoint \texttt{/api/usuario/me} del backend. Al recibir la respuesta, no solo establece los datos de sesión del usuario, sino que procesa el JSON de sus preferencias del sistema y ejecuta la función \texttt{aplicarPreferenciasVisuales()}. 
-
-Esta función traduce los nombres guardados en MongoDB (como el color principal \textit{emerald} o el tema \textit{oscuro}) a sus valores RGB y añade la clase \texttt{.dark} al HTML de la página. El beneficio directo de esta arquitectura es que cuando el usuario interactúa con los selectores de apariencia en la vista de perfil, la aplicación entera muta de color e iluminación al instante sin alterar el resto de los componentes.
-
-\subsubsection{Diseño de Componentes y Experiencia de Usuario en las Vistas}
-
-La organización visual de las pantallas se estructuró a través de un componente base llamado \texttt{Layout}, encargado de delimitar el comportamiento responsivo. Mediante clases utilitarias de Tailwind, programé un patrón móvil prioritario (\textit{Mobile-First}): en pantallas grandes la navegación se despliega como un submenú superior horizontal de pestañas blancas, mientras que en dispositivos móviles este menú se oculta por completo y pasa a fijarse en la base de la pantalla como una barra de pestañas optimizada para el acceso ergonómico con el pulgar.
-
-Al implementar las tres pantallas principales, apliqué un pulido estricto de Experiencia de Usuario (UX) enfocado en la claridad de los datos:
+Durante la implementación de las vistas, se resolvieron diversos impedimentos técnicos para garantizar la calidad del software y el cumplimiento de los Requisitos No Funcionales:
 
 \begin{itemize}
-    \item \textbf{Dashboard (CU9):} En las primeras pruebas del panel de control, las tarjetas del historial reciente mostraban una redundancia visual molesta al pintar la nota en texto negro y repetirla abajo dentro de un círculo de color. Corregí esto eliminando el texto duplicado y transformando el círculo en el elemento central de la tarjeta, agrandándolo a un tamaño \texttt{h-16 w-16} con tipografía en \texttt{text-3xl}. Asimismo, para evitar colapsar la pantalla, restringí las fechas de este panel a los últimos 7 días estrictos mediante un cálculo local de marcas temporales.
-    \item \textbf{Calendario de Historial (CU10):} Durante las pruebas del historial, descubrí que las conversiones nativas de zona horaria de Javascript a través de \texttt{.toISOString()} restaban dos horas a las fechas en horario peninsular de España, provocando que los registros guardados a las 12:00 del mediodía cayeran en la noche del día anterior y desaparecieran del calendario. Lo solucioné anulando los métodos ISO automáticos y construyendo las cadenas de búsqueda hacia el backend de manera textual e independiente de la zona horaria del navegador. Además, aproveché la columna derecha para mejorar el flujo: si el usuario hace clic en un día vacío, el sistema renderiza un botón contextual que abre la modal con esa fecha exacta precargada, facilitando rellenar los huecos históricos (CU6).
-    \item \textbf{Análisis y Estadísticas (CU11, CU12, CU13):} Para esta pantalla descarté los gráficos basados en SVG tradicionales (que generan miles de nodos en el DOM y ralentizan el navegador) en favor de \textbf{Chart.js} mediante su envoltura \texttt{react-chartjs-2}, que realiza un renderizado ultraeficiente basado en \texttt{HTML5 Canvas}. 
+    \item \textbf{Integridad de las Marcas Temporales:} En la vista \textit{Historial.jsx}, las conversiones nativas de fecha en JavaScript mediante \texttt{.toISOString()} provocaban un desfase horario (penalizando con horas negativas según el meridiano), lo que ocasionaba que registros guardados a medianoche se desplazaran al día anterior en el calendario. Este defecto se mitigó anulando los métodos ISO automáticos y construyendo las cadenas de fecha en formato estricto local (\texttt{YYYY-MM-DD}) de manera manual antes de su envío a la API REST.
+    \item \textbf{Representación Honesta de Datos Temporales:} En el componente \textit{Estadisticas.jsx}, se configuró el gráfico de líneas evolutivas de \textit{Chart.js} inhabilitando la interpolación de vacíos (\texttt{spanGaps: false}). Esta directiva técnica interrumpe visualmente el trazado de la línea en aquellas jornadas donde no existe un registro, evitando generar falsos positivos analíticos sobre el estado de ánimo del usuario.
+    \item \textbf{Sistema de Retroalimentación No Bloqueante:} Para cumplir con el \hyperref[tab:rnf_total]{RNF3.3} (Feedback visual inmediato), se descartaron los cuadros de diálogo nativos del navegador (\texttt{alert()}) por interrumpir el hilo principal de ejecución. En su lugar, se integró la librería \texttt{react-hot-toast}, centralizando la gestión de notificaciones. Este sistema captura de manera reactiva tanto las operaciones exitosas (ej. consolidación de un registro) como las excepciones asíncronas atrapadas en los bloques \texttt{try-catch}, disparando notificaciones flotantes estandarizadas que no rompen el flujo de navegación del usuario.
 \end{itemize}
-
-Para la gráfica lineal de evolución temporal, utilicé la propiedad \texttt{spanGaps: false} de Chart.js; esto interrumpe visualmente la línea si encuentra un valor nulo, reflejando de forma honesta los días en los que el usuario no registró su ánimo. 
-
-En la sección de etiquetas, modifiqué el diseño inicial de barras múltiples por el planteamiento del \textit{wireframe}: dos bloques fijos y destacados que exponen directamente al mejor y peor aliado emocional (calculados mediante la desviación matemática en el backend) y un selector interactivo. Al elegir una actividad en este desplegable, se dibuja un gráfico de barras comparativo de dos columnas (Días con la actividad frente a días sin ella) apoyado por un cuadro explicativo que traduce la diferencia matemática a texto legible (ej. ``Mejoran +1.8 Puntos''), pintando sus bordes de verde o rojo según el signo de la desviación para una comprensión analítica instantánea.
-
-Por último, el gráfico de distribución global en formato dona (\textit{Doughnut}) se blindó con un script de ordenación en el cliente. Dado que los rangos de la base de datos podían llegar desordenados, implementé un algoritmo heurístico que clasifica las categorías de peor a mejor (de Días Terribles a Días Increíbles) asociándoles de forma estricta sus colores HEX corporativos. De este modo, la leyenda lateral y las porciones de la dona guardan siempre coherencia lógica para el usuario.
-
-\subsubsection{Sistema de Feedback: Toasts y Gestión de Cargas}
-
-Para sustituir los cuadros de diálogo emergentes del navegador (\texttt{alert()}), los cuales detienen la ejecución del hilo principal y empobrecen la estética de la aplicación, instalé la librería \texttt{react-hot-toast}. Esto me permitió centralizar las alertas del sistema mediante notificaciones flotantes (\textit{Toasts}) animadas y no intrusivas. 
-
-Programé este sistema para dar cobertura de feedback inmediato a los flujos principales y alternativos de los Casos de Uso. Al registrar un usuario (CU1), iniciar sesión (CU2), modificar datos de cuenta (CU3) o consolidar un registro diario (CU6), el cliente lanza un aviso de éxito en color verde. 
-
-En contraposición, si el backend rechaza una petición (como introducir una contraseña de confirmación errónea al intentar dar de baja la cuenta en el CU5, o intentar duplicar dos registros en la misma fecha durante el CU7), el error es capturado por un bloque \texttt{try-catch} que detiene los estados de carga (\textit{Spinners}) y dispara un \textit{Toast} rojo descriptivo, garantizando que el usuario entienda qué ha fallado sin romper su flujo de navegación.
