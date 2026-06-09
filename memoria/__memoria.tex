@@ -166,13 +166,12 @@ $\ $
 
 % --- PRELIMINARES ---
 \pagenumbering{roman}
-\setcounter{page}{0}
+\setcounter{page}{1}
 \pagestyle{indice} 
 
 % (Descomenta y ajusta las rutas cuando los redactes)
 % \input{Preliminares/_agradecimientos}
 
-\clearpage
 \input{Preliminares/_resumen_y_abstract}
 
 % --- ÍNDICES ---
@@ -225,8 +224,9 @@ $\ $
 \bibliography{referencias.bib} 
 
 % --- ANEXOS ---
+\newpage
 \appendix
-\input{Anexos/anexo_manual_usuario}
-% \input{Anexos/presupuesto}
+\input{Anexos/anexo_manual_usuario.tex}
+\input{Anexos/anexo_codigo.tex}
 
 \end{document}

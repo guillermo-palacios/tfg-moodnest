@@ -1,56 +1,50 @@
-\chapter{Código del programa}
+\newpage
+\section{Manual de Código y Despliegue}
+\label{sec:manual_codigo}
 
+El código fuente íntegro de la plataforma MoodNest, abarcando tanto la capa de presentación (\textit{frontend}) como la lógica de negocio (\textit{backend}) y los archivos de configuración de infraestructura, ha sido versionado, documentado y publicado de forma abierta para su libre consulta.
 
-\section{Programa Principal}
+\subsection{Estructura del Repositorio}
 
-\lstset{style=codestyle, language=C}
-\begin{lstlisting}[frame=single]
-// Esto es un comentario.
-const int PIN_LED = 7;
+El proyecto ha sido organizado siguiendo un enfoque de monorepositorio (\textit{Monorepo}), separando claramente los dominios tecnológicos en directorios independientes para facilitar su inspección, mantenimiento y escalabilidad:
 
-int pin_azul = 0;           
-int pin_verde = 1;
-int pin_rojo = 2;
+\begin{itemize}
+    \item \texttt{/backend}: Contiene el código fuente de la API REST desarrollada en Spring Boot (Java 17). Incluye la estructura clásica de \textit{Controllers}, \textit{Services}, \textit{Repositories} y \textit{Models}, así como la configuración de seguridad perimetral mediante Spring Security y JWT.
+    \item \texttt{/frontend}: Alberga la Aplicación de Página Única (SPA) construida con React 18 y Vite. Se estructura internamente mediante la Arquitectura Basada en Componentes (\texttt{/components}, \texttt{/pages}, \texttt{/context}, \texttt{/services}).
+    \item \texttt{docker-compose.yml}: Archivo de orquestación en la raíz del proyecto, encargado de definir y levantar los contenedores de los servicios (Backend, Frontend y base de datos MongoDB) de forma interconectada y automatizada.
+\end{itemize}
 
-void setup() {
-    pinMode(PIN_LED , OUTPUT);
-}
+\subsection{Acceso al Código Fuente}
 
-void loop() {
-    digitalWrite(PIN_LED, HIGH);
-    delay(500);
-    digitalWrite(PIN_LED, LOW);
-    delay(500);
-}
+Siguiendo los principios de transparencia, código abierto y buenas prácticas en la ingeniería de software, el código del proyecto se encuentra alojado de forma pública en la plataforma GitHub:
 
-\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Enlace al repositorio:} \url{https://github.com/guillermo-palacios/tfg-moodnest}
+\end{itemize}
 
+\subsection{Instrucciones de Compilación y Despliegue Local}
 
-\section{Programa Secundario}
+El proyecto ha sido contenerizado con Docker para garantizar un despliegue agnóstico e idéntico en cualquier sistema operativo, mitigando el problema clásico de la falta de dependencias en los entornos de desarrollo locales.
 
-\lstset{style=codestyle, language=C}
-\begin{lstlisting}[frame=single]
-// Esto es un comentario.
-const int PIN_LED = 7;
+Para clonar la plataforma y levantarla por completo, el evaluador o desarrollador únicamente requiere tener instaladas las herramientas de \textbf{Git}, \textbf{Docker} y \textbf{Docker Compose} en su máquina anfitriona. Los pasos de ejecución son los siguientes:
 
-int pin_azul = 0;           
-int pin_verde = 1;
-int pin_rojo = 2;
+\begin{enumerate}
+    \item Clonar el repositorio público mediante la terminal de comandos:
+    \begin{quote}
+        \texttt{git clone https://github.com/guillermo-palacios/tfg-moodnest}
+    \end{quote}
+    \item Navegar hasta el directorio raíz del proyecto donde se ubica el archivo de orquestación:
+    \begin{quote}
+        \texttt{cd tfg-moodnest}
+    \end{quote}
+    \item Ejecutar el comando para construir las imágenes de Docker locales y levantar los servicios en segundo plano:
+    \begin{quote}
+        \texttt{docker compose up -d --build}
+    \end{quote}
+    \item Una vez finalizado el proceso de descarga y compilación, la plataforma estará completamente operativa y accesible a través de:
+    \begin{itemize}
+        \item \textbf{\url{http://localhost:5173}} 
+    \end{itemize}
+\end{enumerate}
 
-
-
-void setup() {
-    pinMode(PIN_LED , OUTPUT);
-}
-
-
-void loop() {
-    digitalWrite(PIN_LED, HIGH);
-    delay(500);
-    digitalWrite(PIN_LED, LOW);
-    delay(500);
-}
-
-\end{lstlisting}
-	
-	
+Para detener de forma limpia el ecosistema de contenedores y liberar los puertos del sistema, se debe ejecutar el comando \texttt{docker compose down}.
