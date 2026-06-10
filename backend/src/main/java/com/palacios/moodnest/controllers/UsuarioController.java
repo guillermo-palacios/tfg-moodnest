@@ -72,7 +72,7 @@ public class UsuarioController {
         }
     }
 
-    @DeleteMapping("/cuenta")
+    @PostMapping("/cuenta/eliminar")
     public ResponseEntity<?> eliminarCuenta(Authentication auth, @RequestBody EliminarCuentaRequest request) {
         try {
             usuarioService.eliminarCuenta(auth.getName(), request.getPassword());

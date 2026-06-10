@@ -156,7 +156,7 @@ export default function Perfil() {
     setCargandoAccion(true);
     try {
 
-      await api.delete('/usuario/cuenta', { data: { password: passwordBorrado } });
+      await api.post('/usuario/cuenta/eliminar', { password: passwordBorrado });
       
       toast.success("Tu cuenta ha sido eliminada. Lamentamos verte partir.");
       logout(); 

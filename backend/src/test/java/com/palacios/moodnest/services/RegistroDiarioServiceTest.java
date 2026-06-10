@@ -145,4 +145,29 @@ class RegistroDiarioServiceTest {
         Usuario usuarioActualizado = usuarioCaptor.getValue();
         assertEquals(0, usuarioActualizado.getRachaActual(), "Al haber un hueco mayor a un día, la racha debe reiniciarse a 0");
     }
+    @Test
+    void recalcularRacha_ConMultiplesRegistrosMismoDia_NoDuplicaRacha() {
+        // Arrange
+        when(usuarioRepository.findByEmail(usuarioMock.getEmail())).thenReturn(Optional.of(usuarioMock));
+        when(registroRepository.save(any(RegistroDiario.class))).thenReturn(new RegistroDiario());
+
+        // Simulamos dos registros HOY y uno AYER
+        RegistroDiario r1 = new RegistroDiario(); r1.setFechaAsignada(LocalDateTime.now());
+        RegistroDiario r2 = new RegistroDiario(); r2.setFechaAsignada(LocalDateTime.now()); // <-- Duplicado en el mismo día
+        RegistroDiario r3 = new RegistroDiario(); r3.setFechaAsignada(LocalDateTime.now().minusDays(1));
+        
+        when(registroRepository.findByIdUsuario(usuarioMock.getId())).thenReturn(List.of(r1, r2, r3));
+
+        // Act
+        registroService.crearRegistro(usuarioMock.getEmail(), requestMock);
+
+        // Assert
+        ArgumentCaptor<Usuario> usuarioCaptor = ArgumentCaptor.forClass(Usuario.class);
+        verify(usuarioRepository).save(usuarioCaptor.capture());
+
+        Usuario usuarioActualizado = usuarioCaptor.getValue();
+        
+        assertEquals(2, usuarioActualizado.getRachaActual(), 
+            "Los registros duplicados del mismo día deben unificarse; la racha real debe ser de 2 días");
+    }
 }
