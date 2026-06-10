@@ -128,7 +128,7 @@ Los Requisitos No Funcionales definen los atributos de calidad del sistema, cond
 \newcommand{\reqTable}[3]{
 \begin{table}[H]
 \centering
-\renewcommand{\arraystretch}{1.5} % Da un poco de "aire" a las filas
+\renewcommand{\arraystretch}{1.5} 
 \begin{tabularx}{\textwidth}{|>{\columncolor{gray!20}\bfseries}c|X|}
 \hline
 \rowcolor{UCO} % Color de la cabecera (definido en confg_colores)
@@ -164,7 +164,7 @@ Los Requisitos de Información definen el modelo conceptual de datos del sistema
 \reqTable{RI-02: Información de la Etiqueta}{
     ID\_Etiqueta & Identificador único y autogenerado por el sistema. \\ \hline
     ID\_Usuario & Identificador que vincula la etiqueta con su usuario creador. \\ \hline
-    Nombre & Cadena de caracteres con el nombre descriptivo de la actividad o factor (ej. "Deporte", "Familia"). \\ \hline
+    Nombre & Cadena de caracteres con el nombre descriptivo de la actividad o factor (ej. ``Deporte'', ``Familia''). \\ \hline
     Color & Código de color asociado a la etiqueta. \\ \hline
     Activa & Indicador lógico que determina si la etiqueta es visible y utilizable por el usuario, o si ha sido archivada/eliminada. \\ \hline
     Fecha\_Ultimo\_Uso & Marca temporal que se actualiza cada vez que la etiqueta se vincula a un nuevo registro, permitiendo ordenar la interfaz por uso reciente. \\ \hline
@@ -342,7 +342,7 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
 \subsubsection{Refinamiento y Corrección de Requisitos}
 
-Tras la aplicación de la matriz de verificación de requisitos se ha detectado que seis requisitos(marcados en la matriz con estado \textit{``A refinar''}) no han superado los criterios de calidad establecidos. Por tanto, para garantizar la robustez en la definición de requisitos, estos han sido sometidos a un proceso de reescritura, para asegurar que cumplen correctamente con los criterios de calidad: 
+Tras la aplicación de la matriz de verificación de requisitos se ha detectado que seis requisitos (marcados en la matriz con estado \textit{``A refinar''}) no han superado los criterios de calidad establecidos. Por tanto, para garantizar la robustez en la definición de requisitos, estos han sido sometidos a un proceso de reescritura, para asegurar que cumplen correctamente con los criterios de calidad: 
 
 
 \begin{itemize}
@@ -710,7 +710,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
         \item El caso de uso comienza cuando el usuario accede a la sección de ``Configuración de Cuenta''.
         \item El sistema recupera y muestra el nombre de visualización actual del usuario y su email.
         \item El usuario modifica su nombre y/o introduce una nueva contraseña en los campos habilitados.
-        \item El usuario selecciona la opción "Guardar Cambios".
+        \item El usuario selecciona la opción ``Guardar Cambios''.
         \item El sistema valida que los datos introducidos cumplan con los requisitos de formato y seguridad.
         \item El sistema actualiza la información en la base de datos.
         \item El sistema confirma la operación mediante un mensaje de éxito.
@@ -1225,7 +1225,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item \textbf{Errores de Validación}: Si en el paso 5 un texto supera la longitud máxima permitida, el sistema detiene el proceso de guardado y muestra un mensaje de aviso.
-        \item \textbf{Restablecer Valores por Defecto}: En cualquier momento, el usuario puede seleccionar la opción ``Restablecer''. El sistema solicita confirmación y, tr utilizará a partir de este momento la nueva escala personalizadaas ser aceptada, restaura los textos genéricos y el conjunto de iconos original de la aplicación, guardando estos cambios en la base de datos.
+        \item \textbf{Restablecer Valores por Defecto}: En cualquier momento, el usuario puede seleccionar la opción ``Restablecer''. El sistema solicita confirmación y, tras ser aceptada, el sistema restaura los textos genéricos y el conjunto de iconos original de la aplicación, guardando estos cambios en la base de datos.
     \end{enumerate}
     \\ \hline
     Postcondición & La escala del estado de animo del usuario queda actualizada en la base de datos y está disponible en la interfaz de creación y edición de registros del usuario. \\ \hline

@@ -17,19 +17,29 @@ La cobertura de estas pruebas se ha enfocado de manera estratégica en el paquet
     \item \textbf{Operaciones Críticas y Cascada:} Se ha garantizado la fiabilidad del algoritmo de cálculo de rachas de días consecutivos, así como el borrado en cascada del historial al eliminar una cuenta de usuario.
 \end{itemize}
 
+Además de validar el comportamiento esperado del sistema, las pruebas unitarias han permitido identificar defectos funcionales durante el desarrollo. Un caso especialmente relevante se produjo en la gestión de las rachas de actividad. Se diseñó una prueba específica para verificar que, al eliminar un registro diario perteneciente a una secuencia consecutiva de días, el sistema recalculara automáticamente la racha del usuario. La ejecución inicial de dicha prueba produjo un fallo, evidenciando que el método encargado de actualizar la racha no era invocado tras la eliminación del registro.
+
+La Figura \ref{fig:fallo_test} muestra la salida generada por Maven durante la ejecución de la batería de pruebas. Gracias a este resultado fue posible localizar el defecto en la lógica del servicio y corregirlo antes de su despliegue, reforzando la consistencia de los datos mostrados al usuario.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{Imagenes/pruebas_unitarias.png}
-    \caption{Ejecución exitosa de la batería de pruebas unitarias mediante Maven.}
+    \includegraphics[width=0.9\textwidth]{Imagenes/pruebas_unitarias_error.png}
+    \caption{Fallo detectado mediante pruebas unitarias.}
+    \label{fig:fallo_test}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/pruebas_unitarias_ok.png}
+    \caption{Ejecución exitosa de la batería de pruebas unitarias.}
     \label{fig:pruebas_maven}
 \end{figure}
 
-Como se observa en la Figura \ref{fig:pruebas_maven}, la ejecución automatizada del plan de pruebas a través de la herramienta de construcción Maven arrojó un resultado de éxito absoluto (\textit{BUILD SUCCESS}), superando satisfactoriamente los 17 casos de prueba (\textit{Tests run: 17, Failures: 0}) definidos para el núcleo de la aplicación.
+Como se observa en la Figura \ref{fig:pruebas_maven}, una vez corregidos los defectos identificados gracias a las pruebas unitarias, la siguiente ejecución de los test arrojó un resultado de éxito absoluto (\textit{BUILD SUCCESS}), superando satisfactoriamente los 18 casos de prueba (\textit{Tests run: 18, Failures: 0}) definidos para el núcleo de la aplicación.
+
 \subsection{Pruebas de Integración y API REST (Backend)}
 
-Antes de conectar la interfaz visual, se procedió a la validación exhaustiva de la capa de servicios a través de la red para garantizar la solidez de la comunicación y la seguridad perimetral. Para ello, se empleó la herramienta \textbf{Postman} \cite{bib:postman}, simulando las peticiones HTTP que el cliente web realizaría en un entorno real.
-
-El plan de pruebas sobre la API se centró en dos vectores críticos:
+Antes de conectar la interfaz visual, se procedió a la validación exhaustiva de la capa de servicios a través de la red para garantizar la solidez de la comunicación y la seguridad perimetral. Para ello, se empleó la herramienta \textbf{Postman} \cite{bib:postman}, simulando las peticiones HTTP que el cliente web realizaría en un entorno real. El plan de pruebas sobre la API se centró en dos vectores críticos, la autenticación y la seguridad perimetral, descritos en detalle a continuación.
 
 \subsubsection{Autenticación y Generación de Credenciales}
 
