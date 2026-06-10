@@ -1,22 +1,22 @@
 \newpage
 \section{Diseño del Sistema}
 
-En este capítulo se describe la solución técnica adoptada para satisfacer los requisitos expuestos en la \hyperref[tab:rf_total]{fase de análisis}. Se detalla la arquitectura del sistema desde dos perspectivas complementarias: la arquitectura física (despliegue) y la arquitectura lógica (componentes) \cite{software_architecture_ref}, justificando las decisiones tecnológicas adoptadas para el ecosistema de MoodNest.
+En este capítulo se describe la solución técnica adoptada para satisfacer los requisitos expuestos en la \hyperref[tab:rf_total]{fase de análisis}. Se detalla la arquitectura del sistema desde dos perspectivas complementarias: la arquitectura física (despliegue) y la arquitectura lógica (componentes), justificando las decisiones tecnológicas adoptadas para el ecosistema de MoodNest.
 
 \subsection{Diseño de la Arquitectura Física y Despliegue}
 
-En este apartado se detalla la infraestructura física y el entorno de ejecución sobre el cual se asienta MoodNest. Para garantizar la portabilidad, la escalabilidad y la facilidad de despliegue, se ha adoptado una arquitectura basada en contenedores utilizando la tecnología Docker \cite{docker_ref}.
+En este apartado se detalla la infraestructura física y el entorno de ejecución sobre el cual se asienta MoodNest. Para garantizar la portabilidad, la escalabilidad y la facilidad de despliegue, se ha adoptado una arquitectura basada en contenedores utilizando la tecnología Docker \cite{bib:docker}.
 
 Como se observa en el Diagrama de Despliegue de la Figura \ref{fig:diagrama_despliegue}, el sistema se distribuye en dos nodos principales que interactúan a través de redes estándar de comunicación:
 
 \begin{itemize}
-    \item \textbf{Nodo Cliente (Dispositivo del Usuario):} Representa el hardware físico desde el cual el usuario accede a la plataforma (ordenador, tablet o teléfono móvil). El software no requiere instalación local, ya que el artefacto \textit{MoodNest SPA} (desarrollado con la biblioteca React \cite{react_ref}) se ejecuta directamente dentro de un Navegador Web. Al tratarse de una \textit{Single Page Application}, la lógica de presentación y navegación opera localmente en el cliente tras la carga inicial, optimizando el consumo de ancho de banda.
+    \item \textbf{Nodo Cliente (Dispositivo del Usuario):} Representa el hardware físico desde el cual el usuario accede a la plataforma (ordenador, tablet o teléfono móvil). El software no requiere instalación local, ya que el artefacto \textit{MoodNest SPA} (desarrollado con la biblioteca React \cite{bib:react}) se ejecuta directamente dentro de un Navegador Web. Al tratarse de una \textit{Single Page Application}, la lógica de presentación y navegación opera localmente en el cliente tras la carga inicial, optimizando el consumo de ancho de banda.
     
     \item \textbf{Nodo Servidor (Servidor Anfitrión / Host):} Representa la máquina física o virtual que aloja la lógica central y los datos de la aplicación. Este equipo ejecuta un \textit{Docker Engine} encargado de orquestar, mediante \textit{Docker Compose}, tres contenedores independientes y aislados:
     \begin{enumerate}
         \item \textbf{Contenedor Frontend:} Actúa como servidor web ligero que entrega los archivos estáticos de la SPA al navegador cuando se realiza la primera conexión, y redirige las peticiones de la API al servidor subyacente.
-        \item \textbf{Contenedor Backend:} Contiene un entorno de ejecución de Java que aloja la aplicación Spring Boot \cite{spring_boot_ref} junto a su servidor Tomcat embebido, encargado de procesar la lógica de negocio y exponer los \textit{endpoints} de la API REST.
-        \item \textbf{Contenedor de Base de Datos:} Provee el servicio de persistencia mediante el motor NoSQL MongoDB \cite{mongodb_ref}, el cual se encuentra encapsulado y protegido de forma que únicamente sea accesible a través de la red interna del ecosistema Docker.
+        \item \textbf{Contenedor Backend:} Contiene un entorno de ejecución de Java que aloja la aplicación Spring Boot \cite{bib:springboot} junto a su servidor Tomcat embebido, encargado de procesar la lógica de negocio y exponer los \textit{endpoints} de la API REST.
+        \item \textbf{Contenedor de Base de Datos:} Provee el servicio de persistencia mediante el motor NoSQL MongoDB \cite{bib:mongodb}, el cual se encuentra encapsulado y protegido de forma que únicamente sea accesible a través de la red interna del ecosistema Docker.
     \end{enumerate}
 \end{itemize}
 
@@ -31,11 +31,13 @@ La integridad del sistema se apoya en flujos de comunicación diferenciados: los
 \end{figure}
 
 
+
 \subsection{Arquitectura Lógica del Sistema}
 
-Una vez definida la infraestructura física y el entorno de ejecución, resulta fundamental detallar la organización interna del software de MoodNest. El diseño de la arquitectura lógica representa la materialización de los principios fundamentales de la ingeniería de software: \textbf{alta cohesión} y \textbf{bajo acoplamiento} \cite{software_engineering_ref}. 
+Una vez definida la infraestructura física y el entorno de ejecución, resulta fundamental detallar la organización interna del software de MoodNest. El diseño de la arquitectura lógica representa la materialización de los principios fundamentales de la ingeniería de software: \textbf{alta cohesión} y \textbf{bajo acoplamiento} \cite{bib:clean_architecture}. 
 
-El objetivo primordial de esta estructura es garantizar que el sistema sea mantenible a largo plazo y fácilmente escalable. Para ello, se ha optado por una arquitectura desacoplada que separa estrictamente la lógica de presentación de la lógica de negocio y la persistencia de datos. Esta organización permite que los cambios en una capa (por ejemplo, una actualización en la interfaz visual) tengan un impacto nulo o mínimo en las capas subyacentes. Para ilustrar esta estructura, se han elaborado un Diagrama de Componentes y un Diagrama de Paquetes siguiendo el estándar UML.
+El objetivo primordial de esta estructura es garantizar que el sistema sea mantenible a largo plazo y fácilmente escalable. Para ello, se ha optado por una arquitectura desacoplada que separa estrictamente la lógica de presentación de la lógica de negocio y la persistencia de datos. Esta organización permite que los cambios en una capa (por ejemplo, una actualización en la interfaz visual) tengan un impacto nulo o mínimo en las capas subyacentes. Para ilustrar esta estructura, se han elaborado un Diagrama de Componentes y un Diagrama de Paquetes siguiendo el lenguaje de modelado unificado (\textit{UML})..
+
 \subsubsection{Diseño de Componentes}
 
 El Diagrama de Componentes (Figura \ref{fig:diagrama_componentes}) ofrece una visión de alto nivel de los módulos funcionales que conforman MoodNest y de cómo estos interactúan a través de interfaces explícitas. 
@@ -47,13 +49,13 @@ En esta vista, el sistema se divide en tres capas principales, cada una con una 
     
     \item \textbf{Capa de Lógica de Negocio (Backend):} Es el núcleo del sistema. Para evitar un código monolítico y difícil de gestionar, esta capa se ha modularizado en gestores conceptuales independientes que encapsulan dominios de información específicos:
     \begin{itemize}
-        \item \textbf{UsuariosMgr}: Centraliza la seguridad y gestión de identidad, resolviendo las operaciones de registro, autenticación mediante JWT y mantenimiento del perfil del usuario.
+        \item \textbf{UsuariosMgr}: Centraliza la seguridad y gestión de identidad, resolviendo las operaciones de registro, autenticación mediante JWT \cite{bib:jwt} y mantenimiento del perfil del usuario.
         \item \textbf{RegistrosDiariosMgr}: Gestiona la lógica principal de la aplicación, controlando el ciclo de vida completo (creación, lectura, actualización y borrado) de las entradas de estado de ánimo diarias, así como el cálculo de rachas de uso.
         \item \textbf{EtiquetasMgr}: Administra el catálogo de factores contextuales (actividades o hábitos) que el usuario puede asociar a sus registros, permitiendo que el usuario adapte el sistema a sus necesidadaes.
         \item \textbf{EstadísticasMgr}: Es el componente analítico encargado de procesar los datos en bruto para generar información de valor, detectando patrones de impacto emocional entre las actividades realizadas y el bienestar general.
     \end{itemize}
 
-    \item \textbf{Capa de Acceso a Datos:} Representada por el componente \texttt{Base de Datos MongoDB}. Siguiendo el principio de inversión de dependencias (Dependency Inversion Principle) \cite{solid_principles_ref}, los gestores del \textit{backend} no conocen los detalles técnicos de cómo se guardan los datos. Simplemente requieren una interfaz común de acceso (\texttt{IDataAccess}), proporcionada por este componente. Esto permite que MoodNest sea tecnológicamente agnóstico: si en el futuro se decidiera cambiar MongoDB por otra tecnología, la lógica de negocio permanecería intacta.
+    \item \textbf{Capa de Acceso a Datos:} Representada por el componente \texttt{Base de Datos MongoDB}. Siguiendo el principio de inversión de dependencias (Dependency Inversion Principle) \cite{bib:clean_architecture}, los gestores del \textit{backend} no conocen los detalles técnicos de cómo se guardan los datos. Simplemente requieren una interfaz común de acceso (\texttt{IDataAccess}), proporcionada por este componente. Esto permite que MoodNest sea tecnológicamente agnóstico: si en el futuro se decidiera cambiar MongoDB por otra tecnología, la lógica de negocio permanecería intacta.
 \end{itemize}
 
 \begin{figure}[H]
@@ -67,28 +69,28 @@ En esta vista, el sistema se divide en tres capas principales, cada una con una 
 
 La arquitectura lógica no solo se define por sus componentes funcionales, sino también por cómo se organiza físicamente el código fuente para garantizar la escalabilidad y el trabajo colaborativo. Para representar esta jerarquía, se ha elaborado un Diagrama de Paquetes UML (Figura \ref{fig:diagrama_paquetes}), que actúa como un mapa del proyecto, agrupando las clases y módulos según su responsabilidad técnica.
 
-La elección de esta topología se fundamenta en el principio de separación de responsabilidades (\textit{Separation of Concerns}) \cite{separation_concerns_ref}, asegurando el aislamiento entre la lógica de red, las reglas de negocio y el acceso a la base de datos.
+La elección de esta topología se fundamenta en el principio de separación de responsabilidades (\textit{Separation of Concerns}) \cite{bib:clean_architecture}, asegurando el aislamiento entre la lógica de red, las reglas de negocio y el acceso a la base de datos.
 
 \paragraph{Estructura del Backend (Spring Boot)}
 
-En el servidor, se ha adoptado una \textbf{Arquitectura por Capas} (\textit{Layered Architecture}) \cite{layered_architecture_ref}, patrón estándar en entornos empresariales. Esta organización permite que el flujo de datos sea unidireccional y predecible:
+En el servidor, se ha adoptado una \textbf{Arquitectura por Capas} (\textit{Layered Architecture}) \cite{bib:clean_architecture}, patrón estándar en entornos empresariales. Esta organización permite que el flujo de datos sea unidireccional y predecible:
 
 \begin{itemize}
     \item \textbf{Paquete \texttt{controllers}}: Actúa como frontera del sistema. Contiene las clases que interceptan las peticiones HTTP del cliente, validan la estructura de los datos entrantes y mapean las rutas de la API REST. Delega el procesamiento complejo al nivel inferior.
     \item \textbf{Paquete \texttt{services}}: Alberga la lógica de negocio pura. Aquí se implementa la lógica de negocio pura, como el cálculo de rachas de días consecutivos o el análisis de impacto de las etiquetas. Al estar aislada en servicios, esta lógica puede ser reutilizada o testeada de forma independiente.
     \item \textbf{Paquete \texttt{repositories}}: Funciona como una capa de abstracción sobre MongoDB. Utiliza las interfaces de Spring Data para realizar operaciones de persistencia sin necesidad de escribir consultas manuales complejas, facilitando el mantenimiento si la tecnología de base de datos cambiara en el futuro.
     \item \textbf{Paquete \texttt{models} y \texttt{dto}}: Se ha realizado una separación crítica entre las entidades de dominio (\texttt{models}), que modelan las colecciones de la base de datos, y los Objetos de Transferencia de Datos (\texttt{dto}), utilizados para enviar al frontend exclusivamente la información necesaria, protegiendo datos sensibles como las contraseñas cifradas.
-    \item \textbf{Paquete \texttt{security}}: Aloja la configuración de acceso, políticas de CORS \cite{CORS_ref} y el sistema de filtros necesario para la emisión y validación de los tokens JWT \cite{jwt_ref}.
+    \item \textbf{Paquete \texttt{security}}: Aloja la configuración de acceso, políticas de CORS \cite{bib:cors} y el sistema de filtros necesario para la emisión y validación de los tokens JWT \cite{bib:jwt}.
 \end{itemize}
 
 \paragraph{Estructura del Frontend (React)}
 
-En el lado del cliente, la organización se basa en el paradigma de \textbf{Arquitectura Basada en Componentes} \cite{component_based_ref}. El objetivo es tratar la interfaz de usuario como un conjunto de piezas de Lego reutilizables, lo que agiliza el desarrollo y garantiza la coherencia visual:
+En el lado del cliente, la organización se basa en el paradigma de \textbf{Arquitectura Basada en Componentes} \cite{bib:clean_architecture}. El objetivo es tratar la interfaz de usuario como un conjunto de piezas de Lego reutilizables, lo que agiliza el desarrollo y garantiza la coherencia visual:
 
 \begin{itemize}
     \item \textbf{Paquete \texttt{pages}}: Representa las vistas completas a las que el usuario navega. Su función es orquestar los componentes más pequeños para darles sentido dentro de una ruta específica.
     \item \textbf{Paquete \texttt{components}}: Almacena los elementos visuales atómicos e independientes, como modales o los esqueletos de diseño. Esta separación permite modificar el diseño de un componente en un solo archivo y que el cambio se refleje en toda la aplicación.
-    \item \textbf{Paquete \texttt{services}}: Encapsula toda la comunicación con el exterior. En lugar de realizar llamadas a la API directamente desde los componentes visuales, se centralizan aquí mediante librerías como Axios. Esto desacopla la interfaz de la infraestructura de red.
+    \item \textbf{Paquete \texttt{services}}: Encapsula toda la comunicación con el exterior. En lugar de realizar llamadas a la API directamente desde los componentes visuales, se centralizan aquí mediante librerías como Axios \cite{bib:axios}. Esto desacopla la interfaz de la infraestructura de red.
     \item \textbf{Paquete \texttt{context} y \texttt{hooks}}: Estos paquetes gestionan el estado global y la lógica compartida. El \texttt{context} permite que datos como la sesión del usuario o el tema visual estén disponibles en cualquier parte de la aplicación sin necesidad de pasarlos manualmente entre componentes, mientras que los \texttt{hooks} permiten reciclar lógica compleja de forma elegante.
 \end{itemize}
 
@@ -103,11 +105,13 @@ Esta organización modular permite que MoodNest sea un sistema robusto donde cad
 
 \newpage
 
+
+
 \subsection{Diseño del Modelo de Datos}
 
 El núcleo de MoodNest reside en su capacidad para almacenar, relacionar y analizar de forma eficiente el historial emocional del usuario. A diferencia de los sistemas tradicionales, la naturaleza de los registros diarios es altamente dinámica: una misma entrada puede contener múltiples etiquetas con calificaciones opcionales, anotaciones textuales de longitud variable o, por el contrario, carecer de ambas.
 
-Para dar respuesta a estos requerimientos de flexibilidad sin comprometer el rendimiento, se ha descartado el modelo relacional tradicional (SQL) en favor de una base de datos NoSQL orientada a documentos, concretamente MongoDB \cite{mongodb_ref}. Este paradigma permite almacenar la información en formato BSON (Binary JSON) \cite{bson_ref}, garantizando una lectura ágil y evitando las costosas operaciones de cruce de tablas (\textit{JOINs}) que penalizarían la escalabilidad del sistema bajo grandes volúmenes de datos históricos \cite{sadalaj_nosql_ref}.
+Para dar respuesta a estos requerimientos de flexibilidad sin comprometer el rendimiento, la persistencia se apoya en MongoDB. Este motor permite almacenar la información en formato BSON (Binary JSON) \cite{bib:bson}, garantizando una lectura ágil y evitando las costosas operaciones de cruce de tablas (\textit{JOINs}) que penalizarían la escalabilidad del sistema bajo grandes volúmenes de datos históricos.
 
 \subsubsection{Modelo Conceptual del Dominio}
 
@@ -122,7 +126,7 @@ El sistema se articula conceptualmente en torno a tres entidades principales: el
 
 \subsubsection{Patrones de Diseño NoSQL y Esquemas Físicos}
 
-En el modelado de bases de datos orientadas a documentos, una de las decisiones de diseño más críticas consiste en determinar si los datos relacionados deben estructurarse mediante anidamiento (\textit{Embedding}) o mediante referenciación (\textit{Referencing}) \cite{coupal_mongodb_ref}.
+En el modelado de bases de datos orientadas a documentos, una de las decisiones de diseño más críticas consiste en determinar si los datos relacionados deben estructurarse mediante anidamiento (\textit{Embedding}) o mediante referenciación (\textit{Referencing}) \cite{bib:mongodb_modeling}.
 
 Para la relación entre los \texttt{RegistrosDiarios} y las \texttt{Etiquetas}, se ha optado por el Patrón de Referenciación. Dado que las etiquetas tienen un ciclo de vida independiente (pueden ser modificadas en color o nombre, o desactivadas por el usuario), anidarlas dentro de cada registro diario generaría una redundancia masiva e inconsistencias en las actualizaciones históricas. 
 
@@ -154,7 +158,7 @@ Esta colección almacena las credenciales cifradas de acceso, los parámetros de
 \end{lstlisting}
 
 \paragraph{Colección \texttt{etiquetas}}
-Actúa como el catálogo personalizado de factores contextuales de cada usuario. Se ha incluido un campo booleano ''activa'' para permitir un borrado lógico, garantizando que si el usuario elimina una etiqueta, esta no desaparezca de los registros históricos del pasado.
+Actúa como el catálogo personalizado de factores contextuales de cada usuario. Se ha incluido un campo booleano ``activa'' para permitir un borrado lógico, garantizando que si el usuario elimina una etiqueta, esta no desaparezca de los registros históricos del pasado.
 
 \begin{lstlisting}[style=estiloJSON]
 {
@@ -197,12 +201,14 @@ Con la definición de estas tres estructuras documentales, se da por finalizado 
 
 \newpage
 
+
+
 \subsection{Diseño del Comportamiento y Seguridad}
 \label{sec:seguridad}
 
-El diseño del comportamiento y la seguridad de la plataforma MoodNest se centra en garantizar una interacción fluida entre el cliente y el servidor, bajo un estricto marco de seguridad que cumpla con el \hyperref[tab:rnf_total]{\textbf{RNF4.2 (Protección de datos privados)}} \cite{iso_security_ref}.
+El diseño del comportamiento y la seguridad de la plataforma MoodNest se centra en garantizar una interacción fluida entre el cliente y el servidor, bajo un estricto marco de seguridad que cumpla con el \hyperref[tab:rnf_total]{\textbf{RNF4.2 (Protección de datos privados)}}.
 
-A diferencia de las arquitecturas web tradicionales basadas en el mantenimiento de sesiones activas en el servidor (\textit{Stateful}), MoodNest implementa una arquitectura desacoplada y sin estado \textit{Stateless} mediante el estándar criptográfico de \textit{JSON Web Tokens} (JWT) \cite{jwt_ref}. Esta elección responde a la necesidad de optimizar la escalabilidad del sistema. El JWT consiste en un token digital firmado criptográficamente que funciona como una credencial de identidad autónoma. Al utilizar este mecanismo, el servidor no necesita reservar memoria para mantener el estado de cada usuario; en su lugar, delega en el cliente la responsabilidad de portar su propia identidad en la cabecera de cada petición. Este token viaja codificado y contiene la información mínima necesaria (el identificador del usuario y la fecha de caducidad) asegurando mediante una firma secreta en el backend que la información no ha sido manipulada por terceros. De este modo, se garantiza un acceso seguro a los datos emocionales sin comprometer el rendimiento del servidor.
+A diferencia de las arquitecturas web tradicionales basadas en el mantenimiento de sesiones activas en el servidor (\textit{Stateful}), MoodNest implementa una arquitectura desacoplada y sin estado \textit{Stateless} mediante el estándar criptográfico de \textit{JSON Web Tokens} (JWT) \cite{bib:jwt}. Esta elección responde a la necesidad de optimizar la escalabilidad del sistema. El JWT consiste en un token digital firmado criptográficamente que funciona como una credencial de identidad autónoma. Al utilizar este mecanismo, el servidor no necesita reservar memoria para mantener el estado de cada usuario; en su lugar, delega en el cliente la responsabilidad de portar su propia identidad en la cabecera de cada petición. Este token viaja codificado y contiene la información mínima necesaria (el identificador del usuario y la fecha de caducidad) asegurando mediante una firma secreta en el backend que la información no ha sido manipulada por terceros. De este modo, se garantiza un acceso seguro a los datos emocionales sin comprometer el rendimiento del servidor.
 
 Para entender mejor cómo MoodNest integra este mecanismo de seguridad, analizaremos tanto el flujo de autenticación inicial y generación del JWT como el protocolo de validación sistemática que gobierna el acceso a los recursos restringidos del sistema. 
 
@@ -240,15 +246,14 @@ Como se observa en la Figura \ref{fig:val_jwt}, el servidor no confía ciegament
 
 Gracias a este mecanismo, la seguridad de MoodNest no depende de mantener una conexión constante, sino de la validez de la credencial que el usuario presenta en cada interacción.
 
-\newpage
 
 \subsection{Diseño de Interfaz y Guía de Estilo Visual}
 
-El diseño de la interfaz de MoodNest se ha concebido bajo los principios de usabilidad, claridad y "cero fricción". A continuación se detallan los elementos que componen la identidad visual del sistema.
+El diseño de la interfaz de MoodNest se ha concebido bajo los principios de usabilidad, claridad y ``cero fricción''. A continuación se detallan los elementos que componen la identidad visual del sistema.
 
 \subsubsection{Identidad de Marca y Logotipo}
 
-Para la identidad gráfica de MoodNest se ha diseñado un isotipo que fusiona el monograma de la marca con su funcionalidad principal. El logotipo consiste en una línea continua en forma de cinta que dibuja la letra "M", finalizando en una flecha ascendente.
+Para la identidad gráfica de MoodNest se ha diseñado un isotipo que fusiona el monograma de la marca con su funcionalidad principal. El logotipo consiste en una línea continua en forma de cinta que dibuja la letra ``M'', finalizando en una flecha ascendente.
 
 \begin{figure}[H]
     \centering
@@ -302,7 +307,7 @@ La jerarquía de textos combina elegancia y funcionalidad técnica:
 
 Una vez definida la guía de estilo, se procede a la estructuración conceptual y espacial de las interfaces principales del sistema mediante \textit{wireframes} de fidelidad media. 
 
-Aunque los \textit{wireframes} han sido diseñados para pantallas de escritorio, en consonancia con las buenas prácticas de usabilidad y adaptabilidad, se proyectará un comportamiento responsivo para garantizar una navegación fluida en dispositivos móviles, ya que para un usuario resulta más cómodo realizar un registro diario rápidamente desde un dispositivo móvil que desde un ordenador. Para agilizar la navegación del usuario por la aplicación en entornos de escritorio se implementará una barra horizontal de submenú en la zona superior, la cual será desplazada de manera ergonómica hacia una barra de navegación inferior para pantallas de dispositivos móviles. A continuación, se describen las cinco vistas principales que componen el flujo central del sistema.
+Aunque los \textit{wireframes} han sido diseñados para pantallas de escritorio, en consonancia con las buenas prácticas de usabilidad y adaptabilidad \cite{bib:marcotte_responsive}, se proyectará un comportamiento responsivo para garantizar una navegación fluida en dispositivos móviles, diseñado para que el usuario pueda crear un registro diario de la forma más rapida y simple posible. Para agilizar la navegación del usuario por la aplicación en entornos de escritorio se implementará una barra horizontal de submenú en la zona superior, la cual será desplazada de manera ergonómica hacia una barra de navegación inferior para pantallas de dispositivos móviles. A continuación, se describen las cinco vistas principales que componen el flujo central del sistema.
 
 \begin{figure}[H]
     \centering
@@ -347,4 +352,4 @@ El núcleo interactivo de MoodNest recae en la creación y consulta de datos. La
     \label{fig:wf_estadisticas}
 \end{figure}
 
-Finalmente, la Figura \ref{fig:wf_estadisticas} expone la vista de análisis estadístico estructurada. Esta vista traduce los datos brutos en descubrimientos de valor, identificando mediante un análisis automatizado qué etiquetas actúan como el ''mejor o peor aliado'' del usuario, cuantificando su impacto directo en el estado de ánimo y presentando distribuciones porcentuales en gráficos circulares y de barras.
+Finalmente, la Figura \ref{fig:wf_estadisticas} expone la vista de análisis estadístico estructurada. Esta vista traduce los datos brutos en descubrimientos de valor, identificando mediante un análisis automatizado qué etiquetas actúan como el ``mejor o peor aliado'' del usuario, cuantificando su impacto directo en el estado de ánimo y presentando distribuciones porcentuales en gráficos circulares y de barras.

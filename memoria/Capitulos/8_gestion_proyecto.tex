@@ -1,11 +1,11 @@
 \section{Gestión y Planificación del Proyecto}
 \label{sec:gestion_proyecto}
 
-La gestión y planificación de este Trabajo Fin de Grado se ha fundamentado en la adaptación de metodologías ágiles \cite{agile_methodology_ref}, priorizando la entrega continua de valor, el desarrollo iterativo y la flexibilidad ante los cambios o impedimentos técnicos. Para centralizar todo el ciclo de vida del desarrollo de software, se ha utilizado la plataforma \textbf{GitHub} como herramienta integral, abarcando desde el control de versiones hasta la planificación de tareas.
+La gestión y planificación de este Trabajo Fin de Grado se ha fundamentado en la adaptación de metodologías ágiles \cite{bib:agile_redhat}, priorizando la entrega continua de valor, el desarrollo iterativo y la flexibilidad ante los cambios o impedimentos técnicos. Para centralizar todo el ciclo de vida del desarrollo de software, se ha utilizado la plataforma \textbf{GitHub} \cite{bib:github} como herramienta integral, abarcando desde el control de versiones hasta la planificación de tareas.
 
 \subsection{Control de Versiones y Repositorio}
 
-El código fuente del sistema MoodNest (\textit{backend} y \textit{frontend}) se ha custodiado en un repositorio privado en GitHub mediante el sistema de control de versiones \textbf{Git}. Esta práctica ha garantizado la integridad del código fuente, permitiendo mantener un registro histórico detallado de los cambios (\textit{commits}) y proporcionar un mecanismo de recuperación ante posibles fallos durante la fase de implementación.
+El código fuente del sistema MoodNest (\textit{backend} y \textit{frontend}) se ha custodiado en un repositorio privado en GitHub mediante el sistema de control de versiones \textbf{Git} \cite{bib:git}. Esta práctica ha garantizado la integridad del código fuente, permitiendo mantener un registro histórico detallado de los cambios (\textit{commits}) y proporcionar un mecanismo de recuperación ante posibles fallos durante la fase de implementación.
 
 \subsection{Estructuración del Trabajo: Issues y Milestones}
 
@@ -15,33 +15,28 @@ Para organizar estos requerimientos en fases lógicas de desarrollo y establecer
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/gestion_milestones.png}
-        \caption{Agrupación iterativa de tareas en \textit{Milestones}.}
-        \label{fig:gestion_milestones}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/gestion_issue.png}
-        \caption{Detalle de un \textit{Issue} con criterios de aceptación.}
-        \label{fig:gestion_issue}
-    \end{subfigure}
-    \caption{Estructuración y planificación del trabajo en GitHub.}
-    \label{fig:planificacion_estructural}
+    \includegraphics[width=0.9\textwidth]{Imagenes/gestion_milestones.png}
+    \caption{Agrupación iterativa de tareas en \textit{Milestones}.}
+    \label{fig:gestion_milestones}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/gestion_issue.png}
+    \caption{Detalle de un \textit{Issue} con criterios de aceptación.}
+    \label{fig:gestion_issue}
 \end{figure}
 
 \subsection{Metodología Kanban y Seguimiento del Progreso}
 
-El seguimiento diario de las tareas operativas se ha gestionado mediante un tablero \textbf{Kanban} \cite{kanban_ref} integrado a través de la herramienta \textit{GitHub Projects}. Este tablero dividió visualmente el flujo de trabajo en columnas o estados de madurez (\textit{Backlog}, \textit{To Do}, \textit{In Progress}, \textit{Done} y \textit{Validated}), proporcionando en todo momento una radiografía instantánea del estado del proyecto (ver Figura~\ref{fig:gestion_kanban}). 
+El seguimiento diario de las tareas operativas se ha gestionado mediante un tablero \textbf{Kanban} \cite{bib:atlassian_kanban} integrado a través de la herramienta \textit{GitHub Projects}. Este tablero dividió visualmente el flujo de trabajo en columnas o estados de madurez (\textit{Backlog}, \textit{To Do}, \textit{In Progress}, \textit{Done} y \textit{Validated}), proporcionando en todo momento una radiografía instantánea del estado del proyecto (ver Figura~\ref{fig:gestion_kanban}). 
 
 El uso de la metodología Kanban permitió limitar el trabajo en curso, focalizando el esfuerzo en cerrar tareas antes de iniciar nuevas y facilitando la identificación temprana de posibles cuellos de botella durante la fase de codificación.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Imagenes/gestion_kanban_2.png}
-    \caption{Tablero ágil para el seguimiento diario de tareas.}
+    \includegraphics[width=0.9\textwidth]{Imagenes/gestion_kanban_2.png}
+    \caption{Tablero Kanban para el seguimiento diario de tareas.}
     \label{fig:gestion_kanban}
 \end{figure}
 
@@ -54,7 +49,7 @@ La gráfica de evolución \textit{Burn up} (ver Figura~\ref{fig:gestion_burnup})
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Imagenes/gestion_burnup.png}
+    \includegraphics[width=0.9\textwidth]{Imagenes/gestion_burnup.png}
     \caption{Gráfica \textit{Burn up} del progreso temporal.}
     \label{fig:gestion_burnup}
 \end{figure}

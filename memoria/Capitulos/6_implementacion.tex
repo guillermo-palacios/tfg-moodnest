@@ -5,7 +5,7 @@ Una vez establecida la arquitectura lógica y el modelo de datos en la fase de d
 
 \subsection{Implementación del Backend y Estructura del Código}
 
-El núcleo del servidor se ha desarrollado empleando Java 17 y el entorno de trabajo Spring Boot 4.0.6. La base de código se ha construido priorizando un enfoque pragmático y evitando la sobreingeniería, lo cual se refleja en las decisiones de configuración e implementación que se detallan a continuación.
+El núcleo del servidor se ha desarrollado empleando Java 17 \cite{bib:java} y el entorno de trabajo Spring Boot 4.0.6 \cite{bib:springboot}. La base de código se ha construido priorizando un enfoque pragmático y evitando la sobreingeniería, lo cual se refleja en las decisiones de configuración e implementación que se detallan a continuación.
 
 El principal objetivo durante la codificación del servidor backend ha sido mantener una trazabilidad estricta respecto al diseño arquitectónico. Cada módulo planificado en los diagramas lógicos se ha traducido de manera unívoca a paquetes y archivos concretos en el repositorio. La estructura física resultante se divide en las siguientes agrupaciones:
 
@@ -14,18 +14,18 @@ El principal objetivo durante la codificación del servidor backend ha sido mant
 La base del código fuente se ha organizado internamente reflejando la Arquitectura por Capas expuesta en la fase de diseño. A continuación, se detallan las carpetas creadas, sus archivos principales y su vinculación con los modelos teóricos:
 
 \begin{itemize}
-    \item \textbf{Paquete \texttt{models}:} Este directorio es la traducción directa del Modelo Conceptual del Dominio. Contiene exclusivamente tres clases de Java: \texttt{Usuario.java}, \texttt{Etiqueta.java} y \texttt{RegistroDiario.java}. Estas clases definen los atributos exactos y las colecciones que se mapean hacia la base de datos NoSQL, respetando el patrón de referenciación diseñado previamente.
+    \item \textbf{Paquete \texttt{models}:} Este directorio es la traducción directa del Modelo Conceptual del Dominio. Contiene exclusivamente tres clases de Java: \textit{Usuario.java, Etiqueta.java} y \textit{RegistroDiario.java}. Estas clases definen los atributos exactos y las colecciones que se mapean hacia la base de datos NoSQL, respetando el patrón de referenciación diseñado previamente.
 
-    \item \textbf{Paquete \texttt{dto} (Data Transfer Objects):} En concordancia con el principio de ocultación de la información, se han creado archivos como \texttt{RegistroRequest.java}, \texttt{PerfilRequest.java} o \texttt{AuthResponse.java}. Su contenido está diseñado para aislar las entidades de dominio (\texttt{models}) de la red, garantizando que el \textit{frontend} únicamente envíe y reciba los atributos estrictamente necesarios en formato JSON.
+    \item \textbf{Paquete \texttt{dto} (Data Transfer Objects):} En concordancia con el principio de ocultación de la información \cite{bib:clean_architecture}, se han creado archivos como \texttt{RegistroRequest.java}, \texttt{PerfilRequest.java} o \texttt{AuthResponse.java}. Su contenido está diseñado para aislar las entidades de dominio (\texttt{models}) de la red, garantizando que el \textit{frontend} únicamente envíe y reciba los atributos estrictamente necesarios en formato JSON.
 
-    \item \textbf{Paquete \texttt{repositories}:} Materializa la Capa de Acceso a Datos (interfaz \texttt{IDataAccess} del \hyperref[fig:diagrama_componentes]{diagrama de componentes}). Se han implementado tres interfaces (\texttt{UsuarioRepository.java}, \texttt{EtiquetaRepository.java} y \texttt{RegistroDiarioRepository.java}) que heredan de \texttt{MongoRepository}. Estos archivos carecen de código funcional explícito, delegando en Spring Data la construcción automática de consultas complejas.
+    \item \textbf{Paquete \texttt{repositories}:} Materializa la Capa de Acceso a Datos (interfaz \textit{IDataAccess} del \hyperref[fig:diagrama_componentes]{diagrama de componentes}). Se han implementado tres interfaces (\textit{UsuarioRepository.java, EtiquetaRepository.java} y \textit{RegistroDiarioRepository.java}) que heredan de \texttt{MongoRepository}. Estos archivos carecen de código funcional explícito, delegando en Spring Data la construcción automática de consultas complejas.
 
     \item \textbf{Paquete \texttt{services}:} Este directorio es el núcleo del \textit{backend}. Es aquí donde se han programado las clases que se corresponden exactamente con los gestores lógicos (Mgrs) definidos en el \hyperref[fig:diagrama_componentes]{diagrama de componentes}:
     \begin{itemize}
         \item \texttt{UsuarioService.java}: Materializa el \textbf{UsuariosMgr}. Contiene la lógica de registro, validación de contraseñas y el borrado en cascada de la cuenta (al eliminar una cuenta, localiza y purga sus etiquetas y registros asociados).
         \item \texttt{RegistroDiarioService.java}: Materializa el \textbf{RegistrosDiariosMgr}. Implementa la lógica transaccional de guardado, el cálculo de las rachas de días consecutivos y las restricciones de fechas futuras.
         \item \texttt{EtiquetaService.java}: Materializa el \textbf{EtiquetasMgr}. Controla la creación de etiquetas y ejecuta el borrado lógico para preservar el historial.
-        \item \texttt{EstadisticasService.java}: Materializa el \textbf{EstadísticasMgr}. Su contenido implementa algoritmos matemáticos apoyados en la API \textit{Streams} de Java, extrayendo el ''mejor y peor aliado'' emocional en tiempo de ejecución de manera eficiente.
+        \item \texttt{EstadisticasService.java}: Materializa el \textbf{EstadísticasMgr}. Su contenido implementa algoritmos matemáticos apoyados en la API \textit{Streams} de Java, extrayendo el ``mejor y peor aliado'' emocional en tiempo de ejecución de manera eficiente.
     \end{itemize}
 
     \item \textbf{Paquete \texttt{controllers}:} Representa la frontera de la API REST. Se compone de cinco archivos (\textit{AuthController.java, UsuarioController.java, RegistroDiarioController.java, EtiquetaController.java y EstadisticasController.java}). Su contenido se limita a exponer los \textit{endpoints}, interceptar las peticiones HTTP, inyectar el identificador del usuario autenticado y derivar la ejecución a las clases del paquete \texttt{services}.
@@ -36,8 +36,10 @@ La base del código fuente se ha organizado internamente reflejando la Arquitect
 Para orquestar el funcionamiento del sistema y dar soporte a los \hyperref[tab:rnf_total]{Requisitos No Funcionales (RNF)}, se han creado los paquetes \texttt{config} y \texttt{security}, los cuales contienen archivos estructurales críticos para la aplicación:
 
 \begin{itemize}
-    \item \texttt{SecurityConfig.java} y \texttt{JwtAuthenticationFilter.java}: Traducen a código el protocolo de seguridad diseñado previamente en el apartado \ref{sec:seguridad}. En el primer archivo se desactiva la protección CSRF (innecesaria en arquitecturas \textit{stateless}) y se establecen las políticas CORS. El segundo archivo actúa como el interceptor que extrae la cabecera \texttt{Authorization}, validando matemáticamente la firma del JWT en cada petición.
+    \item \texttt{SecurityConfig.java} y \texttt{JwtAuthenticationFilter.java}: Traducen a código el protocolo de seguridad diseñado previamente en el apartado \ref{sec:seguridad}. En el primer archivo se desactiva la protección CSRF (innecesaria en arquitecturas \textit{stateless}) y se establecen las políticas CORS \cite{bib:cors}. El segundo archivo actúa como el interceptor que extrae la cabecera \texttt{Authorization}, validando matemáticamente la firma del JWT en cada petición.
 \end{itemize}
+
+\newpage
 
 \subsubsection{Especificación de Endpoints de la API}
 
@@ -93,20 +95,20 @@ Como resultado de la implementación de los controladores, el servidor expone un
 \subsection{Implementación del Frontend y la Interfaz Visual}
 \label{sec:implementacion_frontend}
 
-El núcleo de la interfaz visual y del cliente web se ha desarrollado empleando la biblioteca React 18.3 y el empaquetador de módulos Vite 5.4. La base de código se ha construido priorizando un enfoque pragmático y evitando la sobreingeniería, lo cual se refleja en las decisiones de configuración e implementación que se detallan a continuación.
+El núcleo de la interfaz visual y del cliente web se ha desarrollado empleando la biblioteca React 18.3 \cite{bib:react} y el empaquetador de módulos Vite 5.4. La base de código se ha construido priorizando un enfoque pragmático y evitando la sobreingeniería, lo cual se refleja en las decisiones de configuración e implementación que se detallan a continuación.
 
-El principal objetivo durante la codificación del \textit{frontend} ha sido mantener una trazabilidad estricta respecto al diseño de la Arquitectura Basada en Componentes \cite{component_based_ref}. Cada módulo conceptual planificado se ha traducido de manera unívoca a paquetes y archivos concretos en el repositorio del cliente.
+El principal objetivo durante la codificación del \textit{frontend} ha sido mantener una trazabilidad estricta respecto al diseño de la Arquitectura Basada en Componentes \cite{bib:clean_architecture}. Cada módulo conceptual planificado se ha traducido de manera unívoca a paquetes y archivos concretos en el repositorio del cliente.
 
 \subsubsection{Correspondencia Arquitectónica y Jerarquía de Directorios}
 
 La estructura física del código fuente se ha organizado en directorios tal y como definimos en nuestro \hyperref[fig:diagrama_paquetes]{Diagrama de Paquetes}:
 
 \begin{itemize}
-    \item \textbf{Paquete \texttt{pages}:} Materializa las vistas de alto nivel a las que el usuario puede navegar mediante \textit{React Router}. Cada archivo aquí centraliza la lógica de presentación de un área funcional:
+    \item \textbf{Paquete \texttt{pages}:} Materializa las vistas de alto nivel a las que el usuario puede navegar mediante \textit{React Router} \cite{bib:react_router}. Cada archivo aquí centraliza la lógica de presentación de un área funcional:
     \begin{itemize}
         \item \texttt{Dashboard.jsx}: Implementa el Dashboard \hyperref[tab:esp_cu9]{(CU9)}, renderizando el mensaje dinámico de bienvenida, la racha, el botón para añadir un nuevo registro y la cuadrícula con los últimos registros.
         \item \texttt{Historial.jsx}: Implementa la vista del calendario \hyperref[tab:esp_cu10]{(CU10)}. Construye una matriz de doble columna que permite la navegación bidireccional entre meses y la inspección asíncrona de los detalles de un día concreto.
-        \item \texttt{Estadisticas.jsx}: Encapsula el Panel Analítico (\hyperref[tab:esp_cu11]{CU11}, \hyperref[tab:esp_cu12]{CU12}, \hyperref[tab:esp_cu13]{CU13}). Delega el renderizado visual en la librería \texttt{react-chartjs-2}, transformando los datos crudos del servidor en gráficos de líneas, barras y anillos mediante \textit{HTML5 Canvas}.
+        \item \texttt{Estadisticas.jsx}: Encapsula el Panel Analítico (\hyperref[tab:esp_cu11]{CU11}, \hyperref[tab:esp_cu12]{CU12}, \hyperref[tab:esp_cu13]{CU13}). Delega el renderizado visual en la librería \texttt{react-chartjs-2}, transformando los datos crudos del servidor en gráficos de líneas, barras y anillos mediante \textit{HTML5 Canvas} apoyados en la API de Chart.js \cite{bib:chartjs}.
         \item \texttt{Perfil.jsx}: Centraliza la gestión de la cuenta (\hyperref[tab:esp_cu3]{CU3}, \hyperref[tab:esp_cu5]{CU5}) y la personalización estética del sistema (\hyperref[tab:esp_cu15]{CU15}).
     \end{itemize}
 
@@ -114,7 +116,7 @@ La estructura física del código fuente se ha organizado en directorios tal y c
 
     \item \textbf{Paquete \texttt{context}:} Contiene el archivo \texttt{AuthContext.jsx}, el cual funciona como el núcleo de control de la sesión privada. Implementa la \textit{Context API} nativa de React para almacenar el estado global del usuario, propagando el token de sesión y las preferencias visuales de forma transversal a todo el árbol de componentes.
 
-    \item \textbf{Paquete \texttt{services}:} Aísla la capa de red. En el archivo \texttt{api.js} se ha instanciado el cliente HTTP Axios 1.16. Este archivo es crítico para la seguridad, ya que su función es anexar automáticamente el token JWT a la cabecera \texttt{Authorization: Bearer} en cada petición saliente dirigida a la API REST.
+    \item \textbf{Paquete \texttt{services}:} Aísla la capa de red. En el archivo \texttt{api.js} se ha instanciado el cliente HTTP Axios 1.16 \cite{bib:axios}. Este archivo es crítico para la seguridad, ya que su función es anexar automáticamente el token JWT a la cabecera \texttt{Authorization: Bearer} en cada petición saliente dirigida a la API REST.
 \end{itemize}
 
 \subsubsection{Desviaciones respecto al Análisis y Diseño Original}
@@ -122,16 +124,16 @@ La estructura física del código fuente se ha organizado en directorios tal y c
 Durante la fase de codificación de la interfaz de usuario, se identificaron escenarios donde la simplificación de la arquitectura y la reevaluación del alcance beneficiaban la viabilidad y legibilidad del software, dando lugar a dos modificaciones formales respecto a la planificación teórica:
 
 \begin{itemize}
-    \item \textbf{Consolidación de la Lógica en Contextos y Estado Local:} En la planificación inicial del sistema, se previó la creación de un paquete denominado \texttt{hooks} destinado a albergar ganchos personalizados (\textit{Custom Hooks}) \cita{} para la abstracción de operaciones asíncronas y flujos globales. No obstante, con el objetivo de evitar una sobreingeniería del software y mantener un flujo de datos directo, se determinó que la lógica de sesión global quedase centralizada exclusivamente en el componente \texttt{AuthContext} del paquete \texttt{context}. 
+    \item \textbf{Consolidación de la Lógica en Contextos y Estado Local:} En la planificación inicial del sistema, se previó la creación de un paquete denominado \texttt{hooks} destinado a albergar ganchos personalizados (\textit{Custom Hooks}) para la abstracción de operaciones asíncronas y flujos globales. No obstante, con el objetivo de evitar una sobreingeniería del software y mantener un flujo de datos directo, se determinó que la lógica de sesión global quedase centralizada exclusivamente en el componente \texttt{AuthContext} del paquete \texttt{context}. 
     
-    Por su parte, la gestión del estado transitorio y los efectos secundarios —tales como la petición de datos analíticos o la mutación de formularios— se resolvió de manera directa en las páginas y componentes mediante el uso nativo de los conectores \texttt{useState} y \texttt{useEffect} de React \cite{react_ref}. Esta decisión eliminó la necesidad de implementar una capa intermedia de \textit{hooks} propios, reduciendo la complejidad cognitiva del proyecto sin mermar su modularidad.
+    Por su parte, la gestión del estado transitorio y los efectos secundarios —tales como la petición de datos analíticos o la mutación de formularios— se resolvió de manera directa en las páginas y componentes mediante el uso nativo de los conectores \texttt{useState} y \texttt{useEffect} de React. Esta decisión eliminó la necesidad de implementar una capa intermedia de \textit{hooks} propios, reduciendo la complejidad cognitiva del proyecto sin mermar su modularidad.
 
-    \item \textbf{Aplazamiento del CU14 (Personalizar Escala):} A pesar de haber sido analizado, especificado y diseñado a nivel de base de datos, durante la fase de implementación se decidió descartar el desarrollo funcional del \hyperref[label]{text}Caso de Uso 14 (\textit{Personalización de los textos descriptivos de la escala del 1 al 10}). Tras evaluar la complejidad de propagar diccionarios de texto dinámicos a través de los componentes de renderizado de \textit{Chart.js} y los calendarios, se consideró que dicha característica excedía el alcance de un Producto Mínimo Viable (MVP). Por consiguiente, esta funcionalidad ha sido relegada al catálogo de futuras mejoras del sistema.
+    \item \textbf{Aplazamiento del CU14 (Personalizar Escala):} A pesar de haber sido analizado, especificado y diseñado a nivel de base de datos, durante la fase de implementación del \textit{frontend} se decidió descartar el desarrollo del \hyperref[tab:esp_cu14]{Caso de Uso 14} (\textit{Personalización de los textos descriptivos de la escala del 1 al 10}). Tras evaluar la complejidad de propagar diccionarios de texto dinámicos a través de los componentes de renderizado de \textit{Chart.js} y los calendarios, se consideró que dicha característica excedía el alcance de un Producto Mínimo Viable (MVP). Por consiguiente, esta funcionalidad ha sido relegada al catálogo de futuras mejoras del sistema.
 \end{itemize}
 
 \subsubsection{Estrategia de Diseño Estético: Tailwind CSS y Variables Dinámicas}
 
-Para garantizar una interfaz adaptable y altamente personalizable, se integró el \textit{framework} Tailwind CSS \cita{}. En lugar de codificar clases estáticas con colores rígidos, se configuró el archivo \texttt{tailwind.config.js} para referenciar un mapa de variables semánticas (\textit{CSS Custom Properties}).
+Para garantizar una interfaz adaptable y altamente personalizable, se integró el \textit{framework} Tailwind CSS \cite{bib:tailwind}. En lugar de codificar clases estáticas con colores rígidos, se configuró el archivo \texttt{tailwind.config.js} para referenciar un mapa de variables semánticas (\textit{CSS Custom Properties}).
 
 Esta decisión arquitectónica permite que el componente \texttt{AuthContext.jsx}, al recibir los datos de perfil desde el servidor, ejecute una función de hidratación visual (\texttt{aplicarPreferenciasVisuales()}). Dicha función inyecta los valores color principal seleccionado por el usuario y alterna la clase \texttt{.dark} en el nodo raíz del DOM. El beneficio directo de esta técnica es que las clases utilitarias (como \texttt{bg-primary} o \texttt{bg-surface}) reaccionan en tiempo de ejecución, provocando que la aplicación completa mute de paleta cromática de manera instantánea y sin parpadeos visuales.
 
@@ -142,5 +144,5 @@ Durante la implementación de las vistas, se resolvieron diversos impedimentos t
 \begin{itemize}
     \item \textbf{Integridad de las Marcas Temporales:} En la vista \textit{Historial.jsx}, las conversiones nativas de fecha en JavaScript mediante \texttt{.toISOString()} provocaban un desfase horario (penalizando con horas negativas según el meridiano), lo que ocasionaba que registros guardados a medianoche se desplazaran al día anterior en el calendario. Este defecto se mitigó anulando los métodos ISO automáticos y construyendo las cadenas de fecha en formato estricto local (\texttt{YYYY-MM-DD}) de manera manual antes de su envío a la API REST.
     \item \textbf{Representación Honesta de Datos Temporales:} En el componente \textit{Estadisticas.jsx}, se configuró el gráfico de líneas evolutivas de \textit{Chart.js} inhabilitando la interpolación de vacíos (\texttt{spanGaps: false}). Esta directiva técnica interrumpe visualmente el trazado de la línea en aquellas jornadas donde no existe un registro, evitando generar falsos positivos analíticos sobre el estado de ánimo del usuario.
-    \item \textbf{Sistema de Retroalimentación No Bloqueante:} Para cumplir con el \hyperref[tab:rnf_total]{RNF3.3} (Feedback visual inmediato), se descartaron los cuadros de diálogo nativos del navegador (\texttt{alert()}) por interrumpir el hilo principal de ejecución. En su lugar, se integró la librería \texttt{react-hot-toast}, centralizando la gestión de notificaciones. Este sistema captura de manera reactiva tanto las operaciones exitosas (ej. consolidación de un registro) como las excepciones asíncronas atrapadas en los bloques \texttt{try-catch}, disparando notificaciones flotantes estandarizadas que no rompen el flujo de navegación del usuario.
+    \item \textbf{Sistema de Retroalimentación No Bloqueante:} Para cumplir con el \hyperref[tab:rnf_total]{RNF3.3} (Feedback visual inmediato), se descartaron los cuadros de diálogo nativos del navegador (\texttt{alert()}) por interrumpir el hilo principal de ejecución. En su lugar, se integró la librería \texttt{react-hot-toast} \cite{bib:react_hot_toast}, centralizando la gestión de notificaciones. Este sistema captura de manera reactiva tanto las operaciones exitosas (ej. consolidación de un registro) como las excepciones asíncronas atrapadas en los bloques \texttt{try-catch}, disparando notificaciones flotantes estandarizadas que no rompen el flujo de navegación del usuario.
 \end{itemize}

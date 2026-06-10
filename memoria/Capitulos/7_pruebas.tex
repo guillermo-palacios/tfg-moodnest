@@ -5,7 +5,7 @@ La fase de pruebas constituye un pilar fundamental en el ciclo de vida del desar
 
 \subsection{Pruebas de Integración y API REST (Backend)}
 
-Antes de conectar la interfaz visual, se procedió a la validación exhaustiva de la capa de servicios (\textit{backend}) para garantizar la solidez de la lógica de negocio y la seguridad perimetral. Para ello, se empleó la herramienta \textbf{Postman}, simulando las peticiones HTTP que el cliente web realizaría en un entorno real.
+Antes de conectar la interfaz visual, se procedió a la validación exhaustiva de la capa de servicios (\textit{backend}) para garantizar la solidez de la lógica de negocio y la seguridad perimetral. Para ello, se empleó la herramienta \textbf{Postman} \cite{bib:postman}, simulando las peticiones HTTP que el cliente web realizaría en un entorno real.
 
 El plan de pruebas sobre la API se centró en dos vectores críticos:
 \begin{itemize}
@@ -60,10 +60,10 @@ La evaluación de los atributos de calidad arquitectónica (Rendimiento, Usabili
 \subsubsection{Seguridad, Usabilidad y Compatibilidad}
 
 \begin{itemize}
-    \item \textbf{Protección Criptográfica (RNF4.1 y RNF4.2):} Se validó de forma satisfactoria el almacenamiento cifrado mediante auditoría de la base de datos, constatando que el \textit{backend} genera firmas irreversibles de 60 caracteres mediante \texttt{BCrypt}. Adicionalmente, la manipulación o borrado manual del token JWT en el almacenamiento local (\textit{LocalStorage}) del navegador provocó la expulsión inmediata y automática del usuario de las rutas privadas gracias al escudo lógico del componente \texttt{<ProtectedRoute>}.
+    \item \textbf{Protección Criptográfica (RNF4.1 y RNF4.2):} Se validó de forma satisfactoria el almacenamiento cifrado mediante auditoría de la base de datos, constatando que el \textit{backend} genera firmas irreversibles de 60 caracteres mediante \texttt{BCrypt} \cite{bib:bcrypt}. Adicionalmente, la manipulación o borrado manual del token JWT en el almacenamiento local del navegador provocó la expulsión inmediata y automática del usuario de las rutas privadas gracias al escudo lógico del componente \texttt{<ProtectedRoute>}.
     \item \textbf{Cifrado de Tráfico (RNF4.4):} Durante el desarrollo local, el sistema operó sobre el protocolo HTTP sin cifrado para agilizar la depuración. El requisito de seguridad de la capa de transporte se cumplirá de forma delegada en la fase de despliegue a Producción, donde se configurará un proxy inverso respaldado por certificados SSL/TLS para forzar la encriptación HTTPS.
     \item \textbf{Usabilidad y Navegadores (RNF1.2 y RNF3.1):} La compatibilidad Multi-Navegador se certificó ejecutando la aplicación de forma paralela en navegadores basados en motores Chromium (Google Chrome) y motores Gecko (Mozilla Firefox bajo SO Ubuntu Linux), sin encontrar discrepancias de diseño. Asimismo, la simulación de resoluciones móviles confirmó el comportamiento responsivo del componente \texttt{Layout}, ocultando el menú superior en favor de una barra de navegación inferior orientada al pulgar.
-    \item \textbf{Eficiencia de Navegación (RNF3.2 y RNF3.3):} Se superó con éxito la métrica de accesibilidad transaccional: un usuario puede crear un registro diario con un máximo de dos interacciones (clic en el logo de MoodNest y clic en el botón central del Dashboard). A su vez, el sistema centralizado de notificaciones (\texttt{react-hot-toast}) proveyó tiempos de \textit{feedback} visual muy inferiores al límite de medio segundo exigido.
+    \item \textbf{Eficiencia de Navegación (RNF3.2 y RNF3.3):} Se superó con éxito la métrica de accesibilidad transaccional: un usuario puede crear un registro diario con un máximo de dos interacciones (clic en el logo de MoodNest y clic en el botón central del Dashboard). A su vez, el sistema centralizado de notificaciones (\texttt{react-hot-toast}) \cite{bib:react_hot_toast} proveyó tiempos de \textit{feedback} visual muy inferiores al límite de medio segundo exigido.
 \end{itemize}
 
 La superación de este marco de pruebas certifica que MoodNest cuenta con una implementación madura, tolerante a fallos y preparada funcionalmente para su entrada en un entorno de producción o uso real.

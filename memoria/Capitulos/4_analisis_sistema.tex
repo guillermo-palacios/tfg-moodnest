@@ -74,7 +74,6 @@ Los Requisitos Funcionales describen el comportamiento esperado del sistema y la
 
 \end{xltabular}
 
-\newpage
 
 \subsubsection{Requisitos No Funcionales (RNF)}
 
@@ -123,7 +122,6 @@ Los Requisitos No Funcionales definen los atributos de calidad del sistema, cond
 
 \end{xltabular}
 
-\newpage
 
 % --- COMANDO PARA TABLAS DE REQUISITOS ---
 
@@ -142,9 +140,9 @@ Los Requisitos No Funcionales definen los atributos de calidad del sistema, cond
 \end{table}
 }
 
+\newpage
+
 % ------------------------------------------------
-
-
 
 \subsubsection{Requisitos de Información (RI)}
 \label{tab:ri_total}
@@ -184,14 +182,15 @@ Los Requisitos de Información definen el modelo conceptual de datos del sistema
     Fecha\_Modificacion & Marca temporal de la última edición realizada sobre el registro. \\ \hline
 }{Requisitos de Información - Registro Diario}
 
-\newpage
+
+
 \subsection{Verificación y Validación de Requisitos}
 
 Una vez desarrollado por completo el catálogo de requisitos, llevamos a cabo un proceso de Verificación y Validación. El objetivo principal de esta etapa es asegurar la calidad, viabilidad y corrección del catálogo de requisitos antes de pasar a la siguiente fase. Aplicar esta técnica de forma temprana permite detectar problemas o incongruencias desde el principio, minimizando el impacto temporal y el coste que supondría arrastrar estos fallos a las fases de diseño o programación.
 
 Esta validación se ha aplicado al catálogo completo de requisitos, incluyendo los Requisitos Funcionales (RF), los Requisitos No Funcionales (RNF) y los Requisitos de Información (RI). 
 
-Para realizar la evaluación, se ha utilizado una lista de control (\textit{Checklist}) de calidad. Cada requisito se ha revisado individualmente para comprobar que cumple con estos cinco criterios básicos:
+Para realizar la evaluación, se ha utilizado una lista de control (\textit{Checklist}) basada en los criterios de calidad principales del estándar IEEE 830 \cite{ieee830}. Cada requisito se ha revisado individualmente para comprobar que cumple con estos cinco criterios básicos:
 
 \begin{itemize}
     \item \textbf{C1 - Inequívoco:} El requisito está redactado con un lenguaje formal de forma clara y precisa. No usa términos subjetivos garantizando que admite una única interpretación técnica posible.
@@ -270,6 +269,8 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
 \end{xltabular}
 
+\newpage
+
 \subsubsection{Matriz de Verificación: Requisitos No Funcionales}
 
 \renewcommand{\arraystretch}{1.3}
@@ -341,7 +342,7 @@ Para realizar la evaluación, se ha utilizado una lista de control (\textit{Chec
 
 \subsubsection{Refinamiento y Corrección de Requisitos}
 
-Tras la aplicación de la matriz de verificación de requisitos se ha detectado que seis requisitos(marcados en la matriz con estado \textit{''A refinar''}) no han superado los criterios de calidad establecidos. Por tanto, para garantizar la robustez en la definición de requisitos, estos han sido sometidos a un proceso de reescritura, para asegurar que cumplen correctamente con los criterios de calidad: 
+Tras la aplicación de la matriz de verificación de requisitos se ha detectado que seis requisitos(marcados en la matriz con estado \textit{``A refinar''}) no han superado los criterios de calidad establecidos. Por tanto, para garantizar la robustez en la definición de requisitos, estos han sido sometidos a un proceso de reescritura, para asegurar que cumplen correctamente con los criterios de calidad: 
 
 
 \begin{itemize}
@@ -382,34 +383,38 @@ Tras la aplicación de la matriz de verificación de requisitos se ha detectado 
     \end{itemize}
 \end{itemize}
 
-\textit{Nota: Para mantener la coherencia del documento, las tablas generales de especificación de requisitos presentadas en los apartados anteriores ya reflejan estas versiones finales y corregidas.}
+\textit{Nota: Para mantener la coherencia del documento, las \hyperref[tab:rf_total]{tablas generales de especificación de requisitos} presentadas en los apartados anteriores ya reflejan estas versiones finales y corregidas.}
 
-\newpage
+
+
 
 \subsection{Estudio de Viabilidad Técnica y Selección Tecnológica}
 
 Para asegurar que MoodNest cumpla con los requisitos de rendimiento, seguridad y escalabilidad definidos, se ha realizado un estudio de las alternativas tecnológicas disponibles. La elección de la arquitectura no responde a una preferencia personal, sino a la necesidad de cubrir las demandas específicas de la gestión de datos y el análisis estadístico del sistema.
 
 \subsubsection{Modelo de Datos}
-El núcleo de MoodNest es el ''Registro Diario''. Al analizar los requisitos del Módulo 2, se observa que la información de cada registro no es rígida: un usuario puede asociar dos etiquetas a un día y diez etiquetas al siguiente, añadir comentarios de longitud variable o incluir puntuaciones específicas solo para ciertos factores.
+El núcleo de MoodNest es el ``Registro Diario''. Al analizar los requisitos del Módulo 2, se observa que la información de cada registro no es rígida: un usuario puede asociar dos etiquetas a un día y diez etiquetas al siguiente, añadir comentarios de longitud variable o incluir puntuaciones específicas solo para ciertos factores.
 
-En un modelo relacional (SQL) como PostgreSQL o MySQL, esta flexibilidad obligaría a realizar diseños de tablas complejos con múltiples uniones o el uso extensivo de valores nulos, lo que penalizaría el rendimiento de las consultas (incumpliendo el RNF2.1). Por ello, se ha optado por un modelo NoSQL orientado a documentos con MongoDB. Esta tecnología permite almacenar cada registro como un documento JSON independiente, facilitando que la estructura de los datos evolucione de forma natural y que el acceso a la información sea directo y mucho más veloz.
+En un modelo relacional (SQL) como PostgreSQL o MySQL, esta flexibilidad obligaría a realizar diseños de tablas complejos con múltiples uniones o el uso extensivo de valores nulos, lo que penalizaría el rendimiento de las consultas (incumpliendo el \hyperref[tab:rnf_total]{RNF2.1}). Por ello, se ha optado por un modelo NoSQL orientado a documentos con MongoDB \cite{bib:mongodb}. Esta tecnología permite almacenar cada registro como un documento JSON \cite{bib:json} independiente, facilitando que la estructura de los datos evolucione de forma natural y que el acceso a la información sea directo y mucho más veloz.
 
 \subsubsection{Lógica de Negocio y Seguridad}
 Para la construcción del servidor, se evaluaron alternativas como Node.js y Spring Boot. Aunque Node.js ofrece una gran rapidez de ejecución, la naturaleza de MoodNest (que maneja datos personales sensibles) requiere un entorno con un enfoque robusto en seguridad y estabilidad.
 
-Se ha seleccionado Spring Boot (Java) debido a su madurez y a la potencia de su ecosistema. Especialmente crítico es el uso de Spring Security, que permite implementar de forma nativa la protección de datos y el acceso mediante tokens JWT exigidos en el RNF4.2. Además, la integración con MongoDB a través de Spring Data permite que el desarrollo sea mucho más ágil, garantizando que el backend sea capaz de procesar las peticiones concurrentes definidas en el RNF2.3 sin degradar la experiencia del usuario.
+Se ha seleccionado Spring Boot \cite{bib:springboot} basado en el lenguaje Java \cite{bib:java} debido a su madurez y a la potencia de su ecosistema. Especialmente el uso de Spring Security, que permite implementar de forma nativa la protección de datos y el acceso mediante tokens JWT exigidos en el \hyperref[tab:rnf_total]{RNF4.2}. Además, la integración con MongoDB a través de Spring Data permite que el desarrollo sea mucho más ágil, garantizando que el backend sea capaz de procesar las peticiones concurrentes definidas en el \hyperref[tab:rnf_total]{RNF2.3} sin degradar la experiencia del usuario.
 
 \subsubsection{Interfaz de Usuario y Visualización de Datos}
-La interfaz de la aplicación tiene dos retos principales: la agilidad (RNF3.2) y la complejidad de los gráficos estadísticos (Módulo 4). Tras analizar opciones como Angular o Vue, se ha determinado que React es la opción más viable para este proyecto, utilizando la biblioteca Chart.js para la generación y gestión de todas las visualizaciones del sistema.
+La interfaz de la aplicación tiene dos retos principales: la agilidad \hyperref[tab:rnf_total]{(RNF3.2)} y la complejidad de los gráficos estadísticos. Tras analizar opciones como Angular o Vue, se ha determinado que React \cite{bib:react} es la opción más viable para este proyecto, utilizando la biblioteca Chart.js \cite{bib:chartjs} para la generación y gestión de todas las visualizaciones del sistema.
 
-React permite construir la interfaz mediante componentes reutilizables (calendarios, selectores de humor, widgets de estadísticas), lo que facilita enormemente el mantenimiento del código. Su capacidad para gestionar el estado de la aplicación de forma reactiva asegura que los cambios en los datos se reflejen instantáneamente en los gráficos generados con Chart.js sin necesidad de recargar la página, cumpliendo así con los tiempos de renderizado exigidos. Asimismo, la integración de esta biblioteca específica garantiza que la implementación de los gráficos de líneas, barras y circulares sea técnica y operativamente posible.
+React permite construir la interfaz mediante componentes reutilizables, lo que facilita enormemente el mantenimiento del código. Su capacidad para gestionar el estado de la aplicación de forma reactiva asegura que los cambios en los datos se reflejen instantáneamente en los gráficos generados con Chart.js sin necesidad de recargar la página, cumpliendo así con los tiempos de renderizado exigidos. Asimismo, la integración de esta biblioteca (Chart.js) específica garantiza que la implementación de los gráficos de líneas, barras y circulares sea técnica y operativamente posible.
 
 Como conclusión de este análisis, se determina que el stack tecnológico seleccionado es capaz de soportar todas las funcionalidades descritas y garantiza el cumplimiento de los requisitos no funcionales de seguridad y rendimiento. Por tanto, el desarrollo de MoodNest se considera técnicamente viable bajo esta arquitectura, permitiendo avanzar con seguridad hacia la fase de especificación funcional del sistema.
 
 
 
 \newpage
+
+
+
 \subsection{Análisis Funcional}
 
 En esta sección se traduce el catálogo de requisitos en interacciones narrativas. Se define qué actores estarán presentes en el sistema y qué acciones pueden realizar, asegurando que toda la funcionalidad técnica tenga una representación orientada al usuario.
@@ -483,7 +488,6 @@ A continuación, se presenta el catálogo general de Casos de Uso del sistema, o
     \label{tab:definicion_cu}
 
 \end{xltabular}
-
 
 \subsubsection{Matriz de Trazabilidad}
 
@@ -570,6 +574,7 @@ La elaboración de esta matriz tiene como objetivo confirmar que cada uno de los
 \end{center}
 
 \newpage
+
 \subsubsection{Diagrama General de Casos de Uso}
 
 A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama general de Casos de Uso de la aplicación. Este modelo visualiza la frontera del sistema y establece las relaciones estructurales entre los actores identificados y las funcionalidades principales, incluyendo las dependencias de inclusión (\textit{include}) y extensión (\textit{extend}) que rigen la lógica de navegación.
@@ -584,6 +589,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
 
 
 \newpage
+
 \subsubsection{Especificación Detallada de Casos de Uso}
 
 \begingroup
@@ -612,7 +618,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & Ninguna \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando un usuario selecciona la opción ''Registrarse''.
+        \item El caso de uso comienza cuando un usuario selecciona la opción ``Registrarse''.
         \item El sistema solicita las credenciales y datos necesarios (nombre, correo electrónico y contraseña).
         \item El usuario introduce la información requerida.
         \item El sistema comprueba que la información introducida es válida y que el correo no está registrado previamente en la base de datos.
@@ -658,10 +664,10 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item El caso de uso comienza cuando un usuario accede a la pantalla de inicio de sesión.
         \item El sistema solicita el correo electrónico y la contraseña.
-        \item El usuario introduce sus credenciales y selecciona ''Iniciar Sesión''.
+        \item El usuario introduce sus credenciales y selecciona ``Iniciar Sesión''.
         \item El sistema verifica que la cuenta existe y que la contraseña es correcta.
         \item El sistema genera un token de autenticación válido para la sesión.
-        \item El sistema redirige al usuario al Panel Principal y le concede permisos de ''Usuario Registrado''.
+        \item El sistema redirige al usuario al Panel Principal y le concede permisos de ``Usuario Registrado''.
     \end{enumerate} 
     \\ \hline
     Flujo Alternativo & 
@@ -669,11 +675,14 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
         \item \textbf{Credenciales Incorrectas}: Se activa en el paso 4 si el correo no existe o la contraseña no coincide. El sistema deniega el acceso, muestra un mensaje de aviso y borra el campo de la contraseña por seguridad.
     \end{enumerate}
     \\ \hline
-    Postcondición & El usuario pasa a tener el rol de ''Usuario Registrado'' y puede acceder a las funciones principales de la aplicación. \\ \hline
+    Postcondición & El usuario pasa a tener el rol de ``Usuario Registrado'' y puede acceder a las funciones principales de la aplicación. \\ \hline
     \caption{CU2: Iniciar Sesión}
     \label{tab:esp_cu2} \\
 \end{xltabular}
 \endgroup
+
+
+\newpage
 
 \begingroup
 \small 
@@ -698,7 +707,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la sección de ''Configuración de Cuenta''.
+        \item El caso de uso comienza cuando el usuario accede a la sección de ``Configuración de Cuenta''.
         \item El sistema recupera y muestra el nombre de visualización actual del usuario y su email.
         \item El usuario modifica su nombre y/o introduce una nueva contraseña en los campos habilitados.
         \item El usuario selecciona la opción "Guardar Cambios".
@@ -720,6 +729,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
 \end{xltabular}
 \endgroup
 
+\newpage
 
 \begingroup
 \small 
@@ -745,7 +755,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe tener una sesión activa en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario selecciona la opción ''Cerrar Sesión'' o cuando el usuario elimina su cuenta (CU5).
+        \item El caso de uso comienza cuando el usuario selecciona la opción ``Cerrar Sesión'' o cuando el usuario elimina su cuenta (CU5).
         \item Si la acción es iniciada manualmente por el usuario
             \begin{enumerate}[label=\theenumi.\arabic*, leftmargin=0.6cm, topsep=2pt, itemsep=2pt]
                 \item El sistema muestra un cuadro de diálogo para confirmar la salida.
@@ -757,11 +767,11 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Cancelar Cierre}: En el paso 2.1, el usuario selecciona ''Cancelar'' o hace clic fuera del cuadro de diálogo. El sistema oculta el aviso y la sesión activa se mantiene intacta.
+        \item \textbf{Cancelar Cierre}: En el paso 2.1, el usuario selecciona ``Cancelar'' o hace clic fuera del cuadro de diálogo. El sistema oculta el aviso y la sesión activa se mantiene intacta.
         \item \textbf{Sesión Expirada}: Si al intentar cerrar la sesión el token del usuario ya había caducado por inactividad, el sistema ignora la confirmación, limpia los datos residuales del navegador y redirige directamente al inicio de sesión.
     \end{enumerate}
     \\ \hline
-    Postcondición & La sesión se da por finalizada. El actor pierde el acceso a las funciones privadas y recobra el rol de ''Usuario Visitante''. \\ \hline
+    Postcondición & La sesión se da por finalizada. El actor pierde el acceso a las funciones privadas y recobra el rol de ``Usuario Visitante''. \\ \hline
 
     \caption{CU4: Cerrar Sesión}
     \label{tab:esp_cu4} \\
@@ -787,29 +797,29 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     % CONTENIDO DE LA TABLA
     Nombre & Eliminar Cuenta \\ \hline
     Identificador & CU5 \\ \hline
-    Descripción & El usuario elimina de forma permanente e irreversible su cuenta y todos los datos asociados a la misma (registros, etiquetas y preferencias). \\ \hline
+    Descripción & El usuario elimina de forma permanente e irreversible su cuenta y todos los datos asociados a la misma. \\ \hline
     Actor Principal & Usuario Registrado \\ \hline
     Actor Secundario & Ninguno \\ \hline
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la configuración de su perfil y selecciona la opción ''Eliminar Cuenta''.
+        \item El caso de uso comienza cuando el usuario accede a la configuración de su perfil y selecciona la opción ``Eliminar Cuenta''.
         \item El sistema muestra una advertencia crítica informando que la acción es completamente irreversible.
         \item El sistema solicita al usuario que introduzca su contraseña actual como medida de seguridad adicional.
         \item El usuario introduce su contraseña y confirma la eliminación.
         \item El sistema valida que la contraseña introducida sea correcta.
         \item El sistema procede a eliminar permanentemente el registro del usuario y realiza un borrado en cascada de todos sus registros diarios y etiquetas personalizadas en la base de datos.
-        \item El sistema incluye y ejecuta el ''CU3: Cerrar Sesión''.
+        \item El sistema incluye y ejecuta el ``CU3: Cerrar Sesión''.
         \item El sistema muestra un mensaje de confirmación de baja.
     \end{enumerate} 
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item \textbf{Contraseña Incorrecta}: Se activa en el paso 5 si la contraseña no coincide con la del usuario. El sistema detiene el proceso de borrado, muestra una alerta de seguridad y permite reintentar la operación.
-        \item \textbf{Cancelar Proceso}: En el paso 2 o 3, el usuario selecciona ''Cancelar'' o retrocede. El sistema aborta la operación y mantiene intactos todos los datos y la sesión del usuario.
+        \item \textbf{Cancelar Proceso}: En el paso 2 o 3, el usuario selecciona ``Cancelar'' o retrocede. El sistema aborta la operación y mantiene intactos todos los datos y la sesión del usuario.
     \end{enumerate}
     \\ \hline
-    Postcondición & Toda la información del usuario desaparece de la plataforma. El actor pierde su cuenta y recobra el rol de ''Usuario Visitante''. \\ \hline
+    Postcondición & Toda la información del usuario desaparece de la plataforma. El actor pierde su cuenta y recobra el rol de ``Usuario Visitante''. \\ \hline
 
     \caption{CU5: Eliminar Cuenta}
     \label{tab:esp_cu5} \\
@@ -840,14 +850,14 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario selecciona la opción ''Registrar mi Día'' desde el dashboard.
+        \item El caso de uso comienza cuando el usuario selecciona la opción ``Registrar mi Día'' desde el dashboard.
         \item El sistema presenta el formulario de creación, estableciendo la fecha actual por defecto.
         \item El usuario confirma la fecha actual o selecciona una fecha pasada en el selector.
         \item El usuario selecciona obligatoriamente una puntuación global (del 1 al 10) para definir su estado de ánimo general del día.
         \item El usuario selecciona, de manera opcional, una o múltiples etiquetas de su catálogo personal.
         \item Para cada etiqueta seleccionada, el usuario puede asignarle (opcionalmente) una puntuación específica del 1 al 10.
         \item El usuario escribe, opcionalmente, un texto descriptivo en el campo de comentario.
-        \item El usuario selecciona la opción ''Guardar Registro''.
+        \item El usuario selecciona la opción ``Guardar Registro''.
         \item El sistema valida que la fecha sea válida (no futura) y que exista una puntuación global.
         \item El sistema guarda el registro en la base de datos y recalcula la racha de días consecutivos del usuario si procede.
         \item El sistema redirige al usuario a la vista anterior, mostrando un mensaje de éxito.
@@ -856,7 +866,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item \textbf{Validación Fallida}: En el paso 9, si los datos no cumplen con el formato o falta por rellenar algún campo, el sistema muestra un mensaje de aviso y permite al usuario corregirlos sin abandonar la pantalla.
-        \item \textbf{Cancelar}: En cualquier momento antes de guardar, el usuario selecciona ''Cancelar'' o retrocede. El sistema descarta toda la información introducida y regresa a la pantalla anterior sin realizar cambios en la base de datos.
+        \item \textbf{Cancelar}: En cualquier momento antes de guardar, el usuario selecciona ``Cancelar'' o retrocede. El sistema descarta toda la información introducida y regresa a la pantalla anterior sin realizar cambios en la base de datos.
     \end{enumerate}
     \\ \hline
     Postcondición & El registro se consolida en la base de datos, queda disponible para su consulta en el historial y computa inmediatamente para las gráficas de análisis estadístico. \\ \hline
@@ -891,11 +901,11 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item El caso de uso comienza cuando el usuario selecciona un registro específico desde la vista de Calendario.
-        \item El sistema muestra los detalles completos de la entrada y habilita las opciones de ''Editar'' y ''Eliminar''.
-        \item El usuario selecciona la opción ''Editar''.
-        \item El sistema presenta el formulario del registro con sus datos actuales pre-cargados (fecha, puntuación, etiquetas vinculadas y comentario).
+        \item El sistema muestra los detalles completos de la entrada y habilita las opciones de ``Editar'' y ``Eliminar''.
+        \item El usuario selecciona la opción ``Editar''.
+        \item El sistema presenta el formulario del registro con sus datos actuales pre-cargados (fecha, puntuación, etiquetas y comentario).
         \item El usuario modifica los atributos deseados.
-        \item El usuario selecciona la opción ''Guardar Cambios''.
+        \item El usuario selecciona la opción ``Guardar Cambios''.
         \item El sistema valida las modificaciones aplicando las mismas reglas de negocio y obligatoriedad que en la creación de registros.
         \item El sistema actualiza el registro en la base de datos y recalcula las estadísticas o la racha si fuese necesario.
         \item El sistema redirige a la vista del historial, mostrando un mensaje de éxito.
@@ -903,9 +913,9 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Eliminar Registro}: En el paso 3, el usuario selecciona ''Eliminar''. El sistema muestra un cuadro de diálogo advirtiendo que la acción es irreversible. El usuario confirma. El sistema borra el registro permanentemente, recalcula la racha/estadísticas afectadas y redirige a la pantalla anterior con un mensaje de éxito.
+        \item \textbf{Eliminar Registro}: En el paso 3, el usuario selecciona ``Eliminar''. El sistema muestra un cuadro de diálogo advirtiendo que la acción es irreversible. El usuario confirma. El sistema borra el registro permanentemente, recalcula la racha/estadísticas afectadas y redirige a la pantalla anterior con un mensaje de éxito.
         \item \textbf{Errores de Validación}: Se activa en el paso 7 si los datos modificados no cumplen con el formato. El sistema detiene el proceso y muestra un mensaje de error.
-        \item \textbf{Cancelar}: En cualquier momento durante la edición o en el cuadro de confirmación de eliminación, el usuario selecciona ''Cancelar'' o retrocede. El sistema cancela el proceso y mantiene el registro original sin alteraciones.
+        \item \textbf{Cancelar}: En cualquier momento durante la edición o en el cuadro de confirmación de eliminación, el usuario selecciona ``Cancelar'' o retrocede. El sistema cancela el proceso y mantiene el registro original sin alteraciones.
     \end{enumerate}
     \\ \hline
     Postcondición & El registro seleccionado queda actualizado o eliminado permanentemente de la base de datos, y los cambios se propagan de inmediato a las estadísticas y vistas del usuario. \\ \hline
@@ -942,7 +952,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
         \item El caso de uso comienza cuando el usuario accede a la sección de etiquetas.
         \item El sistema muestra un formulario solicitando un nombre identificativo y la selección de un color para la etiqueta.
         \item El usuario introduce el nombre deseado y selecciona un color.
-        \item El usuario selecciona ''Añadir''.
+        \item El usuario selecciona ``Añadir''.
         \item El sistema verifica que el nombre no esté vacío y que no exista ya una etiqueta activa con el mismo nombre para este usuario.
         \item El sistema registra la nueva etiqueta en la base de datos asignándola al identificador del usuario.
         \item El sistema actualiza la vista del catálogo mostrando la nueva etiqueta disponible para ser usada en futuros registros diarios.
@@ -950,10 +960,10 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Editar Etiqueta}: En el paso 1, el usuario pulsa ''Editar'' en una etiqueta existente. El sistema muestra el formulario con los datos actuales. El usuario los modifica y guarda. El sistema valida (paso 5) y actualiza la información en la base de datos.
-        \item \textbf{Eliminar Etiqueta (Borrado Lógico)}: En el paso 1, el usuario pulsa ''Eliminar'' en una etiqueta existente. Tras solicitar confirmación, el sistema no borra el registro de la base de datos para preservar la integridad de los registros pasados y en su lugar, marca la etiqueta como inactiva, ocultándola del catálogo para que no pueda ser seleccionada en nuevos registros.
+        \item \textbf{Editar Etiqueta}: En el paso 1, el usuario pulsa ``Editar'' en una etiqueta existente. El sistema muestra el formulario con los datos actuales. El usuario los modifica y guarda. El sistema valida (paso 5) y actualiza la información en la base de datos.
+        \item \textbf{Eliminar Etiqueta (Borrado Lógico)}: En el paso 1, el usuario pulsa ``Eliminar'' en una etiqueta existente. Tras solicitar confirmación, el sistema no borra el registro de la base de datos para preservar la integridad de los registros pasados y en su lugar, marca la etiqueta como inactiva, ocultándola del catálogo para que no pueda ser seleccionada en nuevos registros.
         \item \textbf{Nombre Duplicado o Inválido}: Se activa en el paso 5 si el nombre está vacío o ya existe en el catálogo activo del usuario. El sistema detiene el proceso y muestra un mensaje de error indicando que el nombre debe ser único.
-        \item \textbf{Cancelar}: En cualquier momento, el usuario selecciona ''Cancelar''. El sistema cancela el proceso y regresa al catálogo principal.
+        \item \textbf{Cancelar}: En cualquier momento, el usuario selecciona ``Cancelar''. El sistema cancela el proceso y regresa al catálogo principal.
     \end{enumerate}
     \\ \hline
     Postcondición & El catálogo de etiquetas del usuario queda actualizado, preservando en todo momento la integridad de los registros históricos anteriores. \\ \hline
@@ -996,7 +1006,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Usuario Sin Historial}: Si en el paso 4 y 5 el sistema detecta que el usuario no tiene ningún registro previo, el contador de racha se inicializa a 0. En la sección de entradas recientes, el sistema muestra un mensaje invitando al usuario a crear su primer registro de estado de ánimo, permitiendo extender el flujo hacia el ''CU6: Crear Registro Diario''.
+        \item \textbf{Usuario Sin Historial}: Si en el paso 4 y 5 el sistema detecta que el usuario no tiene ningún registro previo, el contador de racha se inicializa a 0. En la sección de entradas recientes, el sistema muestra un mensaje invitando al usuario a crear su primer registro de estado de ánimo, permitiendo extender el flujo hacia el ``CU6: Crear Registro Diario''.
     \end{enumerate}
     \\ \hline
     Postcondición & El usuario visualiza la información actualizada de su progreso y dispone de los controles necesarios para seguir interactuando con la plataforma. \\ \hline
@@ -1029,7 +1039,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario selecciona el apartado ''Historial'' en el menú de navegación.
+        \item El caso de uso comienza cuando el usuario selecciona el apartado ``Historial'' en el menú de navegación.
         \item El sistema renderiza una vista de calendario, estableciendo por defecto el mes y año actuales.
         \item El sistema consulta la base de datos y resalta visualmente los días que contienen un registro.
         \item El usuario selecciona un día resaltado del calendario.
@@ -1038,9 +1048,9 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     \\ \hline
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item \textbf{Navegar entre meses}: En el paso 4, el usuario utiliza los controles de ''Mes anterior'' o ''Mes siguiente''. El sistema actualiza la vista al mes seleccionado y vuelve al paso 3.
-        \item \textbf{Seleccionar día sin registro}: En el paso 4, si el usuario selecciona un día que no tiene registro, el sistema muestra un mensaje indicándolo y ofrece la opción de extender el flujo hacia el ''CU6: Crear Registro Diario''.
-        \item \textbf{Gestionar Registro}: En el paso 5, si el usuario decide editar o borrar la información del registro visualizado, el sistema extiende el flujo hacia el ''CU7: Gestionar Registros''.
+        \item \textbf{Navegar entre meses}: En el paso 4, el usuario utiliza los controles de ``Mes anterior'' o ``Mes siguiente''. El sistema actualiza la vista al mes seleccionado y vuelve al paso 3.
+        \item \textbf{Seleccionar día sin registro}: En el paso 4, si el usuario selecciona un día que no tiene registro, el sistema muestra un mensaje indicándolo y ofrece la opción de extender el flujo hacia el ``CU6: Crear Registro Diario''.
+        \item \textbf{Gestionar Registro}: En el paso 5, si el usuario decide editar o borrar la información del registro visualizado, el sistema extiende el flujo hacia el ``CU7: Gestionar Registros''.
     \end{enumerate}
     \\ \hline
     Postcondición & El usuario visualiza un calendario con el histórico de sus registros. \\ \hline
@@ -1073,8 +1083,8 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la vista de ''Estadísticas''.
-        \item El sistema renderiza la interfaz y establece por defecto el filtro temporal en vista ''Semanal'' (últimos 7 días).
+        \item El caso de uso comienza cuando el usuario accede a la vista de ``Estadísticas''.
+        \item El sistema renderiza la interfaz y establece por defecto el filtro temporal en vista ``Semanal'' (últimos 7 días).
         \item El sistema consulta la base de datos para recuperar las puntuaciones globales de los registros de ese periodo.
         \item El sistema genera y muestra un gráfico de líneas que conecta cronológicamente los datos recuperados.
     \end{enumerate} 
@@ -1115,7 +1125,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la vista de ''Estadísticas''.
+        \item El caso de uso comienza cuando el usuario accede a la vista de ``Estadísticas''.
         \item El sistema procesa los registros y etiquetas del usuario para calcular tres métricas clave:
         \begin{itemize}[leftmargin=0.5cm, topsep=2pt, itemsep=2pt]
             \item Las etiquetas con mayor desviación positiva y negativa respecto a la puntuación global media de todos los registros históricos del usuario.
@@ -1161,7 +1171,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema y se encuentra dentro de la página de análisis. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la sección de ''Tus Aliados''.
+        \item El caso de uso comienza cuando el usuario accede a la sección de ``Tus Aliados''.
         \item El sistema muestra un selector con el catálogo de etiquetas del usuario.
         \item El usuario elige una etiqueta en el selector.
         \item El sistema calcula y genera un gráfico de barras que compara visualmente la puntuación global media de todos los registros del usuario frente al promedio específico de los días que contienen la etiqueta seleccionada.
@@ -1204,10 +1214,10 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la página de personalización y pulsa en ''Personalizar Escala de Ánimo''.
+        \item El caso de uso comienza cuando el usuario accede a la página de personalización y pulsa en ``Personalizar Escala de Ánimo''.
         \item El sistema muestra un formulario con los diez niveles numéricos con sus textos descriptivos actuales y un selector visual con los conjuntos de iconos predefinidos disponibles.
         \item El usuario modifica los textos descriptivos de los niveles numéricos que desee y selecciona un nuevo conjunto de iconos.
-        \item El usuario selecciona la opción ''Guardar Cambios''.
+        \item El usuario selecciona la opción ``Guardar Cambios''.
         \item El sistema valida que los textos no excedan el límite máximo de caracteres permitido.
         \item El sistema actualiza la información en la base de datos y muestra un mensaje de éxito.
     \end{enumerate} 
@@ -1215,7 +1225,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Flujo Alternativo & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
         \item \textbf{Errores de Validación}: Si en el paso 5 un texto supera la longitud máxima permitida, el sistema detiene el proceso de guardado y muestra un mensaje de aviso.
-        \item \textbf{Restablecer Valores por Defecto}: En cualquier momento, el usuario puede seleccionar la opción ''Restablecer''. El sistema solicita confirmación y, tr utilizará a partir de este momento la nueva escala personalizadaas ser aceptada, restaura los textos genéricos y el conjunto de iconos original de la aplicación, guardando estos cambios en la base de datos.
+        \item \textbf{Restablecer Valores por Defecto}: En cualquier momento, el usuario puede seleccionar la opción ``Restablecer''. El sistema solicita confirmación y, tr utilizará a partir de este momento la nueva escala personalizadaas ser aceptada, restaura los textos genéricos y el conjunto de iconos original de la aplicación, guardando estos cambios en la base de datos.
     \end{enumerate}
     \\ \hline
     Postcondición & La escala del estado de animo del usuario queda actualizada en la base de datos y está disponible en la interfaz de creación y edición de registros del usuario. \\ \hline
@@ -1248,7 +1258,7 @@ A continuación, en la Figura \ref{fig:diagrama_cu}, se presenta el diagrama gen
     Precondición & El usuario debe estar autenticado en el sistema. \\ \hline
     Flujo Principal & 
     \begin{enumerate}[leftmargin=0.5cm, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=4pt]
-        \item El caso de uso comienza cuando el usuario accede a la página de personalización y pulsa en ''Personalizar Interfaz'' interactúa con el panel de apariencia visual.
+        \item El caso de uso comienza cuando el usuario accede a la página de personalización y pulsa en ``Personalizar Interfaz'' interactúa con el panel de apariencia visual.
         \item El sistema renderiza los controles disponibles: un selector de tema (Claro, Oscuro) y una paleta con colores de acento seleccionables.
         \item El usuario selecciona una nueva opción de tema y/o un nuevo color principal.
         \item El sistema aplica el cambio visual de forma inmediata en la interfaz para que el usuario pueda previsualizar el resultado en tiempo real y actualiza las preferencias del usuario en la base de datos.
