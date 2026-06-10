@@ -3,22 +3,67 @@
 
 La fase de pruebas constituye un pilar fundamental en el ciclo de vida del desarrollo de software, garantizando que el producto final no solo cumple con las especificaciones funcionales y no funcionales analizadas, sino que también ofrece un nivel óptimo de calidad, seguridad y tolerancia a fallos. En este capítulo se detallan las estrategias de validación aplicadas sobre el ecosistema de MoodNest, abarcando desde la integración de la API REST hasta la experiencia de usuario final.
 
-\subsection{Pruebas de Integración y API REST (Backend)}
+\subsection{Pruebas Unitarias (Backend)}
 
-Antes de conectar la interfaz visual, se procedió a la validación exhaustiva de la capa de servicios (\textit{backend}) para garantizar la solidez de la lógica de negocio y la seguridad perimetral. Para ello, se empleó la herramienta \textbf{Postman} \cite{bib:postman}, simulando las peticiones HTTP que el cliente web realizaría en un entorno real.
+Siguiendo los principios de la pirámide de pruebas de la ingeniería de software, la primera línea de defensa para garantizar la calidad del código ha sido la automatización de pruebas unitarias sobre el \textit{backend}. El objetivo de esta fase es aislar y verificar la corrección algorítmica de la lógica de negocio pura, independientemente de la base de datos, la red o la interfaz visual.
 
-El plan de pruebas sobre la API se centró en dos vectores críticos:
+Para el ecosistema Spring Boot, se ha utilizado el marco de pruebas \textbf{JUnit 5} \cite{bib:junit} en combinación con la librería \textbf{Mockito} \cite{bib:mockito}. Esta última resulta fundamental, ya que permite crear objetos simulados de los repositorios de datos, evitando que las pruebas dependan de una conexión real a MongoDB y garantizando que se ejecuten en milisegundos.
+
+La cobertura de estas pruebas se ha enfocado de manera estratégica en el paquete \texttt{services}, dada su criticidad arquitectónica. Se ha diseñado una batería de evaluación sobre las clases \texttt{UsuarioService}, \texttt{RegistroDiarioService} y \texttt{EtiquetaService}. Entre los escenarios evaluados destacan:
 \begin{itemize}
-    \item \textbf{Validación de formatos y respuestas:} Se verificó que todos los \textit{endpoints} respondieran con los códigos de estado HTTP correctos (ej. \texttt{200 OK} para peticiones exitosas, \texttt{400 Bad Request} ante DTOs mal formados, y \texttt{404 Not Found} para recursos inexistentes).
-    \item \textbf{Verificación de seguridad perimetral:} Se lanzaron peticiones intencionadas a rutas protegidas (como \texttt{GET /api/estadisticas}) omitiendo el token JWT en la cabecera \texttt{Authorization}. Como se observa en la Figura \ref{fig:prueba_postman}, el sistema interceptó correctamente la petición, devolviendo un estado \texttt{401 Unauthorized} y blindando el acceso a los datos. Asimismo, se comprobó el aislamiento de usuarios, verificando que un token válido no pudiera mutar el identificador de un registro perteneciente a una cuenta ajena.
+    \item \textbf{Validación de Restricciones Temporales:} Se ha comprobado mediante aserciones que el servicio intercepta y bloquea la creación de registros asociados a fechas futuras.
+    \item \textbf{Aislamiento de Entidades y Permisos:} Se ha verificado que el sistema procesa adecuadamente los identificadores de usuario, bloqueando intentos de mutación sobre registros o etiquetas pertenecientes a cuentas ajenas.
+    \item \textbf{Integridad Histórica (Borrado Lógico):} Se ha testeado que la eliminación de etiquetas ejecuta una mutación del estado lógico en lugar de una destrucción física en la base de datos.
+    \item \textbf{Operaciones Críticas y Cascada:} Se ha garantizado la fiabilidad del algoritmo de cálculo de rachas de días consecutivos, así como el borrado en cascada del historial al eliminar una cuenta de usuario.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Imagenes/prueba_postman.png}
-    \caption{Validación de endpoints y seguridad JWT mediante Postman.}
-    \label{fig:prueba_postman}
+    \includegraphics[width=0.9\textwidth]{Imagenes/pruebas_unitarias.png}
+    \caption{Ejecución exitosa de la batería de pruebas unitarias mediante Maven.}
+    \label{fig:pruebas_maven}
 \end{figure}
+
+Como se observa en la Figura \ref{fig:pruebas_maven}, la ejecución automatizada del plan de pruebas a través de la herramienta de construcción Maven arrojó un resultado de éxito absoluto (\textit{BUILD SUCCESS}), superando satisfactoriamente los 17 casos de prueba (\textit{Tests run: 17, Failures: 0}) definidos para el núcleo de la aplicación.
+\subsection{Pruebas de Integración y API REST (Backend)}
+
+Antes de conectar la interfaz visual, se procedió a la validación exhaustiva de la capa de servicios a través de la red para garantizar la solidez de la comunicación y la seguridad perimetral. Para ello, se empleó la herramienta \textbf{Postman} \cite{bib:postman}, simulando las peticiones HTTP que el cliente web realizaría en un entorno real.
+
+El plan de pruebas sobre la API se centró en dos vectores críticos:
+
+\subsubsection{Autenticación y Generación de Credenciales}
+
+El primer hito de las pruebas de integración consistió en certificar el correcto funcionamiento del módulo de seguridad y la emisión de tokens. Como se observa en la Figura \ref{fig:postman_registro}, al realizar una petición legítima de registro al \textit{endpoint} público, el sistema procesa las credenciales, encripta la contraseña en la base de datos y genera exitosamente un \textit{JSON Web Token} (JWT) firmado. Este token se devuelve al cliente para que sea utilizado como salvoconducto (\textit{Bearer Token}) en todas las operaciones posteriores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/postman_registro.png}
+    \caption{Creación de usuario y emisión exitosa del token JWT (Código 200 OK).}
+    \label{fig:postman_registro}
+\end{figure}
+
+\subsubsection{Operaciones Transaccionales y Seguridad Perimetral}
+
+Una vez garantizada la emisión de credenciales, se evaluó el comportamiento de los \textit{endpoints} privados. Cuando las peticiones adjuntan el token JWT válido en la cabecera HTTP, las operaciones (como la creación de un registro diario) son procesadas exitosamente (ver Figura \ref{fig:postman_200}).
+
+Por el contrario, para certificar la robustez del escudo arquitectónico, se lanzaron peticiones intencionadas a rutas privadas omitiendo deliberadamente el token JWT.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/postman_200.png}
+    \caption{Petición autorizada: Guardado de un registro con JWT.}
+    \label{fig:postman_200}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Imagenes/postman_403.png}
+    \caption{Intercepción de seguridad: Petición bloqueada sin JWT.}
+    \label{fig:postman_403}
+\end{figure}
+
+
+Como ilustra la Figura \ref{fig:postman_403}, el filtro de seguridad de Spring actuó de forma implacable ante la ausencia de credenciales, denegando la comunicación en la capa de red y devolviendo un estado \texttt{403 Forbidden} (Prohibido). Esto garantiza que la cadena de filtros intercepta a los usuarios no autenticados, manteniendo la lógica de negocio subyacente y la privacidad de los datos totalmente inaccesibles para clientes anónimos o maliciosos.
 
 \subsection{Validación Funcional (Casos de Uso)}
 
@@ -32,9 +77,9 @@ Durante la ejecución del plan de pruebas, la interacción real con la interfaz 
 
 \begin{itemize}
     \item \textbf{CU1 (Registrar Usuario):} El análisis inicial estipulaba que, tras un registro exitoso, el sistema debía redirigir al usuario a la pantalla de inicio de sesión. Durante las pruebas, se consideró que esto añadía fricción innecesaria. Se modificó el comportamiento para que el servidor generase y devolviese un token JWT inmediatamente tras el registro, redirigiendo al usuario directamente al Panel Principal (\textit{Dashboard}).
-    
+
     \item \textbf{CU4 (Cerrar Sesión):} Se detectó una desviación respecto al flujo planificado. Originalmente se diseñó un cuadro de diálogo de confirmación previa a la salida. Sin embargo, en la implementación inicialmente se creó un modelo de acción directa (\textit{One-Click Logout}), cerrando la sesión instantáneamente y redirigiendo al usuario a la pantalla de inicio de sesión, por lo que tras la revisión del flujo se detectó la contradicción con el CU y se corrigió.
-    
+
     \item \textbf{CU5 (Eliminar Cuenta):} En este caso sucedió algo parecido al caso anterior, ya que la cuenta se eliminaba por completo al pulsar el botón sin solicitar las confirmaciones necesarias, por lo que tras detectar el problema se implementó el flujo correcto para la eliminación de la cuenta.
 \end{itemize}
 
@@ -46,7 +91,7 @@ La evaluación de los atributos de calidad arquitectónica (Rendimiento, Usabili
 
 \begin{itemize}
     \item \textbf{RNF2.1 y RNF2.2 (Tiempos de Respuesta y Renderizado):} Mediante las herramientas de desarrollador del navegador (\textit{DevTools}), se monitorizó el tráfico de red (Figura \ref{fig:prueba_red}). Las respuestas de la API REST mantuvieron promedios excelentes de entre 12 y 107 milisegundos, manteniendose inferior a los 2 y 3 segundos pedidos por los \hyperref[tab:rnf_total]{RNF}.
-    
+
     \item \textbf{RNF2.4 (Caída de Base de Datos y Timeout):} Durante las pruebas de estrés, se forzó la detención del contenedor de MongoDB. Inicialmente, este escenario provocó el bloqueo indefinido del cliente web. Por ello, para solventar este defecto, se reconfiguró el sistema en el \textit{frontend}, donde se inyectó un \texttt{timeout} explícito de 5000ms en el cliente Axios. Tras la corrección, la caída del motor de base de datos se tradujo en una intercepción controlada del error y el lanzamiento inmediato de una notificación de fallo de red al usuario, evitando la congelación de la pantalla.
 \end{itemize}
 

@@ -1,3 +1,4 @@
+\newpage
 \section{Manual de Usuario}
 \label{sec:manual_usuario}
 
@@ -13,7 +14,7 @@ Al acceder a la URL principal, el sistema renderiza la interfaz pública de ater
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Imagenes/pantalla_bienvenida.png}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_bienvenida.png}
     \caption{Pantalla de Bienvenida pública de MoodNest.}
     \label{fig:bienvenida}
 \end{figure}
@@ -26,30 +27,25 @@ Los componentes interactivos clave distribuidos en esta vista son:
 
 \subsubsection{Formularios de Acceso y Registro de Cuentas}
 
-Al interactuar con los controles de acceso, la interfaz transiciona de forma asíncrona hacia las pasarelas de autenticación y registro de credenciales (ver Figura~\ref{fig:autenticacion}).
+Al interactuar con los controles de acceso, la interfaz transiciona de forma asíncrona hacia las pasarelas de autenticación (ver Figura~\ref{fig:login}) y registro de credenciales (ver Figura~\ref{fig:registro}).
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_iniciar_sesion.png}
-        \caption{Interfaz de Inicio de Sesión.}
-        \label{fig:login}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_crear_cuenta.png}
-        \caption{Interfaz de Registro de Usuario.}
-        \label{fig:registro}
-    \end{subfigure}
-    \caption{Formularios de autenticación perimetral del sistema.}
-    \label{fig:autenticacion}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_iniciar_sesion.png}
+    \caption{Interfaz de Inicio de Sesión de MoodNest.}
+    \label{fig:login}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_crear_cuenta.png}
+    \caption{Interfaz de Registro de Usuario en MoodNest.}
+    \label{fig:registro}
 \end{figure}
 
 Ambas vistas se estructuran mediante módulos de captura de datos validados en tiempo real:
 \begin{itemize}
-    \item \textbf{Campos de Entrada:} En la pantalla de login (Figura~\ref{fig:login}) se solicitan obligatoriamente los campos indexados de correo electrónico y contraseña. En la pantalla de registro (Figura~\ref{fig:registro}) se añade el campo de ``Nombre de pila'', insumo fundamental para la posterior personalización dinámica de la interfaz interna.
+    \item \textbf{Campos de Entrada:} En la pantalla de login se solicitan obligatoriamente los campos indexados de correo electrónico y contraseña. En la pantalla de registro se añade el campo de ``Nombre de pila'', insumo fundamental para la posterior personalización dinámica de la interfaz interna.
     \item \textbf{Enlaces de Interconexión Cruzada:} Con el fin de enmendar errores de navegación del usuario, la base de cada tarjeta incluye un enlace de redirección indexado (``¿No tienes cuenta? Regístrate aquí'' y ``¿Ya tienes cuenta? Inicia sesión''), vinculando ambos estados de forma directa sin requerir volver a la página de bienvenida.
 \end{itemize}
 
@@ -59,7 +55,7 @@ Una vez superado el protocolo de seguridad mediante JWT, el framework inyecta lo
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Imagenes/pantalla_dashboard_inicial.png}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_dashboard_inicial.png}
     \caption{Vista general del Dashboard Inicial tras el primer acceso.}
     \label{fig:dashboard_inicial}
 \end{figure}
@@ -74,36 +70,30 @@ En este escenario de primera toma de contacto, destacan los siguientes elementos
 
 \subsection{Formulario de Registro Diario y Gestión de Etiquetas}
 
-Al presionar el botón central, la interfaz despliega una ventana modal superpuesta (\textit{Portal}) que encapsula el formulario transaccional del estado de ánimo diaria. Este módulo representa el núcleo operativo de la recolección de datos (ver Figura~\ref{fig:registro_diario}).
+Al presionar el botón central, la interfaz despliega una ventana modal superpuesta (\textit{Portal}) que encapsula el formulario transaccional del estado de ánimo diario. Este módulo representa el núcleo operativo de la recolección de datos. En la Figura~\ref{fig:reg_inicial} se observa el formulario en blanco, mientras que en la Figura~\ref{fig:reg_rellenado} se muestra ya cumplimentado.
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_crear_registro_inicial.png}
-        \caption{Formulario en estado inicial.}
-        \label{fig:reg_inicial}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_crear_registro_rellenado.png}
-        \caption{Formulario rellenado con sub-notas.}
-        \label{fig:reg_rellenado}
-    \end{subfigure}
-    \caption{Modal interactiva de creación de registros y evaluación de tags.}
-    \label{fig:registro_diario}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_crear_registro_inicial.png}
+    \caption{Formulario de registro diario en estado inicial.}
+    \label{fig:reg_inicial}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_crear_registro_rellenado.png}
+    \caption{Formulario de registro diario rellenado con sub-notas y tags evaluados.}
+    \label{fig:reg_rellenado}
 \end{figure}
 
 El formulario se compone de cuatro áreas funcionales perfectamente acotadas:
 \begin{enumerate}
     \item \textbf{Selector Temporal de Fecha:} Preselecciona automáticamente el día actual. Permite su modificación para rellenar jornadas del pasado, bloqueando por código la selección de fechas futuras.
     \item \textbf{Deslizador de Puntuación Global:} Control deslizante (\textit{input range}) del 1 al 10. Al ser manipulado, el indicador numérico cambia reactivamente de color siguiendo la escala semántica emocional diseñada.
-    \item \textbf{Paleta Híbrida de Etiquetas (\textit{Tags}):} Permite vincular actividades al día. La Figura~\ref{fig:reg_inicial} ilustra el estado virgen del catálogo. Al interactuar de forma dinámica (Figura~\ref{fig:reg_rellenado}), el usuario puede:
+    \item \textbf{Paleta Híbrida de Etiquetas (\textit{Tags}):} Permite vincular actividades al día. Al interactuar con ellas, el usuario puede:
     \begin{itemize}
         \item Seleccionar píldoras existentes, lo que despliega un sub-campo numérico opcional para puntuar el impacto específico de esa actividad aislada (ej. \texttt{\#Estudios} calificado con una nota baja).
         \item Pulsar el botón discontinuo ``Nueva'', abriendo un campo de entrada de texto integrado para dar de alta una nueva etiqueta e incorporarla al instante al catálogo seleccionado.
-        \item Dejar etiquetas creadas en segundo plano sin seleccionar para la jornada actual (ej. manteniendo el botón sin resaltar).
     \end{itemize}
     \item \textbf{Comentario Textual:} Área libre para anotaciones de diario cualitativas de carácter opcional.
 \end{enumerate}
@@ -114,7 +104,7 @@ Una vez que el usuario presiona ``Guardar Registro'', la información es procesa
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Imagenes/pantalla_dashboard_postregistro.png}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_dashboard_postregistro.png}
     \caption{Estado del Dashboard tras consolidar el registro diario.}
     \label{fig:dashboard_post}
 \end{figure}
@@ -128,25 +118,20 @@ Las actualizaciones automáticas del sistema visibles en este panel corresponden
 
 \subsection{Historial y Navegación Cronológica mensual}
 
-La pantalla de Historial se plantea como un visor mensual interactivo estructurado en una disposición de doble columna responsiva (ver Figura~\ref{fig:hist_interaccion}).
+La pantalla de Historial se plantea como un visor mensual interactivo estructurado en una disposición de doble columna responsiva. La Figura~\ref{fig:hist_con} muestra la inspección de un día con datos, y la Figura~\ref{fig:hist_sin} el estado ante un día vacío.
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_historial_postregistro.png}
-        \caption{Inspección de un día con registro.}
-        \label{fig:hist_con}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_historial_diaSinRegistro.png}
-        \caption{Inspección de un día sin registro.}
-        \label{fig:hist_sin}
-    \end{subfigure}
-    \caption{Módulo de calendario mensual e inspección contextual de celdas.}
-    \label{fig:hist_interaccion}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_historial_postregistro.png}
+    \caption{Vista de Historial: Inspección de un día con registro consolidado.}
+    \label{fig:hist_con}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_historial_diaSinRegistro.png}
+    \caption{Vista de Historial: Panel derecho ante un día sin registro.}
+    \label{fig:hist_sin}
 \end{figure}
 
 El comportamiento de este componente se rige por las siguientes interacciones:
@@ -154,78 +139,63 @@ El comportamiento de este componente se rige por las siguientes interacciones:
     \item \textbf{Navegación del Calendario (Columna Izquierda):} El usuario puede conmutar cronológicamente entre meses utilizando las flechas del encabezado. La cuadrícula calcula de forma dinámica los offsets de los días y colorea las celdas correspondientes a las fechas que albergan registros, actuando como un mapa de calor emocional.
     \item \textbf{Panel Contextual de Inspección (Columna Derecha):} Al hacer clic sobre una celda del calendario, la columna derecha reacciona según la existencia de datos:
     \begin{itemize}
-        \item \textbf{Día con registro (Figura~\ref{fig:hist_con}):} Extrae y detalla la puntuación global, el comentario y el listado de etiquetas evaluadas. Habilita los botones para ``Editar'' (reabre la modal con los datos cargados) y ``Eliminar'' (ejecuta el borrado físico tras confirmar el aviso).
-        \item \textbf{Día sin registro (Figura~\ref{fig:hist_sin}):} Muestra un estado vacío explicativo e inyecta un botón de inserción rápida configurado con la fecha de la celda seleccionada para invocar directamente al formulario de creación.
+        \item \textbf{Día con registro:} Extrae y detalla la puntuación global, el comentario y el listado de etiquetas evaluadas. Habilita los botones para ``Editar'' y ``Eliminar''.
+        \item \textbf{Día sin registro:} Muestra un estado vacío explicativo e inyecta un botón de inserción rápida configurado con la fecha de la celda seleccionada.
     \end{itemize}
 \end{itemize}
 
 \subsection{Panel de Configuración y Perfil de Usuario}
 
-La vista de Perfil cede el gobierno absoluto de las variables estéticas e identitarias al usuario autenticado, agrupando sus capacidades operativas en cuatro bloques de gestión diferenciados (ver Figuras~\ref{fig:perfil_bloque1} y~\ref{fig:perfil_bloque2}).
+La vista de Perfil cede el gobierno absoluto de las variables estéticas e identitarias al usuario autenticado, agrupando sus capacidades operativas en diferentes bloques de gestión (ver Figuras~\ref{fig:perf_ini} a~\ref{fig:perf_logout}).
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_perfil_inicial.png}
-        \caption{Vista general de Perfil.}
-        \label{fig:perf_ini}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_perfil_personalizarInterfaz.png}
-        \caption{Widget de personalización estética.}
-        \label{fig:perf_inter}
-    \end{subfigure}
-    \caption{Interfaz de Perfil y controles de mutación del tema visual.}
-    \label{fig:perfil_bloque1}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_perfil_inicial.png}
+    \caption{Vista general del panel de Perfil del usuario.}
+    \label{fig:perf_ini}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_perfil_editarEtiqueta.png}
-        \caption{Módulo de edición de etiquetas.}
-        \label{fig:perf_etiq}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_perfil_configuracionCuenta.png}
-        \caption{Formularios de seguridad de cuenta.}
-        \label{fig:perf_cuenta}
-    \end{subfigure}
-    \caption{Componentes de edición de tags y actualización de credenciales.}
-    \label{fig:perfil_bloque2}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_perfil_personalizarInterfaz.png}
+    \caption{Widget de personalización estética de la interfaz (Tema y Color).}
+    \label{fig:perf_inter}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_perfil_editarEtiqueta.png}
+    \caption{Módulo de gestión y edición del catálogo de etiquetas.}
+    \label{fig:perf_etiq}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_perfil_configuracionCuenta.png}
+    \caption{Formularios de seguridad y actualización de credenciales.}
+    \label{fig:perf_cuenta}
 \end{figure}
 
 Las funcionalidades desplegadas de forma atómica en este panel comprenden:
 \begin{enumerate}
-    \item \textbf{Personalización de la Interfaz (Figura~\ref{fig:perf_inter}):} Expone un conmutador semántico para alternar de forma nativa entre el Modo Claro y el Modo Oscuro, y una paleta de colores para reconfigurar el color de acento principal. Los cambios se inyectan en el DOM instantáneamente.
-    \item \textbf{Gestión de Catálogo de Etiquetas (Figura~\ref{fig:perf_etiq}):} Permite listar las etiquetas personalizadas creadas por el usuario, abriendo formularios independientes para la alteración de sus nombres o la ejecución de un borrado lógico que las retire de la paleta actual sin destruir el histórico de registros pasados.
-    \item \textbf{Configuración de la Cuenta (Figura~\ref{fig:perf_cuenta}):} Habilita bloques validados independientes para actualizar el nombre de visualización en el sistema o modificar la contraseña mediante el re-hashing seguro de BCrypt en el backend.
-    \item \textbf{Eliminación de la Cuenta (Fila inferior):} Acotado visualmente dentro de una ``Zona de Peligro'' con bordes rojos de advertencia (ver Figura~\ref{fig:perfil_eliminacion_logout}). El sistema exige introducir la contraseña actual para desbloquear la acción, previniendo bajas accidentales y ejecutando el posterior borrado en cascada en la base de datos.
+    \item \textbf{Personalización de la Interfaz (Figura~\ref{fig:perf_inter}):} Expone un conmutador semántico para alternar entre el Modo Claro y el Modo Oscuro, y una paleta de colores para reconfigurar el color de acento.
+    \item \textbf{Gestión de Catálogo de Etiquetas (Figura~\ref{fig:perf_etiq}):} Permite listar las etiquetas personalizadas, abriendo formularios para la alteración de sus nombres o la ejecución de un borrado lógico.
+    \item \textbf{Configuración de la Cuenta (Figura~\ref{fig:perf_cuenta}):} Habilita bloques validados para actualizar el nombre de visualización o modificar la contraseña.
+    \item \textbf{Eliminación de la Cuenta:} Acotado visualmente dentro de una ``Zona de Peligro'' (ver Figura~\ref{fig:perf_elim}). El sistema exige introducir la contraseña actual para confirmar la acción.
 \end{enumerate}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_perfil_eliminarCuenta.png}
-        \caption{Widget crítico de eliminación de cuenta.}
-        \label{fig:perf_elim}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_cerrar_sesion.png}
-        \caption{Modal de Cierre de Sesión.}
-        \label{fig:perf_logout}
-    \end{subfigure}
-    \caption{Módulos de seguridad críticos e interrupción de sesión activa.}
-    \label{fig:perfil_eliminacion_logout}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_perfil_eliminarCuenta.png}
+    \caption{Widget crítico de confirmación para la eliminación de la cuenta.}
+    \label{fig:perf_elim}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_cerrar_sesion.png}
+    \caption{Ventana modal de confirmación de Cierre de Sesión.}
+    \label{fig:perf_logout}
 \end{figure}
 
 \subsection{Módulo Analítico y Estadísticas Avanzadas}
@@ -234,79 +204,64 @@ El panel de estadísticas representa la culminación del valor de MoodNest, trad
 
 \subsubsection{Comportamiento en Ausencia de Datos (Estado Vacío)}
 
-Con el fin de asegurar la robustez de la interfaz y evitar la distorsión de los ejes gráficos por falta de muestras estadísticas, el sistema controla el volumen histórico del usuario. Si este no alcanza un umbral transaccional mínimo, los componentes gráficos de Chart.js se ocultan temporalmente en favor de estados vacíos informativos (\textit{Empty states}), invitando explícitamente a registrar información (ver Figura~\ref{fig:estadisticas_vacias}).
+Con el fin de asegurar la robustez de la interfaz, el sistema controla el volumen histórico del usuario. Si este no alcanza un umbral transaccional mínimo, los componentes gráficos de Chart.js se ocultan temporalmente en favor de estados vacíos informativos (ver Figuras~\ref{fig:est_vac1} y~\ref{fig:est_vac2}).
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_estadisticas_inicial_1.png}
-        \caption{Estado inicial del bloque cronológico superior.}
-        \label{fig:est_vac1}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_estadisticas_inicial_2.png}
-        \caption{Estado inicial de los bloques analíticos de tags.}
-        \label{fig:est_vac2}
-    \end{subfigure}
-    \caption{Tratamiento visual del panel analítico libre de registros.}
-    \label{fig:estadisticas_vacias}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_estadisticas_inicial_1.png}
+    \caption{Estado inicial de estadísticas: Bloque cronológico superior vacío.}
+    \label{fig:est_vac1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_estadisticas_inicial_2.png}
+    \caption{Estado inicial de estadísticas: Paneles analíticos de tags vacíos.}
+    \label{fig:est_vac2}
 \end{figure}
 
 \subsubsection{Visualización Avanzada tras Uso Continuo}
 
-Tras recopilar registros durante varias semanas, el módulo analítico se hidrata por completo y procesa las variables cuantitativas agregadas, distribuyendo la información en cuatro secciones críticas (ver Figuras~\ref{fig:estadisticas_bloque1} y~\ref{fig:estadisticas_bloque2}).
+Tras recopilar registros durante varias semanas, el módulo analítico se hidrata por completo y procesa las variables cuantitativas agregadas, distribuyendo la información en cuatro secciones críticas (ver Figuras~\ref{fig:est_sem} a~\ref{fig:est_dist}).
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_estadisticas_semanal.png}
-        \caption{Evolución temporal con filtro semanal.}
-        \label{fig:est_sem}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_estadisticas_anual.png}
-        \caption{Evolución temporal con filtro anual.}
-        \label{fig:est_anual}
-    \end{subfigure}
-    \caption{Componente dinámico de líneas evolutivas del estado de ánimo.}
-    \label{fig:estadisticas_bloque1}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_estadisticas_semanal.png}
+    \caption{Gráfico de evolución temporal con filtro semanal activado.}
+    \label{fig:est_sem}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_estadisticas_aliados.png}
-        \caption{Métricas de correlación extrema de tags.}
-        \label{fig:est_aliados}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Imagenes/pantalla_estadisticas_diasSemanaYPromedio.png}
-        \caption{Distribuciones de barras y anillos.}
-        \label{fig:est_dist}
-    \end{subfigure}
-    \caption{Paneles e histogramas del motor de análisis de correlaciones de MoodNest.}
-    \label{fig:estadisticas_bloque2}
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_estadisticas_anual.png}
+    \caption{Gráfico de evolución temporal con filtro anual activado.}
+    \label{fig:est_anual}
 \end{figure}
 
-Los cuatro bloques funcionales representados operan bajo las siguientes premisas técnicas:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_estadisticas_aliados.png}
+    \caption{Métricas de correlación extrema de etiquetas (Aliados).}
+    \label{fig:est_aliados}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Imagenes/pantalla_estadisticas_diasSemanaYPromedio.png}
+    \caption{Distribuciones avanzadas: Barras por día y Anillo de promedio cualitativo.}
+    \label{fig:est_dist}
+\end{figure}
+
+Los cuatro bloques funcionales operan bajo las siguientes premisas técnicas:
 \begin{enumerate}
-    \item \textbf{Evolución Temporal Interactiva (Figura~\ref{fig:estadisticas_bloque1}):} Gráfico de líneas ejecutado en HTML5 Canvas. Conecta las notas globales cronológicamente. El usuario puede alterar la escala del eje horizontal mediante selectores de rango dedicados (semanal, mensual o anual), rompiendo la línea de forma limpia si hay vacíos (\textit{spanGaps: false}).
-    \item \textbf{Módulo Central ``Tus Aliados'' (Figura~\ref{fig:est_aliados}, zona superior):} Dos paneles destacados en contraste verde y rojo. Visualizan de forma directa el resultado del cálculo de desviación del backend, revelando al usuario qué actividad específica está mejorando e incrementando su media general (Mejor Aliado) y cuál la está lastrando (Peor Aliado).
-    \item \textbf{Análisis Comparativo por Etiqueta (Figura~\ref{fig:est_aliados}, zona inferior):} Permite al usuario elegir un tag de su catálogo personal. El sistema calcula y dibuja un gráfico de barras yuxtapuestas que contrasta el promedio global del estado de ánimo con la sub-nota específica asignada a dicho tag, generando además un mensaje textual descriptivo de carácter interpretativo basado en la brecha matemática detectada.
-    \item \textbf{Distribuciones y Tendencias Cíclicas (Figura~\ref{fig:est_dist}):} La base del panel incorpora un gráfico de barras vertical que agrupa las medias históricas según los días de la semana (revelando, por ejemplo, qué días sufre mayor estrés el usuario) y un gráfico de anillo (\textit{Doughnut chart}) que representa la descomposición porcentual cualitativa de sus días históricos categorizados en rangos lógicos de ánimo.
+    \item \textbf{Evolución Temporal Interactiva:} Gráfico de líneas Canvas. Rompe la línea de forma limpia si hay vacíos (\textit{spanGaps: false}).
+    \item \textbf{Módulo Central ``Tus Aliados'':} Visualizan de forma directa el resultado del cálculo de desviación del backend, revelando qué actividad mejora o lastra la media general.
+    \item \textbf{Análisis Comparativo por Etiqueta:} Gráfico de barras yuxtapuestas que contrasta el promedio global con la sub-nota específica asignada a un tag.
+    \item \textbf{Distribuciones y Tendencias Cíclicas:} Gráfico de barras vertical por días de la semana y un gráfico de anillo (\textit{Doughnut chart}) cualitativo.
 \end{enumerate}
 
 \subsection{Finalización de Sesión Segura}
 
-En cualquier instante de la navegación privada, el usuario dispone en la zona lateral derecha de la barra de navegación del control para efectuar un cierre de sesión seguro. 
+En cualquier instante de la navegación privada, el usuario dispone en la zona lateral derecha de la barra de navegación del control para efectuar un cierre de sesión seguro.
 
-Al interactuar con dicho elemento, la interfaz despliega una ventana modal de confirmación previa a la salida (ver Figura~\ref{fig:perf_logout}). Si el usuario ratifica la acción, el sistema procede de forma asíncrona a destruir el token JWT custodiado en el \texttt{localStorage} del cliente web y purga el estado global de la sesión en React, garantizando la confidencialidad perimetral de los registros y devolviendo de inmediato al actor al rol inicial de Usuario Visitante en la Landing Page pública.
+Al interactuar con dicho elemento, la interfaz despliega una ventana modal de confirmación previa a la salida (ver Figura~\ref{fig:perf_logout}). Si el usuario ratifica la acción, el sistema procede a destruir el token JWT y purga el estado global, devolviendo de inmediato al actor a la Landing Page pública.
